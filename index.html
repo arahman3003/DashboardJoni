@@ -1542,6 +1542,95 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 .cuti-note-close-btn:hover{filter:brightness(1.06)}
 
+
+/* Tabel Pengajuan Cuti terkunci penuh di layar: tanpa scroll kanan-kiri */
+@media (min-width:768px){
+  #dashPengajuanCuti{
+    overflow-x:hidden!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+  }
+  #dashPengajuanCuti .pengajuan-table-wrap{
+    width:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:visible!important;
+  }
+  #dashPengajuanCuti .pengajuan-table{
+    width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th,
+  #dashPengajuanCuti .pengajuan-table td{
+    padding:7px 4px!important;
+    font-size:9px!important;
+    line-height:1.22!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
+    white-space:normal!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th{
+    font-size:9px!important;
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th:nth-child(1),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(1){width:3.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(2),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(2){width:6.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(3),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(3){width:5.7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(4),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(4){width:8.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(5),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(5){width:7.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(6),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(6){width:8.1%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(7),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(7){width:7.5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(8){width:6.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(9),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(9){width:7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(10),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(10){width:5.3%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:5.1%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:5.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:4.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(14),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(14){width:4.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(15),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(15){width:5.3%!important}
+  #dashPengajuanCuti .pengajuan-copy-btn{
+    padding:6px 5px!important;
+    font-size:9px!important;
+    width:100%!important;
+  }
+  #dashPengajuanCuti .pengajuan-eye{
+    width:28px!important;
+    height:28px!important;
+    font-size:12px!important;
+  }
+  #dashPengajuanCuti .leader-row-actions{
+    flex-direction:column!important;
+    gap:4px!important;
+  }
+  #dashPengajuanCuti .leader-row-actions button{
+    padding:5px 3px!important;
+    font-size:8px!important;
+    width:100%!important;
+  }
+  #dashPengajuanCuti .cuti-remaining,
+  #dashPengajuanCuti .cuti-note-status{
+    min-width:0!important;
+    width:100%!important;
+    padding:5px 3px!important;
+    font-size:8px!important;
+  }
+}
+
 </style>
 </head>
 <body>
