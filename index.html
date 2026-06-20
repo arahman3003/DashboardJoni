@@ -1822,9 +1822,11 @@ body.pc-app-mode #desktopApp{display:grid!important}
             <option value="CUTI INDO (AMBIL PASPOR)">CUTI INDO (AMBIL PASPOR)</option>
             <option value="CUTI LOKAL (AMBIL PASPOR)">CUTI LOKAL (AMBIL PASPOR)</option>
             <option value="CUTI LOKAL (TIDAK AMBIL PASPOR)">CUTI LOKAL (TIDAK AMBIL PASPOR)</option>
+            <option value="CUTI LOKAL & CUTI KERJA (TIDAK AMBIL PASPOR)">CUTI LOKAL & CUTI KERJA (TIDAK AMBIL PASPOR)</option>
+            <option value="CUTI KERJA">CUTI KERJA</option>
           </select>
         </div>
-        <div class="pengajuan-date-box">
+        <div class="pengajuan-date-box" id="cutiLokalBox">
           <h4>📅 Tanggal Cuti Lokal / Indo</h4>
           <div class="pengajuan-form-row two">
             <div>
@@ -1837,7 +1839,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
             </div>
           </div>
         </div>
-        <div class="pengajuan-date-box">
+        <div class="pengajuan-date-box" id="cutiKerjaBox">
           <h4>💼 Tanggal Cuti Kerja</h4>
           <div class="pengajuan-form-row two">
             <div>
@@ -4104,6 +4106,34 @@ document.addEventListener('keydown',e=>{
     if(ps('cutiNamaStaff')) ps('cutiNamaStaff').value=user.name;
     if(ps('cutiRoleStaff')) ps('cutiRoleStaff').value=user.role;
   }
+  function getCutiMode(type){
+    if(type==='CUTI KERJA') return 'kerja';
+    if(type==='CUTI LOKAL & CUTI KERJA (TIDAK AMBIL PASPOR)') return 'both';
+    if(type) return 'lokal';
+    return 'none';
+  }
+  function toggleCutiFields(){
+    const type=ps('cutiJenis')?.value||'';
+    const mode=getCutiMode(type);
+    const lokalBox=ps('cutiLokalBox');
+    const kerjaBox=ps('cutiKerjaBox');
+    if(lokalBox) lokalBox.style.display=(mode==='lokal'||mode==='both') ? '' : 'none';
+    if(kerjaBox) kerjaBox.style.display=(mode==='kerja'||mode==='both') ? '' : 'none';
+    if(mode==='kerja'){
+      if(ps('cutiLokalStart')) ps('cutiLokalStart').value='';
+      if(ps('cutiLokalEnd')) ps('cutiLokalEnd').value='';
+    }
+    if(mode==='lokal'){
+      if(ps('cutiKerjaStart')) ps('cutiKerjaStart').value='';
+      if(ps('cutiKerjaEnd')) ps('cutiKerjaEnd').value='';
+    }
+    if(mode==='none'){
+      if(ps('cutiLokalStart')) ps('cutiLokalStart').value='';
+      if(ps('cutiLokalEnd')) ps('cutiLokalEnd').value='';
+      if(ps('cutiKerjaStart')) ps('cutiKerjaStart').value='';
+      if(ps('cutiKerjaEnd')) ps('cutiKerjaEnd').value='';
+    }
+  }
   function openForm(){
     const user=safeUser();
     ps('cutiNamaStaff').value=user.name;
@@ -4111,6 +4141,7 @@ document.addEventListener('keydown',e=>{
     ps('pengajuanCutiForm').reset();
     ps('cutiNamaStaff').value=user.name;
     ps('cutiRoleStaff').value=user.role;
+    toggleCutiFields();
     ps('pengajuanCutiModal').classList.remove('hidden');
   }
   function closeForm(){ ps('pengajuanCutiModal').classList.add('hidden'); }
@@ -4161,6 +4192,7 @@ document.addEventListener('keydown',e=>{
     if(e.target===ps('pengajuanCutiDetailModal')) closeDetail();
   });
   ps('pengajuanRoleFilter')?.addEventListener('change',e=>{cutiState.role=e.target.value;renderPengajuanCuti();});
+  ps('cutiJenis')?.addEventListener('change',toggleCutiFields);
   ps('cutiSetPending')?.addEventListener('click',()=>setStatus('Pending'));
   ps('cutiSetApproved')?.addEventListener('click',()=>setStatus('Approved'));
   ps('cutiSetRejected')?.addEventListener('click',()=>setStatus('Rejected'));
@@ -4172,9 +4204,18 @@ document.addEventListener('keydown',e=>{
     const lokalEnd=ps('cutiLokalEnd').value;
     const kerjaStart=ps('cutiKerjaStart').value;
     const kerjaEnd=ps('cutiKerjaEnd').value;
+    const mode=getCutiMode(type);
     if(!type){ alert('Pilih jenis cuti dulu.'); return; }
-    if(!(lokalStart&&lokalEnd) && !(kerjaStart&&kerjaEnd)){
-      alert('Isi minimal salah satu tanggal cuti Lokal/Indo atau tanggal cuti kerja.');
+    if(mode==='lokal' && !(lokalStart&&lokalEnd)){
+      alert('Isi tanggal cuti Lokal / Indo terlebih dahulu.');
+      return;
+    }
+    if(mode==='kerja' && !(kerjaStart&&kerjaEnd)){
+      alert('Isi tanggal cuti kerja terlebih dahulu.');
+      return;
+    }
+    if(mode==='both' && (!(lokalStart&&lokalEnd) || !(kerjaStart&&kerjaEnd))){
+      alert('Untuk jenis cuti ini, isi tanggal cuti Lokal / Indo dan tanggal cuti kerja.');
       return;
     }
     const entry={
@@ -4199,7 +4240,7 @@ document.addEventListener('keydown',e=>{
     renderPengajuanCuti();
     alert('Pengajuan cuti berhasil dikirim.');
   });
-  window.addEventListener('load',()=>{setTimeout(()=>{ if(typeof renderPengajuanCuti==='function') renderPengajuanCuti(); },120);});
+  window.addEventListener('load',()=>{setTimeout(()=>{ if(typeof renderPengajuanCuti==='function') renderPengajuanCuti(); toggleCutiFields(); },120);});
 })();
 </script>
 
