@@ -1521,6 +1521,27 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 .pengajuan-copy-btn:hover{filter:brightness(1.08)}
 
+
+/* Hak akses LEADER untuk pengajuan cuti */
+.leader-row-actions{display:flex;justify-content:center;gap:6px;white-space:nowrap}
+.leader-row-actions button{
+  border:none;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:900;cursor:pointer;
+}
+.leader-approve-btn{background:#e8fff1;color:#0a8d42}
+.leader-reject-btn{background:#ffe8e8;color:#c93f38}
+.leader-approve-btn:hover,.leader-reject-btn:hover{filter:brightness(.96)}
+.cuti-note-modal{width:min(100%,410px)!important;text-align:center;padding:32px 28px!important}
+.cuti-note-modal h3{justify-content:center!important;color:#0d6f1f!important;font-size:24px!important;margin:8px 0 14px!important}
+.cuti-note-icon{
+  width:66px;height:66px;border:3px solid #4cc3f0;border-radius:50%;margin:4px auto 16px;
+  display:grid;place-items:center;color:#4cc3f0;font-size:42px;line-height:1;
+}
+.cuti-note-content{min-height:50px;display:flex;align-items:center;justify-content:center;color:#5b5b5b;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.cuti-note-close-btn{
+  margin-top:20px;border:none;border-radius:4px;padding:9px 22px;background:#6d5bdd;color:#fff;font-weight:800;cursor:pointer;
+}
+.cuti-note-close-btn:hover{filter:brightness(1.06)}
+
 </style>
 </head>
 <body>
@@ -1798,10 +1819,11 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>💬 Keterangan Cuti</th>
                <th>👁 Keterangan</th>
                <th>⧉ Copy Teks</th>
+               <th class="leader-action-head">⚙ Tindakan</th>
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
-             <tr><td colspan="14" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
+             <tr><td colspan="15" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
            </tbody>
          </table>
        </div>
@@ -1927,11 +1949,13 @@ body.pc-app-mode #desktopApp{display:grid!important}
 </div>
 
 <div class="pengajuan-modal-backdrop hidden" id="pengajuanCutiDetailModal">
-  <div class="pengajuan-modal large">
+  <div class="pengajuan-modal cuti-note-modal">
     <button type="button" class="pengajuan-modal-close" id="closePengajuanCutiDetailModal">×</button>
-    <h3>👁 Detail Pengajuan Cuti</h3>
-    <div class="pengajuan-detail-grid" id="pengajuanCutiDetailBody"></div>
-    <div class="pengajuan-detail-actions">
+    <div class="cuti-note-icon">ⓘ</div>
+    <h3>Keterangan</h3>
+    <div class="cuti-note-content" id="pengajuanCutiDetailBody">-</div>
+    <button type="button" class="cuti-note-close-btn" id="cutiNoteCloseBtn">Tutup</button>
+    <div class="pengajuan-detail-actions hidden">
       <button type="button" class="pengajuan-pending" id="cutiSetPending">Pending</button>
       <button type="button" class="pengajuan-approve" id="cutiSetApproved">Approved</button>
       <button type="button" class="pengajuan-reject" id="cutiSetRejected">Rejected</button>
@@ -2340,6 +2364,11 @@ const TEST_USERS={
     "password": "1",
     "name": "AGUNG PRASETIO SETIAWAN",
     "role": "KASIR"
+  },
+  "velaaleader": {
+    "password": "1",
+    "name": "MICHAEL-LEADER",
+    "role": "LEADER"
   }
 };
 
@@ -3545,7 +3574,7 @@ setInterval(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();rend
 
 <script>
 (function(){
-  const USERS={"velaagheagema": {"password": "1", "name": "GHEA GEMANANDA SANTOSO PUTRI", "role": "CS"}, "velaaericroy": {"password": "1", "name": "ERIC ROYNARDO SIANTURI", "role": "CS"}, "velaamichael": {"password": "1", "name": "MICHAEL", "role": "CS"}, "velaaferyisnan": {"password": "1", "name": "FERY ISNAN PANE", "role": "CS"}, "velaaselisahfi": {"password": "1", "name": "SELI SAHFITRI", "role": "CS"}, "velaatypesulta": {"password": "1", "name": "TYPE SULTAN LUBIS", "role": "CS"}, "velaaasephardi": {"password": "1", "name": "ASEP HARDIAN ZAHMAN", "role": "CS"}, "velaafarazi": {"password": "1", "name": "MUHAMMAD AL FARAZI LAHAMI", "role": "CS"}, "velaadanu": {"password": "1", "name": "DANU UMBARA", "role": "CS"}, "velaasures81": {"password": "1", "name": "SURES", "role": "CS"}, "velaanahdiyah": {"password": "1", "name": "NAHDIYAH HIDAYANI TANJUNG", "role": "CS"}, "velaafiqri": {"password": "1", "name": "MUHAMMAD FIQRI TANJUNG", "role": "CS"}, "velaabinsarriz": {"password": "1", "name": "BINSAR RIZKY SYABAN", "role": "CS"}, "velaafadly": {"password": "1", "name": "MUHAMMAD FADLY JULIANSYAH", "role": "CS"}, "velaajosua": {"password": "1", "name": "JOSUA SIMANJUNTAK", "role": "CS"}, "velaacalvinsan": {"password": "1", "name": "CALVIN SANDIKA HARAHAP", "role": "CS"}, "velaafezirose": {"password": "1", "name": "FEZY ROSELLY", "role": "CS"}, "velaaricoharta": {"password": "1", "name": "RICO HARTANTO", "role": "CS"}, "velaaariandika": {"password": "1", "name": "ARI ANDIKA", "role": "CS"}, "velaamfahmi": {"password": "1", "name": "MUHAMMAD FAHMI ELFAROQI", "role": "CS"}, "velaadavid": {"password": "1", "name": "DAVID", "role": "CS"}, "velaaheriyanto": {"password": "1", "name": "HERIYANTO", "role": "KAPTEN"}, "velaaaprinda": {"password": "1", "name": "APRINDA HAMID MULYADI", "role": "KAPTEN"}, "velaataufanhar": {"password": "1", "name": "TAUFAN HARDIANTO", "role": "KAPTEN"}, "velaaferdiansya": {"password": "1", "name": "FERDIANSYAH HIDAYAD", "role": "KAPTEN"}, "velaakelvin": {"password": "1", "name": "KELVIN", "role": "KAPTEN"}, "velaadaltriono": {"password": "1", "name": "DAL TRIONO", "role": "KAPTEN"}, "velaarakespran": {"password": "1", "name": "RAKES PRAN", "role": "KASIR"}, "velaarajunasem": {"password": "1", "name": "RAJUNA SEMBIRING", "role": "KASIR"}, "velaaluigi": {"password": "1", "name": "LUIGI", "role": "KASIR"}, "velaafauzilubis": {"password": "1", "name": "MHD FAUZI LUBIS", "role": "KASIR"}, "velaabuharipra": {"password": "1", "name": "BUHARI PRATAMA", "role": "KASIR"}, "velaanellypakp": {"password": "1", "name": "NELLY PAKPAHAN", "role": "KASIR"}, "velaafirmanfra": {"password": "1", "name": "FIRMAN FRANCISKUS PURBA", "role": "KASIR"}, "velaaagustina": {"password": "1", "name": "AGUSTINA NADEAK", "role": "KASIR"}, "velaaabdurrasy": {"password": "1", "name": "ABDUR RASYID", "role": "KASIR"}, "velaaaldiifant": {"password": "1", "name": "ALDI IFANTRA", "role": "KASIR"}, "velaabiondi": {"password": "1", "name": "BIONDI", "role": "KASIR"}, "velaanovi": {"password": "1", "name": "NOVI", "role": "KASIR"}, "velaaarwana": {"password": "1", "name": "ARWANA BAGUS SUHARTA SINAGA", "role": "KASIR"}, "velaakevinmanu": {"password": "1", "name": "KEVIN MANURUNG", "role": "KASIR"}, "velaawellianto": {"password": "1", "name": "WELLIANTO", "role": "KASIR"}, "velaaluckyandr": {"password": "1", "name": "LUCKY ANDREAN KASPARI", "role": "KASIR"}, "velaamendra": {"password": "1", "name": "MENDRA VISEN", "role": "KASIR"}, "velaapijakanu71": {"password": "1", "name": "PIJA KANU", "role": "KASIR"}, "velaamrizkysan": {"password": "1", "name": "MUHAMMAD RIZKY SANJAYA", "role": "KASIR"}, "velaanopriady56": {"password": "1", "name": "NOPRIADY", "role": "KASIR"}, "velaaroselyn": {"password": "1", "name": "ROSELYN SUWITO", "role": "KASIR"}, "velaavarelin": {"password": "1", "name": "VARELIN", "role": "KASIR"}, "velaabudi": {"password": "1", "name": "BUDI SYAHPUTRA SIREGAR", "role": "KASIR"}, "velaafiona": {"password": "1", "name": "FIONA GUNAWAN", "role": "KASIR"}, "velaadesinatal": {"password": "1", "name": "DESI NATALIA NURHAYATI SIRAIT", "role": "KASIR"}, "velaarickyleon": {"password": "1", "name": "RICKY LEONARDO", "role": "KASIR"}, "velaaindrasalim": {"password": "1", "name": "INDRA SALIM", "role": "KASIR"}, "velaaagung": {"password": "1", "name": "AGUNG PRASETIO SETIAWAN", "role": "KASIR"}};
+  const USERS={"velaagheagema": {"password": "1", "name": "GHEA GEMANANDA SANTOSO PUTRI", "role": "CS"}, "velaaericroy": {"password": "1", "name": "ERIC ROYNARDO SIANTURI", "role": "CS"}, "velaamichael": {"password": "1", "name": "MICHAEL", "role": "CS"}, "velaaferyisnan": {"password": "1", "name": "FERY ISNAN PANE", "role": "CS"}, "velaaselisahfi": {"password": "1", "name": "SELI SAHFITRI", "role": "CS"}, "velaatypesulta": {"password": "1", "name": "TYPE SULTAN LUBIS", "role": "CS"}, "velaaasephardi": {"password": "1", "name": "ASEP HARDIAN ZAHMAN", "role": "CS"}, "velaafarazi": {"password": "1", "name": "MUHAMMAD AL FARAZI LAHAMI", "role": "CS"}, "velaadanu": {"password": "1", "name": "DANU UMBARA", "role": "CS"}, "velaasures81": {"password": "1", "name": "SURES", "role": "CS"}, "velaanahdiyah": {"password": "1", "name": "NAHDIYAH HIDAYANI TANJUNG", "role": "CS"}, "velaafiqri": {"password": "1", "name": "MUHAMMAD FIQRI TANJUNG", "role": "CS"}, "velaabinsarriz": {"password": "1", "name": "BINSAR RIZKY SYABAN", "role": "CS"}, "velaafadly": {"password": "1", "name": "MUHAMMAD FADLY JULIANSYAH", "role": "CS"}, "velaajosua": {"password": "1", "name": "JOSUA SIMANJUNTAK", "role": "CS"}, "velaacalvinsan": {"password": "1", "name": "CALVIN SANDIKA HARAHAP", "role": "CS"}, "velaafezirose": {"password": "1", "name": "FEZY ROSELLY", "role": "CS"}, "velaaricoharta": {"password": "1", "name": "RICO HARTANTO", "role": "CS"}, "velaaariandika": {"password": "1", "name": "ARI ANDIKA", "role": "CS"}, "velaamfahmi": {"password": "1", "name": "MUHAMMAD FAHMI ELFAROQI", "role": "CS"}, "velaadavid": {"password": "1", "name": "DAVID", "role": "CS"}, "velaaheriyanto": {"password": "1", "name": "HERIYANTO", "role": "KAPTEN"}, "velaaaprinda": {"password": "1", "name": "APRINDA HAMID MULYADI", "role": "KAPTEN"}, "velaataufanhar": {"password": "1", "name": "TAUFAN HARDIANTO", "role": "KAPTEN"}, "velaaferdiansya": {"password": "1", "name": "FERDIANSYAH HIDAYAD", "role": "KAPTEN"}, "velaakelvin": {"password": "1", "name": "KELVIN", "role": "KAPTEN"}, "velaadaltriono": {"password": "1", "name": "DAL TRIONO", "role": "KAPTEN"}, "velaarakespran": {"password": "1", "name": "RAKES PRAN", "role": "KASIR"}, "velaarajunasem": {"password": "1", "name": "RAJUNA SEMBIRING", "role": "KASIR"}, "velaaluigi": {"password": "1", "name": "LUIGI", "role": "KASIR"}, "velaafauzilubis": {"password": "1", "name": "MHD FAUZI LUBIS", "role": "KASIR"}, "velaabuharipra": {"password": "1", "name": "BUHARI PRATAMA", "role": "KASIR"}, "velaanellypakp": {"password": "1", "name": "NELLY PAKPAHAN", "role": "KASIR"}, "velaafirmanfra": {"password": "1", "name": "FIRMAN FRANCISKUS PURBA", "role": "KASIR"}, "velaaagustina": {"password": "1", "name": "AGUSTINA NADEAK", "role": "KASIR"}, "velaaabdurrasy": {"password": "1", "name": "ABDUR RASYID", "role": "KASIR"}, "velaaaldiifant": {"password": "1", "name": "ALDI IFANTRA", "role": "KASIR"}, "velaabiondi": {"password": "1", "name": "BIONDI", "role": "KASIR"}, "velaanovi": {"password": "1", "name": "NOVI", "role": "KASIR"}, "velaaarwana": {"password": "1", "name": "ARWANA BAGUS SUHARTA SINAGA", "role": "KASIR"}, "velaakevinmanu": {"password": "1", "name": "KEVIN MANURUNG", "role": "KASIR"}, "velaawellianto": {"password": "1", "name": "WELLIANTO", "role": "KASIR"}, "velaaluckyandr": {"password": "1", "name": "LUCKY ANDREAN KASPARI", "role": "KASIR"}, "velaamendra": {"password": "1", "name": "MENDRA VISEN", "role": "KASIR"}, "velaapijakanu71": {"password": "1", "name": "PIJA KANU", "role": "KASIR"}, "velaamrizkysan": {"password": "1", "name": "MUHAMMAD RIZKY SANJAYA", "role": "KASIR"}, "velaanopriady56": {"password": "1", "name": "NOPRIADY", "role": "KASIR"}, "velaaroselyn": {"password": "1", "name": "ROSELYN SUWITO", "role": "KASIR"}, "velaavarelin": {"password": "1", "name": "VARELIN", "role": "KASIR"}, "velaabudi": {"password": "1", "name": "BUDI SYAHPUTRA SIREGAR", "role": "KASIR"}, "velaafiona": {"password": "1", "name": "FIONA GUNAWAN", "role": "KASIR"}, "velaadesinatal": {"password": "1", "name": "DESI NATALIA NURHAYATI SIRAIT", "role": "KASIR"}, "velaarickyleon": {"password": "1", "name": "RICKY LEONARDO", "role": "KASIR"}, "velaaindrasalim": {"password": "1", "name": "INDRA SALIM", "role": "KASIR"}, "velaaagung": {"password": "1", "name": "AGUNG PRASETIO SETIAWAN", "role": "KASIR"}, "velaaleader": {"password": "1", "name": "MICHAEL-LEADER", "role": "LEADER"}};
   const isDesktop=()=>window.matchMedia('(min-width:768px)').matches;
 
   function showLogin(){
@@ -4157,6 +4186,7 @@ document.addEventListener('keydown',e=>{
   function renderTable(){
     const rows=ps('pengajuanCutiRows');
     if(!rows) return;
+    const isLeader=safeUser().role==='LEADER';
     const entries=getFilteredEntries();
     rows.innerHTML=entries.length ? entries.map(x=>{
       const rawLeaveState=cutiReferenceDate(x);
@@ -4209,8 +4239,16 @@ document.addEventListener('keydown',e=>{
         }</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
         <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
+        <td class="leader-action-cell">${
+          isLeader && (x.status||'Pending')==='Pending'
+            ? `<div class="leader-row-actions">
+                 <button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>
+                 <button type="button" class="leader-reject-btn" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕ Reject</button>
+               </div>`
+            : '—'
+        }</td>
       </tr>`;
-    }).join('') : '<tr><td colspan="14" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    }).join('') : '<tr><td colspan="15" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
@@ -4222,8 +4260,13 @@ document.addEventListener('keydown',e=>{
     if(ps('pengajuanRoleFilter')) ps('pengajuanRoleFilter').value=cutiState.role;
     renderTable();
     const user=safeUser();
+    const isLeader=user.role==='LEADER';
     if(ps('cutiNamaStaff')) ps('cutiNamaStaff').value=user.name;
     if(ps('cutiRoleStaff')) ps('cutiRoleStaff').value=user.role;
+    const addBtn=ps('openPengajuanCutiBtn');
+    if(addBtn) addBtn.style.display=isLeader?'none':'inline-flex';
+    document.querySelectorAll('.leader-action-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
+    document.querySelectorAll('.leader-action-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
@@ -4269,28 +4312,24 @@ document.addEventListener('keydown',e=>{
     if(!item) return;
     currentDetailId=id;
     const body=ps('pengajuanCutiDetailBody');
-    body.innerHTML=`
-      <div class="pengajuan-detail-item"><b>Nama Staff</b>${item.name}</div>
-      <div class="pengajuan-detail-item"><b>Role</b>${item.role}</div>
-      <div class="pengajuan-detail-item"><b>Nomor Paspor</b>${item.passport||'-'}</div>
-      <div class="pengajuan-detail-item"><b>Status</b><span class="pengajuan-status ${statusClass(item.status)}">${item.status||'Pending'}</span></div>
-      <div class="pengajuan-detail-item"><b>Jenis Cuti</b>${item.type||'-'}</div>
-      <div class="pengajuan-detail-item"><b>Tanggal/Jam Pengajuan</b>${fmtSubmitted(item.submittedAt)}</div>
-      <div class="pengajuan-detail-item"><b>Tanggal Cuti Lokal/Indo</b>${fmtRange(item.lokalStart,item.lokalEnd)}</div>
-      <div class="pengajuan-detail-item"><b>Jumlah Hari Cuti Lokal/Indo</b>${item.lokalDays||'-'}</div>
-      <div class="pengajuan-detail-item"><b>Tanggal Cuti Kerja</b>${fmtRange(item.kerjaStart,item.kerjaEnd)}</div>
-      <div class="pengajuan-detail-item"><b>Jumlah Hari Cuti Kerja</b>${item.kerjaDays||'-'}</div>
-      <div class="pengajuan-detail-item full"><b>Keterangan</b>${item.notes||'-'}</div>
-    `;
+    body.textContent=item.notes?.trim() || 'Tidak ada keterangan.';
     ps('pengajuanCutiDetailModal').classList.remove('hidden');
   }
   function closeDetail(){ ps('pengajuanCutiDetailModal').classList.add('hidden'); currentDetailId=null; }
-  function setStatus(status){
-    if(!currentDetailId) return;
+  function setStatus(status,id=currentDetailId){
+    const leader=safeUser();
+    if(leader.role!=='LEADER'){
+      alert('Hanya role LEADER yang dapat menyetujui atau menolak pengajuan cuti.');
+      return;
+    }
+    if(!id) return;
     const entries=loadEntries();
-    const idx=entries.findIndex(x=>x.id===currentDetailId);
+    const idx=entries.findIndex(x=>x.id===id);
     if(idx<0) return;
+    if((entries[idx].status||'Pending')!=='Pending') return;
     entries[idx].status=status;
+    entries[idx].accLeader=leader.name;
+    entries[idx].accAt=new Date().toISOString();
     saveEntries(entries);
     closeDetail();
     renderPengajuanCuti();
@@ -4302,11 +4341,21 @@ document.addEventListener('keydown',e=>{
     const closeDetailBtn=e.target.closest('#closePengajuanCutiDetailModal');
     const detailBtn=e.target.closest('[data-cuti-detail]');
     const copyBtn=e.target.closest('[data-cuti-copy]');
+    const leaderActionBtn=e.target.closest('[data-cuti-action][data-cuti-id]');
+    const noteCloseBtn=e.target.closest('#cutiNoteCloseBtn');
     const statusBtn=e.target.closest('[data-cuti-filter-status]');
     if(addBtn){e.preventDefault();openForm();}
     if(closeBtn){e.preventDefault();closeForm();}
     if(closeDetailBtn){e.preventDefault();closeDetail();}
+    if(noteCloseBtn){e.preventDefault();closeDetail();}
     if(detailBtn){e.preventDefault();openDetail(detailBtn.dataset.cutiDetail);}
+    if(leaderActionBtn){
+      e.preventDefault();
+      const action=leaderActionBtn.dataset.cutiAction;
+      const id=leaderActionBtn.dataset.cutiId;
+      const confirmText=action==='Approved'?'Setujui pengajuan cuti ini?':'Tolak pengajuan cuti ini?';
+      if(window.confirm(confirmText)) setStatus(action,id);
+    }
     if(copyBtn){
       e.preventDefault();
       const text=decodeURIComponent(copyBtn.dataset.cutiCopy||'');
