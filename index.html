@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#7b6248">
-<title>DashboardJoni</title>
+<title>Absensi Joni</title>
 <style>
 :root{--green:#b08968;--green2:#7b6248;--deep:#17181b;--card:#222428;--muted:#9f8f7d;--line:rgba(93,230,146,.23);--light:#f6f2ea;--ink:#2b2d31;--}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#ebe3d7;color:var(--ink)}
@@ -1423,6 +1423,41 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 #dashPengajuanCuti .pengajuan-cuti-title{
   margin:0 0 4px;
+}
+
+
+/* Sidebar dan header tetap terlihat saat halaman di-scroll */
+@media (min-width:768px){
+  .dash-shell{
+    display:block!important;
+    min-height:100vh!important;
+  }
+  .dash-side{
+    position:fixed!important;
+    top:0!important;
+    left:0!important;
+    bottom:0!important;
+    width:255px!important;
+    height:100vh!important;
+    overflow-y:auto!important;
+    z-index:2000!important;
+  }
+  .dash-main{
+    margin-left:255px!important;
+    min-height:100vh!important;
+    height:100vh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+  .dash-topbar{
+    position:sticky!important;
+    top:0!important;
+    z-index:1500!important;
+  }
+}
+@media (min-width:768px) and (max-width:1050px){
+  .dash-side{width:80px!important}
+  .dash-main{margin-left:80px!important}
 }
 
 </style>
