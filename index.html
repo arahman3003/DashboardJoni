@@ -4159,7 +4159,9 @@ document.addEventListener('keydown',e=>{
     if(!rows) return;
     const entries=getFilteredEntries();
     rows.innerHTML=entries.length ? entries.map(x=>{
-      const leaveState=cutiReferenceDate(x);
+      const rawLeaveState=cutiReferenceDate(x);
+      const isApproved=(x.status||'Pending')==='Approved';
+      const leaveState=isApproved ? rawLeaveState : {label:'-',className:'cuti-none'};
       const isKerjaOnly=(x.type||'')==='CUTI KERJA';
       const isBoth=(x.type||'').includes('CUTI LOKAL & CUTI KERJA');
       const rangeText=isKerjaOnly
@@ -4195,8 +4197,16 @@ document.addEventListener('keydown',e=>{
         <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
         <td>${x.kerjaDays||'-'}</td>
         <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
-        <td><span class="cuti-remaining ${leaveState.className}">${leaveState.label}</span></td>
-        <td><span class="cuti-note-status ${leaveState.className}">${leaveState.label==='Selesai Cuti'?'🗓 Selesai Cuti':leaveState.label==='Sedang Cuti'?'🛫 Sedang Cuti':'—'}</span></td>
+        <td><span class="cuti-remaining ${leaveState.className}">${isApproved ? leaveState.label : '-'}</span></td>
+        <td><span class="cuti-note-status ${leaveState.className}">${
+          isApproved
+            ? (leaveState.label==='Selesai Cuti'
+                ? '🗓 Selesai Cuti'
+                : leaveState.label==='Sedang Cuti'
+                  ? '🛫 Sedang Cuti'
+                  : leaveState.label==='-' ? '—' : '⏳ Menunggu Cuti')
+            : (x.status==='Rejected' ? '✖ Pengajuan Ditolak' : '⏳ Menunggu Persetujuan')
+        }</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
         <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
       </tr>`;
