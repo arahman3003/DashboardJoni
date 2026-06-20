@@ -1645,6 +1645,34 @@ body.pc-app-mode #desktopApp{display:grid!important}
   #dashPengajuanCuti .cuti-note-status{display:none!important}
 }
 
+
+/* Tombol leader dipindah ke dua kolom sebelum Status. Kolom paling ujung adalah Copy Teks. */
+.leader-approve-cell,.leader-reject-cell{text-align:center}
+.leader-approve-cell .leader-approve-btn,
+.leader-reject-cell .leader-reject-btn{
+  width:100%;
+  border:none;
+  border-radius:7px;
+  padding:7px 6px;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.leader-approve-cell .leader-approve-btn{background:#e8fff1;color:#0a8d42}
+.leader-reject-cell .leader-reject-btn{background:#ffe8e8;color:#c93f38}
+@media (min-width:768px){
+  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(8){width:6.5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(9),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(9){width:6.5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(10),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(10){width:5.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:4.7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:5.7%!important}
+}
+
 </style>
 </head>
 <body>
@@ -1915,16 +1943,15 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>📝 Jenis Cuti</th>
                <th>🛫 Tanggal Cuti Lokal/Indo</th>
                <th>🗓 Jumlah Hari Cuti Lokal/Indo</th>
-               <th>💼 Tanggal Cuti Kerja</th>
-               <th>🗓 Jumlah Hari Cuti Kerja</th>
+               <th class="leader-approve-head">✓ Approved</th>
+               <th class="leader-reject-head">✕ Reject</th>
                <th>ℹ Status</th>
                <th>👁 Keterangan</th>
                <th>⧉ Copy Teks</th>
-               <th class="leader-action-head">⚙ Tindakan</th>
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
-             <tr><td colspan="13" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
+             <tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
            </tbody>
          </table>
        </div>
@@ -4328,21 +4355,21 @@ document.addEventListener('keydown',e=>{
         <td>${x.type||'-'}</td>
         <td>${fmtRange(x.lokalStart,x.lokalEnd)}</td>
         <td>${x.lokalDays||'-'}</td>
-        <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
-        <td>${x.kerjaDays||'-'}</td>
+        <td class="leader-approve-cell">${
+          isLeader && (x.status||'Pending')==='Pending'
+            ? `<button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>`
+            : '—'
+        }</td>
+        <td class="leader-reject-cell">${
+          isLeader && (x.status||'Pending')==='Pending'
+            ? `<button type="button" class="leader-reject-btn" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕ Reject</button>`
+            : '—'
+        }</td>
         <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
         <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
-        <td class="leader-action-cell">${
-          isLeader && (x.status||'Pending')==='Pending'
-            ? `<div class="leader-row-actions">
-                 <button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>
-                 <button type="button" class="leader-reject-btn" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕ Reject</button>
-               </div>`
-            : '—'
-        }</td>
       </tr>`;
-    }).join('') : '<tr><td colspan="13" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
@@ -4359,8 +4386,8 @@ document.addEventListener('keydown',e=>{
     if(ps('cutiRoleStaff')) ps('cutiRoleStaff').value=user.role;
     const addBtn=ps('openPengajuanCutiBtn');
     if(addBtn) addBtn.style.display=isLeader?'none':'inline-flex';
-    document.querySelectorAll('.leader-action-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
-    document.querySelectorAll('.leader-action-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
+    document.querySelectorAll('.leader-approve-head,.leader-reject-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
+    document.querySelectorAll('.leader-approve-cell,.leader-reject-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
