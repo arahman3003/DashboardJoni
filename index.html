@@ -1673,6 +1673,11 @@ body.pc-app-mode #desktopApp{display:grid!important}
   #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:5.7%!important}
 }
 
+
+/* Tab Pending: kolom Copy Teks disembunyikan */
+#dashPengajuanCuti.pending-no-copy .copy-text-head,
+#dashPengajuanCuti.pending-no-copy .copy-text-cell{display:none!important}
+
 </style>
 </head>
 <body>
@@ -1947,7 +1952,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th class="leader-reject-head">✕ Reject</th>
                <th>ℹ Status</th>
                <th>👁 Keterangan</th>
-               <th>⧉ Copy Teks</th>
+               <th class="copy-text-head">⧉ Copy Teks</th>
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
@@ -4367,7 +4372,7 @@ document.addEventListener('keydown',e=>{
         }</td>
         <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
-        <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
+        <td class="copy-text-cell"><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
       </tr>`;
     }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
@@ -4380,6 +4385,8 @@ document.addEventListener('keydown',e=>{
     renderTabs();
     if(ps('pengajuanRoleFilter')) ps('pengajuanRoleFilter').value=cutiState.role;
     renderTable();
+    const page=ps('dashPengajuanCuti');
+    if(page) page.classList.toggle('pending-no-copy',cutiState.status==='Pending');
     const user=safeUser();
     const isLeader=user.role==='LEADER';
     if(ps('cutiNamaStaff')) ps('cutiNamaStaff').value=user.name;
@@ -4388,6 +4395,9 @@ document.addEventListener('keydown',e=>{
     if(addBtn) addBtn.style.display=isLeader?'none':'inline-flex';
     document.querySelectorAll('.leader-approve-head,.leader-reject-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
     document.querySelectorAll('.leader-approve-cell,.leader-reject-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
+    const showCopy=cutiState.status!=='Pending';
+    document.querySelectorAll('.copy-text-head').forEach(th=>th.style.display=showCopy?'table-cell':'none');
+    document.querySelectorAll('.copy-text-cell').forEach(td=>td.style.display=showCopy?'table-cell':'none');
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
