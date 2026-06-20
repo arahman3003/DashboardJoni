@@ -4186,6 +4186,9 @@ document.addEventListener('keydown',e=>{
   }
   function saveEntries(entries){
     localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));
+    if(typeof window.syncPengajuanCutiToFirebase==='function'){
+      window.syncPengajuanCutiToFirebase(entries);
+    }
   }
   function uid(){ return 'cuti_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
   function startEnd(entry){
@@ -4531,6 +4534,57 @@ window.addEventListener('load',()=>{
       if(parentId) document.getElementById(parentId)?.classList.add('open');
     }
   }catch(e){ console.error('Menu restore error',e); }
+});
+</script>
+
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+
+const cutiSyncConfig={
+  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
+  authDomain:'absensi-joni.firebaseapp.com',
+  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'absensi-joni',
+  storageBucket:'absensi-joni.firebasestorage.app',
+  messagingSenderId:'784014108802',
+  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
+};
+
+const cutiSyncApp=getApps().length?getApp():initializeApp(cutiSyncConfig);
+const cutiSyncDb=getDatabase(cutiSyncApp);
+const cutiSyncRef=ref(cutiSyncDb,'pengajuanCutiShared');
+const CUTI_STORAGE_KEY='absensi_pengajuan_cuti_v1';
+let cutiRemoteReady=false;
+let cutiFirstSnapshot=true;
+
+window.syncPengajuanCutiToFirebase=(entries)=>{
+  if(!cutiRemoteReady) return;
+  set(cutiSyncRef,entries).catch(err=>console.error('Gagal simpan pengajuan cuti Firebase:',err));
+};
+
+onValue(cutiSyncRef,(snap)=>{
+  const remote=snap.exists()?snap.val():null;
+  if(Array.isArray(remote)){
+    localStorage.setItem(CUTI_STORAGE_KEY,JSON.stringify(remote));
+    cutiRemoteReady=true;
+    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+  }else if(cutiFirstSnapshot){
+    // Firebase masih kosong: ambil data lama dari browser pertama sebagai data awal bersama.
+    let local=[];
+    try{local=JSON.parse(localStorage.getItem(CUTI_STORAGE_KEY)||'[]')||[]}catch(e){}
+    cutiRemoteReady=true;
+    if(local.length){
+      set(cutiSyncRef,local).catch(err=>console.error('Gagal migrasi data cuti:',err));
+    }else if(typeof window.renderPengajuanCuti==='function'){
+      window.renderPengajuanCuti();
+    }
+  }
+  cutiFirstSnapshot=false;
+},err=>{
+  console.error('Gagal memuat data cuti Firebase:',err);
+  cutiRemoteReady=true;
 });
 </script>
 
