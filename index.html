@@ -1460,6 +1460,67 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .dash-main{margin-left:80px!important}
 }
 
+
+/* Tampilan Approved / Rejected Pengajuan Cuti */
+.pengajuan-table th:nth-child(10),
+.pengajuan-table th:nth-child(11),
+.pengajuan-table th:nth-child(12),
+.pengajuan-table th:nth-child(13),
+.pengajuan-table th:nth-child(14){
+  white-space:normal;
+}
+.pengajuan-table td:nth-child(10),
+.pengajuan-table td:nth-child(11),
+.pengajuan-table td:nth-child(12),
+.pengajuan-table td:nth-child(13),
+.pengajuan-table td:nth-child(14){
+  white-space:normal;
+}
+.cuti-remaining,
+.cuti-note-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-width:76px;
+  padding:7px 9px;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:900;
+  line-height:1.15;
+}
+.cuti-remaining.cuti-finished,
+.cuti-note-status.cuti-finished{
+  background:#e4e6e8;
+  color:#68727b;
+}
+.cuti-remaining.cuti-active,
+.cuti-note-status.cuti-active{
+  background:#e4fff0;
+  color:#079143;
+}
+.cuti-remaining.cuti-upcoming{
+  background:#fff4dd;
+  color:#d38415;
+}
+.cuti-remaining.cuti-none{
+  background:#f1f1f1;
+  color:#808080;
+}
+.cuti-note-status.cuti-upcoming{background:#f3f3f3;color:#909090}
+.pengajuan-copy-btn{
+  border:none;
+  border-radius:7px;
+  padding:9px 12px;
+  background:#0d168b;
+  color:#fff;
+  font-weight:900;
+  font-size:12px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.pengajuan-copy-btn:hover{filter:brightness(1.08)}
+
 </style>
 </head>
 <body>
@@ -1728,16 +1789,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>🪪 Nomor Paspor</th>
                <th>🗓 Tanggal/Jam Pengajuan</th>
                <th>📝 Jenis Cuti</th>
-               <th>🗓 Tanggal Cuti Lokal/Indo</th>
-               <th>🧮 Jumlah Hari Cuti Lokal/Indo</th>
-               <th>🧳 Tanggal Cuti Kerja</th>
-               <th>🧮 Jumlah Hari Cuti Kerja</th>
+               <th>🛫 Tanggal Cuti Lokal/Indo</th>
+               <th>🗓 Jumlah Hari Cuti Lokal/Indo</th>
+               <th>💼 Tanggal Cuti Kerja</th>
+               <th>🗓 Jumlah Hari Cuti Kerja</th>
                <th>ℹ Status</th>
-               <th>🗂 Keterangan</th>
+               <th>⌛ Berapa Hari Lagi</th>
+               <th>💬 Keterangan Cuti</th>
+               <th>👁 Keterangan</th>
+               <th>⧉ Copy Teks</th>
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
-             <tr><td colspan="11" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
+             <tr><td colspan="14" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
            </tbody>
          </table>
        </div>
@@ -4075,23 +4139,54 @@ document.addEventListener('keydown',e=>{
     const entries=loadEntries().sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
     return entries.filter(x=>(x.status||'Pending')===cutiState.status && (cutiState.role==='Semua Role' || x.role===cutiState.role));
   }
+  function cutiReferenceDate(entry){
+    const now=new Date();
+    const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    const starts=[entry.lokalStart,entry.kerjaStart].filter(Boolean).sort();
+    const ends=[entry.lokalEnd,entry.kerjaEnd].filter(Boolean).sort();
+    const start=starts[0] ? new Date(starts[0]+'T00:00:00') : null;
+    const end=ends.length ? new Date(ends[ends.length-1]+'T00:00:00') : null;
+    if(!start || !end) return {label:'-',className:'cuti-none'};
+    if(today<start){
+      const days=Math.ceil((start-today)/86400000);
+      return {label:`${days} Hari Lagi`,className:'cuti-upcoming'};
+    }
+    if(today>=start && today<=end) return {label:'Sedang Cuti',className:'cuti-active'};
+    return {label:'Selesai Cuti',className:'cuti-finished'};
+  }
   function renderTable(){
     const rows=ps('pengajuanCutiRows');
     if(!rows) return;
     const entries=getFilteredEntries();
-    rows.innerHTML=entries.length ? entries.map(x=>`<tr>
-      <td>${x.role}</td>
-      <td class="nama-cell">${x.name}</td>
-      <td>${x.passport||'-'}</td>
-      <td>${fmtSubmitted(x.submittedAt)}</td>
-      <td>${x.type||'-'}</td>
-      <td>${fmtRange(x.lokalStart,x.lokalEnd)}</td>
-      <td>${x.lokalDays||'-'}</td>
-      <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
-      <td>${x.kerjaDays||'-'}</td>
-      <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
-      <td><button type="button" class="pengajuan-eye" data-cuti-detail="${x.id}">👁</button></td>
-    </tr>`).join('') : '<tr><td colspan="11" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    rows.innerHTML=entries.length ? entries.map(x=>{
+      const leaveState=cutiReferenceDate(x);
+      const textToCopy=[
+        `Nama: ${x.name||'-'}`,
+        `Role: ${x.role||'-'}`,
+        `Nomor Paspor: ${x.passport||'-'}`,
+        `Jenis Cuti: ${x.type||'-'}`,
+        `Tanggal Cuti Lokal/Indo: ${fmtRange(x.lokalStart,x.lokalEnd)}`,
+        `Tanggal Cuti Kerja: ${fmtRange(x.kerjaStart,x.kerjaEnd)}`,
+        `Status: ${x.status||'Pending'}`,
+        `Keterangan: ${x.notes||'-'}`
+      ].join('\n');
+      return `<tr>
+        <td>${x.role}</td>
+        <td class="nama-cell">${x.name}</td>
+        <td>${x.passport||'-'}</td>
+        <td>${fmtSubmitted(x.submittedAt)}</td>
+        <td>${x.type||'-'}</td>
+        <td>${fmtRange(x.lokalStart,x.lokalEnd)}</td>
+        <td>${x.lokalDays||'-'}</td>
+        <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
+        <td>${x.kerjaDays||'-'}</td>
+        <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
+        <td><span class="cuti-remaining ${leaveState.className}">${leaveState.label}</span></td>
+        <td><span class="cuti-note-status ${leaveState.className}">${leaveState.label==='Selesai Cuti'?'🗓 Selesai Cuti':leaveState.label==='Sedang Cuti'?'🛫 Sedang Cuti':'—'}</span></td>
+        <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
+        <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
+      </tr>`;
+    }).join('') : '<tr><td colspan="14" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
@@ -4182,11 +4277,21 @@ document.addEventListener('keydown',e=>{
     const closeBtn=e.target.closest('#closePengajuanCutiModal');
     const closeDetailBtn=e.target.closest('#closePengajuanCutiDetailModal');
     const detailBtn=e.target.closest('[data-cuti-detail]');
+    const copyBtn=e.target.closest('[data-cuti-copy]');
     const statusBtn=e.target.closest('[data-cuti-filter-status]');
     if(addBtn){e.preventDefault();openForm();}
     if(closeBtn){e.preventDefault();closeForm();}
     if(closeDetailBtn){e.preventDefault();closeDetail();}
     if(detailBtn){e.preventDefault();openDetail(detailBtn.dataset.cutiDetail);}
+    if(copyBtn){
+      e.preventDefault();
+      const text=decodeURIComponent(copyBtn.dataset.cutiCopy||'');
+      navigator.clipboard?.writeText(text).then(()=>{
+        const oldText=copyBtn.textContent;
+        copyBtn.textContent='✓ Tersalin';
+        setTimeout(()=>copyBtn.textContent=oldText,1300);
+      }).catch(()=>window.prompt('Salin teks ini:',text));
+    }
     if(statusBtn){e.preventDefault();cutiState.status=statusBtn.dataset.cutiFilterStatus;renderPengajuanCuti();}
     if(e.target===ps('pengajuanCutiModal')) closeForm();
     if(e.target===ps('pengajuanCutiDetailModal')) closeDetail();
