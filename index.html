@@ -4160,15 +4160,29 @@ document.addEventListener('keydown',e=>{
     const entries=getFilteredEntries();
     rows.innerHTML=entries.length ? entries.map(x=>{
       const leaveState=cutiReferenceDate(x);
+      const isKerjaOnly=(x.type||'')==='CUTI KERJA';
+      const isBoth=(x.type||'').includes('CUTI LOKAL & CUTI KERJA');
+      const rangeText=isKerjaOnly
+        ? fmtRange(x.kerjaStart,x.kerjaEnd)
+        : (isBoth
+          ? `${fmtRange(x.lokalStart,x.lokalEnd)} | Cuti Kerja: ${fmtRange(x.kerjaStart,x.kerjaEnd)}`
+          : fmtRange(x.lokalStart,x.lokalEnd));
+      const totalText=isKerjaOnly
+        ? `${x.kerjaDays||'-'} Hari`
+        : (isBoth
+          ? `${x.lokalDays||0} Hari Lokal/Indo + ${x.kerjaDays||0} Hari Kerja`
+          : `${x.lokalDays||'-'} Hari`);
+      const labelRange=isKerjaOnly ? 'Start Cuti Kerja s/d' : 'Start Cuti Lokal/Indo s/d';
       const textToCopy=[
-        `Nama: ${x.name||'-'}`,
-        `Role: ${x.role||'-'}`,
-        `Nomor Paspor: ${x.passport||'-'}`,
-        `Jenis Cuti: ${x.type||'-'}`,
-        `Tanggal Cuti Lokal/Indo: ${fmtRange(x.lokalStart,x.lokalEnd)}`,
-        `Tanggal Cuti Kerja: ${fmtRange(x.kerjaStart,x.kerjaEnd)}`,
-        `Status: ${x.status||'Pending'}`,
-        `Keterangan: ${x.notes||'-'}`
+        `PENGAJUAN CUTI : ${x.type||'-'}`,
+        `No Paspor : ${x.passport||'-'}`,
+        `Nama Staff : ${x.name||'-'}`,
+        `Status : ${x.role||'-'}`,
+        '',
+        `${labelRange} : ${rangeText} (${totalText})`,
+        `Total Cuti : ${totalText}`,
+        '',
+        'ACC LDR : '
       ].join('\n');
       return `<tr>
         <td>${x.role}</td>
