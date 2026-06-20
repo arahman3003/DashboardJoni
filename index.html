@@ -1631,6 +1631,20 @@ body.pc-app-mode #desktopApp{display:grid!important}
   }
 }
 
+
+/* Pengajuan cuti: kolom Berapa Hari Lagi dan Keterangan Cuti dihapus.
+   Tombol Approve/Reject khusus LEADER tetap berada di kolom Tindakan paling kanan. */
+@media (min-width:768px){
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:5.4%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:4.8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:6%!important}
+  #dashPengajuanCuti .cuti-remaining,
+  #dashPengajuanCuti .cuti-note-status{display:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1904,15 +1918,13 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>💼 Tanggal Cuti Kerja</th>
                <th>🗓 Jumlah Hari Cuti Kerja</th>
                <th>ℹ Status</th>
-               <th>⌛ Berapa Hari Lagi</th>
-               <th>💬 Keterangan Cuti</th>
                <th>👁 Keterangan</th>
                <th>⧉ Copy Teks</th>
                <th class="leader-action-head">⚙ Tindakan</th>
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
-             <tr><td colspan="15" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
+             <tr><td colspan="13" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
            </tbody>
          </table>
        </div>
@@ -4319,16 +4331,6 @@ document.addEventListener('keydown',e=>{
         <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
         <td>${x.kerjaDays||'-'}</td>
         <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
-        <td><span class="cuti-remaining ${leaveState.className}">${isApproved ? leaveState.label : '-'}</span></td>
-        <td><span class="cuti-note-status ${leaveState.className}">${
-          isApproved
-            ? (leaveState.label==='Selesai Cuti'
-                ? '🗓 Selesai Cuti'
-                : leaveState.label==='Sedang Cuti'
-                  ? '🛫 Sedang Cuti'
-                  : leaveState.label==='-' ? '—' : '⏳ Menunggu Cuti')
-            : (x.status==='Rejected' ? '✖ Pengajuan Ditolak' : '⏳ Menunggu Persetujuan')
-        }</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
         <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
         <td class="leader-action-cell">${
@@ -4340,7 +4342,7 @@ document.addEventListener('keydown',e=>{
             : '—'
         }</td>
       </tr>`;
-    }).join('') : '<tr><td colspan="15" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    }).join('') : '<tr><td colspan="13" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
