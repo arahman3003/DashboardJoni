@@ -1678,6 +1678,33 @@ body.pc-app-mode #desktopApp{display:grid!important}
 #dashPengajuanCuti.pending-no-copy .copy-text-head,
 #dashPengajuanCuti.pending-no-copy .copy-text-cell{display:none!important}
 
+
+/* Editor 3 card ringkasan cuti */
+.pengajuan-summary-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font-size:13px;font-weight:900;color:#6b5a45;margin:0 0 -7px;
+}
+.summary-edit-btn{
+  border:none;border-radius:8px;padding:8px 12px;background:#151c95;color:#fff;
+  font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 6px 15px rgba(21,28,149,.16);
+}
+.summary-edit-btn.hidden{display:none!important}
+.summary-cards-modal{width:min(100%,560px)!important}
+.summary-cards-help{margin:-3px 0 14px;color:#756654;font-size:12px;line-height:1.45}
+.summary-editor-tabs{display:flex;gap:8px;margin:0 0 14px}
+.summary-editor-tab{
+  flex:1;border:1px solid #dccbb9;border-radius:9px;background:#fbf7f0;color:#5b4631;
+  padding:10px 8px;font-weight:900;cursor:pointer;
+}
+.summary-editor-tab.active{background:#151c95;color:#fff;border-color:#151c95}
+#summaryDates{min-height:96px}
+.summary-modal-actions{display:grid;grid-template-columns:1fr 1.5fr;gap:10px;margin-top:14px}
+.summary-reset-btn{border:none;border-radius:10px;background:#ece6de;color:#66533d;font-weight:900;cursor:pointer}
+@media(max-width:640px){
+  .pengajuan-summary-head{align-items:flex-start;flex-direction:column}
+  .summary-modal-actions{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -1914,6 +1941,10 @@ body.pc-app-mode #desktopApp{display:grid!important}
    <section class="dash-content extra-page" id="dashPengajuanCuti">
      <div class="pengajuan-cuti-wrap">
        <h1 class="pengajuan-cuti-title"><span class="shield">🛡</span> <span>Pengajuan Cuti</span></h1>
+       <div class="pengajuan-summary-head">
+         <span>Ringkasan Kuota Cuti</span>
+         <button type="button" class="summary-edit-btn hidden" id="editSummaryCardsBtn">⚙ Edit 3 Card</button>
+       </div>
        <div class="pengajuan-summary-grid" id="pengajuanSummaryGrid">
          <div class="pengajuan-summary-card" id="summaryCS"></div>
          <div class="pengajuan-summary-card" id="summaryKKS"></div>
@@ -2013,6 +2044,54 @@ body.pc-app-mode #desktopApp{display:grid!important}
 </section>
 
 
+
+<div class="pengajuan-modal-backdrop hidden" id="summaryCardsModal">
+  <div class="pengajuan-modal summary-cards-modal">
+    <button type="button" class="pengajuan-modal-close" id="closeSummaryCardsModal">×</button>
+    <h3>⚙ Edit Ringkasan 3 Card</h3>
+    <p class="summary-cards-help">Khusus LEADER. Isi manual sesuai kebutuhan; kosongkan tanggal bila tidak ingin ditampilkan.</p>
+
+    <div class="summary-editor-tabs">
+      <button type="button" class="summary-editor-tab active" data-summary-role="CS">Card CS</button>
+      <button type="button" class="summary-editor-tab" data-summary-role="KKS">Card KKS</button>
+      <button type="button" class="summary-editor-tab" data-summary-role="KS">Card KS</button>
+    </div>
+
+    <form id="summaryCardsForm" class="pengajuan-form">
+      <input type="hidden" id="summaryEditRole" value="CS">
+      <div class="pengajuan-form-grid">
+        <div class="pengajuan-form-row two">
+          <div>
+            <label for="summaryMax">Max Orang</label>
+            <input id="summaryMax" type="number" min="0" max="99" placeholder="Contoh: 2">
+          </div>
+          <div>
+            <label for="summaryReady">Ready</label>
+            <input id="summaryReady" type="number" min="0" max="99" placeholder="Contoh: 1">
+          </div>
+        </div>
+        <div>
+          <label for="summaryDates">Daftar Tanggal Cuti</label>
+          <textarea id="summaryDates" placeholder="Satu baris satu tanggal, contoh:&#10;20 Jun 2026 s/d 04 Jul 2026 (15 hari)"></textarea>
+        </div>
+        <div class="pengajuan-form-row two">
+          <div>
+            <label for="summaryHoliday">On Holiday</label>
+            <input id="summaryHoliday" type="number" min="0" max="99" placeholder="0">
+          </div>
+          <div>
+            <label for="summaryBelum">Belum Cuti</label>
+            <input id="summaryBelum" type="number" min="0" max="99" placeholder="0">
+          </div>
+        </div>
+      </div>
+      <div class="summary-modal-actions">
+        <button type="button" class="summary-reset-btn" id="summaryResetBtn">Reset Otomatis</button>
+        <button type="submit" class="pengajuan-submit-btn">Simpan Card</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <div class="pengajuan-modal-backdrop hidden" id="pengajuanCutiModal">
   <div class="pengajuan-modal">
@@ -4215,6 +4294,19 @@ document.addEventListener('keydown',e=>{
   const ps=id=>document.getElementById(id);
   const pad=n=>String(n).padStart(2,'0');
   const cutiState={status:'Pending',role:'Semua Role'};
+  const SUMMARY_STORAGE_KEY='absensi_pengajuan_summary_cards_v1';
+  let summaryOverrides={};
+  try{summaryOverrides=JSON.parse(localStorage.getItem(SUMMARY_STORAGE_KEY)||'{}')||{}}catch(e){summaryOverrides={};}
+  const escapeSummary=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  window.setSummaryCardOverrides=function(data){
+    summaryOverrides=(data&&typeof data==='object')?data:{};
+    localStorage.setItem(SUMMARY_STORAGE_KEY,JSON.stringify(summaryOverrides));
+    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+  };
+  function syncSummaryOverrides(){
+    localStorage.setItem(SUMMARY_STORAGE_KEY,JSON.stringify(summaryOverrides));
+    if(typeof window.syncSummaryCardsToFirebase==='function') window.syncSummaryCardsToFirebase(summaryOverrides);
+  };
 
   function safeUser(){
     let saved=null;
@@ -4276,6 +4368,18 @@ document.addEventListener('keydown',e=>{
     return td>=start && td<=end;
   }
   function summaryHtml(roleKey,title,maxPeople,entries){
+    const manual=summaryOverrides?.[roleKey];
+    if(manual){
+      const lines=(manual.dates||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
+      return `
+        <div class="sum-top"><i>${roleKey==='CS'?'◔':roleKey==='KKS'?'◕':'◉'}</i> Total Cuti ${title}</div>
+        <h3>Max ${escapeSummary(manual.max||0)} Orang</h3>
+        <div class="sum-meta ready">🗓 Ready : ${escapeSummary(manual.ready||0)}</div>
+        ${lines.length?`<ul>${lines.map(line=>`<li>${escapeSummary(line)}</li>`).join('')}</ul>`:'<ul><li>Belum ada data cuti.</li></ul>'}
+        <div class="sum-meta">🛫 On Holiday : ${escapeSummary(manual.holiday||0)}</div>
+        <div class="sum-meta">👥 Belum Cuti : ${escapeSummary(manual.belum||0)}</div>
+      `;
+    }
     const active=entries.filter(isActiveApproved);
     const pending=entries.filter(x=>(x.status||'Pending')==='Pending');
     const ready=Math.max(0,maxPeople-active.length);
@@ -4393,6 +4497,8 @@ document.addEventListener('keydown',e=>{
     if(ps('cutiRoleStaff')) ps('cutiRoleStaff').value=user.role;
     const addBtn=ps('openPengajuanCutiBtn');
     if(addBtn) addBtn.style.display=isLeader?'none':'inline-flex';
+    const editCardsBtn=ps('editSummaryCardsBtn');
+    if(editCardsBtn) editCardsBtn.classList.toggle('hidden',!isLeader);
     document.querySelectorAll('.leader-approve-head,.leader-reject-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
     document.querySelectorAll('.leader-approve-cell,.leader-reject-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
     const showCopy=cutiState.status!=='Pending';
@@ -4465,6 +4571,61 @@ document.addEventListener('keydown',e=>{
     closeDetail();
     renderPengajuanCuti();
   }
+
+  function getDefaultSummary(roleKey){
+    const max=ROLE_QUOTA[roleKey]||0;
+    const entries=loadEntries().filter(x=>x.role===roleKey);
+    const active=entries.filter(isActiveApproved);
+    const pending=entries.filter(x=>(x.status||'Pending')==='Pending');
+    const preview=(active.length?active:pending).slice(0,2).map(x=>`${fmtRange(startEnd(x).start,startEnd(x).end)} (${Math.max(x.lokalDays||0,x.kerjaDays||0)||0} hari)`);
+    return {
+      max,
+      ready:Math.max(0,max-active.length),
+      dates:preview.join('\n'),
+      holiday:active.length,
+      belum:Math.max(0,max-active.length-pending.length)
+    };
+  }
+  function showSummaryEditor(roleKey='CS'){
+    if(safeUser().role!=='LEADER') return;
+    const role=roleKey||'CS';
+    ps('summaryEditRole').value=role;
+    document.querySelectorAll('[data-summary-role]').forEach(btn=>btn.classList.toggle('active',btn.dataset.summaryRole===role));
+    const value=summaryOverrides[role]||getDefaultSummary(role);
+    ps('summaryMax').value=value.max??'';
+    ps('summaryReady').value=value.ready??'';
+    ps('summaryDates').value=value.dates??'';
+    ps('summaryHoliday').value=value.holiday??'';
+    ps('summaryBelum').value=value.belum??'';
+    ps('summaryCardsModal').classList.remove('hidden');
+  }
+  function closeSummaryEditor(){ps('summaryCardsModal').classList.add('hidden')}
+  ps('editSummaryCardsBtn')?.addEventListener('click',()=>showSummaryEditor('CS'));
+  ps('closeSummaryCardsModal')?.addEventListener('click',closeSummaryEditor);
+  document.querySelectorAll('[data-summary-role]').forEach(btn=>btn.addEventListener('click',()=>showSummaryEditor(btn.dataset.summaryRole)));
+  ps('summaryCardsModal')?.addEventListener('click',e=>{if(e.target===ps('summaryCardsModal'))closeSummaryEditor()});
+  ps('summaryCardsForm')?.addEventListener('submit',e=>{
+    e.preventDefault();
+    if(safeUser().role!=='LEADER') return;
+    const role=ps('summaryEditRole').value;
+    summaryOverrides[role]={
+      max:ps('summaryMax').value||'0',
+      ready:ps('summaryReady').value||'0',
+      dates:ps('summaryDates').value||'',
+      holiday:ps('summaryHoliday').value||'0',
+      belum:ps('summaryBelum').value||'0'
+    };
+    syncSummaryOverrides();
+    closeSummaryEditor();
+    renderPengajuanCuti();
+  });
+  ps('summaryResetBtn')?.addEventListener('click',()=>{
+    const role=ps('summaryEditRole').value;
+    delete summaryOverrides[role];
+    syncSummaryOverrides();
+    showSummaryEditor(role);
+    renderPengajuanCuti();
+  });
 
   document.addEventListener('click',e=>{
     const addBtn=e.target.closest('#openPengajuanCutiBtn');
@@ -4625,6 +4786,36 @@ onValue(cutiSyncRef,(snap)=>{
   console.error('Gagal memuat data cuti Firebase:',err);
   cutiRemoteReady=true;
 });
+</script>
+
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+
+const summaryFirebaseConfig={
+  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
+  authDomain:'absensi-joni.firebaseapp.com',
+  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'absensi-joni',
+  storageBucket:'absensi-joni.firebasestorage.app',
+  messagingSenderId:'784014108802',
+  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
+};
+const summaryApp=getApps().length?getApp():initializeApp(summaryFirebaseConfig);
+const summaryDb=getDatabase(summaryApp);
+const summaryRef=ref(summaryDb,'pengajuanCutiSummaryCards');
+let summaryReady=false;
+window.syncSummaryCardsToFirebase=(data)=>{
+  if(!summaryReady) return;
+  set(summaryRef,data||{}).catch(err=>console.error('Gagal simpan card ringkasan:',err));
+};
+onValue(summaryRef,(snap)=>{
+  summaryReady=true;
+  if(snap.exists() && typeof window.setSummaryCardOverrides==='function'){
+    window.setSummaryCardOverrides(snap.val()||{});
+  }
+},err=>{console.error('Gagal memuat card ringkasan:',err);summaryReady=true;});
 </script>
 
 </body>
