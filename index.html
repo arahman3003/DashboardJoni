@@ -2886,6 +2886,130 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .resign-confirm-submit.approve{background:linear-gradient(135deg,#2aa963,#178545)!important}
 .resign-confirm-submit.reject{background:linear-gradient(135deg,#df5e58,#bd3935)!important}
 
+
+/* ===== User Staff Directory ===== */
+#dashUserStaff{
+  padding:30px 34px 40px!important;
+  min-height:calc(100vh - 72px)!important;
+}
+.user-staff-wrap{width:100%}
+.user-staff-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+  margin-bottom:20px;
+}
+.user-staff-head h1{
+  margin:0;color:#312b24;font-size:24px;font-weight:950;
+}
+.user-staff-head p{
+  margin:7px 0 0;color:#7a746d;font-size:12px;line-height:1.55;
+}
+.user-staff-total{
+  flex:none;padding:10px 14px;border-radius:12px;
+  background:#fffaf3;border:1px solid rgba(181,138,86,.30);
+  color:#87613b;font-size:12px;font-weight:950;
+  box-shadow:0 8px 18px rgba(84,61,35,.07);
+}
+.user-staff-tools{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin:0 0 18px;
+}
+.user-staff-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.user-staff-tab{
+  min-height:38px;padding:0 14px;border-radius:9px;
+  background:#e7e4df!important;color:#2c2925!important;
+  font-size:12px;font-weight:900;
+}
+.user-staff-tab.active{
+  background:linear-gradient(135deg,#b58a56,#8d6844)!important;
+  color:#fffdf8!important;
+  box-shadow:0 8px 18px rgba(141,104,68,.18);
+}
+#userStaffSearch{
+  width:min(280px,100%);
+  height:39px;padding:0 12px;border-radius:10px;
+  background:#fff!important;border:1px solid #d8d0c6!important;
+  color:#332f2a!important;font-size:12px;
+}
+.user-staff-summary{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;
+  margin-bottom:18px;
+}
+.user-role-summary{
+  padding:15px 16px;border-radius:17px;
+  background:linear-gradient(180deg,#fffdfa,#f3ece3);
+  border:1px solid #ded4c7;
+  box-shadow:0 8px 20px rgba(71,52,31,.07);
+}
+.user-role-summary .lab{
+  color:#7a6b5c;font-size:11px;font-weight:900;
+}
+.user-role-summary .num{
+  margin-top:6px;color:#332a21;font-size:24px;line-height:1;font-weight:950;
+}
+.user-role-summary .cap{
+  margin-top:6px;color:#9a7957;font-size:10px;font-weight:800;
+}
+.user-staff-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
+}
+.user-staff-card{
+  position:relative;overflow:hidden;
+  min-height:132px;padding:16px;border-radius:18px;
+  background:#fff;border:1px solid #ded7ce;
+  box-shadow:0 9px 22px rgba(65,48,30,.07);
+}
+.user-staff-card:before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:#b58a56;
+}
+.user-staff-avatar{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#c49b68,#8a643e);
+  color:#fffdf8;font-size:14px;font-weight:950;
+  box-shadow:0 7px 14px rgba(181,138,86,.20);
+}
+.user-staff-name{
+  margin-top:11px;color:#28231e;font-size:13px;font-weight:950;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.user-staff-username{
+  margin-top:3px;color:#81776c;font-size:10px;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.user-staff-role{
+  position:absolute;right:14px;top:15px;
+  padding:6px 9px;border-radius:999px;
+  background:#f4e7d7;border:1px solid rgba(181,138,86,.20);
+  color:#775733;font-size:9px;font-weight:950;
+}
+.user-staff-empty{
+  grid-column:1/-1;padding:35px 16px;border-radius:16px;
+  text-align:center;color:#85796d;font-size:12px;font-weight:800;
+  background:#fff;border:1px dashed #d6c7b6;
+}
+.user-staff-card.role-leader:before{background:#6e4aa0}
+.user-staff-card.role-leader .user-staff-role{background:#efe8ff;color:#694994;border-color:#d9c8f2}
+.user-staff-card.role-cs:before{background:#36896a}
+.user-staff-card.role-cs .user-staff-role{background:#e8f6ed;color:#2f7b56;border-color:#c7e6d1}
+.user-staff-card.role-kapten:before{background:#b2742b}
+.user-staff-card.role-kapten .user-staff-role{background:#fff3df;color:#a16923;border-color:#efd7ae}
+.user-staff-card.role-kasir:before{background:#4f759f}
+.user-staff-card.role-kasir .user-staff-role{background:#e9f2fb;color:#476f98;border-color:#cfe0f2}
+@media(max-width:1250px){
+  .user-staff-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:980px){
+  .user-staff-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .user-staff-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:767px){
+  #dashUserStaff{padding:18px!important}
+  .user-staff-head,.user-staff-tools{align-items:stretch;flex-direction:column}
+  #userStaffSearch{width:100%}
+  .user-staff-summary,.user-staff-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -2958,6 +3082,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
    <div class="dash-sub">MENU UTAMA</div>
    <nav class="dash-nav">
     <button class="active" data-view="home"><b>🗃️</b> <span>Dashboard</span></button>
+    <button data-view="user-staff"><b>👥</b> <span>User Staff</span></button>
     <div class="nav-group" id="shiftGroup">
       <button class="nav-parent" id="shiftToggle" type="button">
         <span class="nav-left"><b>🖥️</b> <span>Shift Kerja</span></span>
@@ -3032,6 +3157,32 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <p class="home-caption">Selamat datang di dashboard absensi kerja staff.</p>
      </div>
    </section>
+   <section class="dash-content" id="dashUserStaff">
+     <div class="user-staff-wrap">
+       <div class="user-staff-head">
+         <div>
+           <h1>👥 User Staff</h1>
+           <p>Daftar seluruh staff berdasarkan role LEADER, CS, KAPTEN / KKS, dan KASIR.</p>
+         </div>
+         <div class="user-staff-total" id="userStaffTotal">0 Staff</div>
+       </div>
+
+       <div class="user-staff-tools">
+         <div class="user-staff-tabs">
+           <button type="button" class="user-staff-tab active" data-user-role="ALL">Semua</button>
+           <button type="button" class="user-staff-tab" data-user-role="LEADER">Leader</button>
+           <button type="button" class="user-staff-tab" data-user-role="CS">CS</button>
+           <button type="button" class="user-staff-tab" data-user-role="KAPTEN">Kapten / KKS</button>
+           <button type="button" class="user-staff-tab" data-user-role="KASIR">Kasir</button>
+         </div>
+         <input id="userStaffSearch" type="search" placeholder="Cari nama atau username">
+       </div>
+
+       <div class="user-staff-summary" id="userStaffSummary"></div>
+       <div class="user-staff-grid" id="userStaffGrid"></div>
+     </div>
+   </section>
+
    <section class="dash-content" id="dashShift">
     <header class="dash-head"><div><h1 id="shiftTitle">SHIFT KERJA CS</h1><p id="shiftSubtitle">Pantau kehadiran staff CS hari ini secara langsung.</p></div><div class="dash-date" id="dashToday">Memuat tanggal...</div></header>
     
@@ -4752,6 +4903,80 @@ function startIzinTicker(){
     if(needRender) renderIzin();
   },1000);
 }
+let userStaffRoleFilter='ALL';
+
+function normalizeUserRole(role){
+  const value=String(role||'').trim().toUpperCase();
+  if(value==='LEADER') return 'LEADER';
+  if(value==='CS') return 'CS';
+  if(value==='KAPTEN' || value==='KKS') return 'KAPTEN';
+  if(value==='KASIR' || value==='KS') return 'KASIR';
+  return value || 'LAINNYA';
+}
+function displayUserRole(role){
+  const normalized=normalizeUserRole(role);
+  if(normalized==='KAPTEN') return 'KAPTEN / KKS';
+  return normalized;
+}
+function userRoleClass(role){
+  const normalized=normalizeUserRole(role).toLowerCase();
+  return normalized==='kapten' ? 'kapten' : normalized;
+}
+function renderUserStaff(){
+  const grid=$('userStaffGrid');
+  const summary=$('userStaffSummary');
+  const total=$('userStaffTotal');
+  const search=String($('userStaffSearch')?.value||'').trim().toLowerCase();
+
+  if(!grid || !summary || !total) return;
+
+  const users=Object.entries(TEST_USERS||{}).map(([username,data])=>({
+    username,
+    name:data?.name||username,
+    role:data?.role||'LAINNYA',
+    normalizedRole:normalizeUserRole(data?.role)
+  })).sort((a,b)=>a.name.localeCompare(b.name,'id'));
+
+  const categories=[
+    {key:'LEADER',label:'LEADER',cap:'Akses penuh'},
+    {key:'CS',label:'CS',cap:'Customer Service'},
+    {key:'KAPTEN',label:'KAPTEN / KKS',cap:'Kapten Kasir'},
+    {key:'KASIR',label:'KASIR',cap:'Kasir'}
+  ];
+
+  summary.innerHTML=categories.map(category=>{
+    const count=users.filter(user=>user.normalizedRole===category.key).length;
+    return `<div class="user-role-summary">
+      <div class="lab">${category.label}</div>
+      <div class="num">${count}</div>
+      <div class="cap">${category.cap}</div>
+    </div>`;
+  }).join('');
+
+  const filtered=users.filter(user=>{
+    const byRole=userStaffRoleFilter==='ALL'||user.normalizedRole===userStaffRoleFilter;
+    const bySearch=!search || user.name.toLowerCase().includes(search) || user.username.toLowerCase().includes(search);
+    return byRole && bySearch;
+  });
+
+  total.textContent=`${filtered.length} Staff`;
+
+  grid.innerHTML=filtered.length ? filtered.map(user=>{
+    const initials=user.name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'?';
+    const roleClass=userRoleClass(user.role);
+    return `<article class="user-staff-card role-${roleClass}">
+      <div class="user-staff-avatar">${initials}</div>
+      <div class="user-staff-role">${displayUserRole(user.role)}</div>
+      <div class="user-staff-name" title="${user.name}">${user.name}</div>
+      <div class="user-staff-username">@${user.username}</div>
+    </article>`;
+  }).join('') : '<div class="user-staff-empty">Staff tidak ditemukan.</div>';
+
+  document.querySelectorAll('[data-user-role]').forEach(button=>{
+    button.classList.toggle('active',button.dataset.userRole===userStaffRoleFilter);
+  });
+}
+
 function switchDash(view){
   document.querySelectorAll('.dash-nav button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
   $('dashHome').classList.toggle('hidden',view!=='home');
@@ -4759,7 +4984,9 @@ function switchDash(view){
   const isIzinInput=view==='izin-input';
   const isIzinDashboard=view==='izin-dashboard';
   const isPengajuanCuti=view==='pengajuan-cuti';
+  const isUserStaff=view==='user-staff';
   const extraViews={
+    'user-staff':'dashUserStaff',
     'pengajuan-cuti':'dashPengajuanCuti',
     'pengajuan-resign':'dashPengajuanResign',
     'ganti-rekening':'dashGantiRekening',
@@ -4782,10 +5009,19 @@ function switchDash(view){
     $('dashRole').value='';
   }
   if(isShift) renderDashboard();
+  if(isUserStaff) renderUserStaff();
   if(isIzinInput) renderDeskIzinInput();
   if(isIzinDashboard) renderIzin();
   if(isPengajuanCuti && typeof renderPengajuanCuti==='function') renderPengajuanCuti();
 }
+document.addEventListener('click',event=>{
+  const roleTab=event.target.closest('[data-user-role]');
+  if(!roleTab) return;
+  userStaffRoleFilter=roleTab.dataset.userRole||'ALL';
+  renderUserStaff();
+});
+$('userStaffSearch')?.addEventListener('input',renderUserStaff);
+
 $('loginBtn').addEventListener('click',login);
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 $('logoutBtn').addEventListener('click',logout);
