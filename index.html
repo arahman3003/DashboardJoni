@@ -1543,29 +1543,660 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .cuti-note-close-btn:hover{filter:brightness(1.06)}
 
 
-/* === Pengajuan Cuti font override: larger and clearer === */
-#dashPengajuanCuti .pengajuan-summary-card .sum-top{font-size:15px!important}
-#dashPengajuanCuti .pengajuan-summary-card .sum-main{font-size:18px!important}
-#dashPengajuanCuti .pengajuan-summary-card .sum-meta{font-size:14px!important;color:#383838!important}
-#dashPengajuanCuti .pengajuan-summary-card ul{font-size:14px!important;line-height:1.5!important;color:#333!important}
-#dashPengajuanCuti .pengajuan-add-btn{font-size:15px!important}
-#dashPengajuanCuti .pengajuan-tab{font-size:15px!important;padding:10px 18px!important}
-#dashPengajuanCuti .pengajuan-filter select{font-size:15px!important;padding:11px 14px!important;min-width:150px!important}
-#dashPengajuanCuti .pengajuan-table th{font-size:12px!important;line-height:1.28!important;padding:10px 6px!important;font-weight:900!important}
-#dashPengajuanCuti .pengajuan-table td{font-size:12px!important;line-height:1.35!important;padding:10px 6px!important;color:#222!important;font-weight:600!important}
-#dashPengajuanCuti .pengajuan-table .nama-cell{font-size:13px!important;font-weight:900!important;color:#151515!important}
-#dashPengajuanCuti .pengajuan-status{font-size:13px!important;padding:7px 12px!important}
-#dashPengajuanCuti .pengajuan-eye{width:36px!important;height:36px!important;font-size:16px!important}
+/* Tabel Pengajuan Cuti terkunci penuh di layar: tanpa scroll kanan-kiri */
+@media (min-width:768px){
+  #dashPengajuanCuti{
+    overflow-x:hidden!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+  }
+  #dashPengajuanCuti .pengajuan-table-wrap{
+    width:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:visible!important;
+  }
+  #dashPengajuanCuti .pengajuan-table{
+    width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th,
+  #dashPengajuanCuti .pengajuan-table td{
+    padding:7px 4px!important;
+    font-size:9px!important;
+    line-height:1.22!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
+    white-space:normal!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th{
+    font-size:9px!important;
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th:nth-child(1),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(1){width:3.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(2),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(2){width:6.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(3),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(3){width:5.7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(4),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(4){width:8.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(5),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(5){width:7.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(6),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(6){width:8.1%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(7),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(7){width:7.5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(8){width:6.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(9),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(9){width:7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(10),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(10){width:5.3%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:5.1%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:5.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:4.2%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(14),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(14){width:4.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(15),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(15){width:5.3%!important}
+  #dashPengajuanCuti .pengajuan-copy-btn{
+    padding:6px 5px!important;
+    font-size:9px!important;
+    width:100%!important;
+  }
+  #dashPengajuanCuti .pengajuan-eye{
+    width:28px!important;
+    height:28px!important;
+    font-size:12px!important;
+  }
+  #dashPengajuanCuti .leader-row-actions{
+    flex-direction:column!important;
+    gap:4px!important;
+  }
+  #dashPengajuanCuti .leader-row-actions button{
+    padding:5px 3px!important;
+    font-size:8px!important;
+    width:100%!important;
+  }
+  #dashPengajuanCuti .cuti-remaining,
+  #dashPengajuanCuti .cuti-note-status{
+    min-width:0!important;
+    width:100%!important;
+    padding:5px 3px!important;
+    font-size:8px!important;
+  }
+}
+
+
+/* Pengajuan cuti: kolom Berapa Hari Lagi dan Keterangan Cuti dihapus.
+   Tombol Approve/Reject khusus LEADER tetap berada di kolom Tindakan paling kanan. */
+@media (min-width:768px){
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:5.4%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:4.8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:6%!important}
+  #dashPengajuanCuti .cuti-remaining,
+  #dashPengajuanCuti .cuti-note-status{display:none!important}
+}
+
+
+/* Tombol leader dipindah ke dua kolom sebelum Status. Kolom paling ujung adalah Copy Teks. */
+.leader-approve-cell,.leader-reject-cell{text-align:center}
+.leader-approve-cell .leader-approve-btn,
+.leader-reject-cell .leader-reject-btn{
+  width:100%;
+  border:none;
+  border-radius:7px;
+  padding:7px 6px;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.leader-approve-cell .leader-approve-btn{background:#e8fff1;color:#0a8d42}
+.leader-reject-cell .leader-reject-btn{background:#ffe8e8;color:#c93f38}
+@media (min-width:768px){
+  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(8){width:6.5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(9),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(9){width:6.5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(10),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(10){width:5.6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:4.7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:5.7%!important}
+}
+
+
+/* Tab Pending: kolom Copy Teks disembunyikan */
+#dashPengajuanCuti.pending-no-copy .copy-text-head,
+#dashPengajuanCuti.pending-no-copy .copy-text-cell{display:none!important}
+
+
+/* Editor 3 card ringkasan cuti */
+.pengajuan-summary-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font-size:13px;font-weight:900;color:#6b5a45;margin:0 0 -7px;
+}
+.summary-edit-btn{
+  border:none;border-radius:8px;padding:8px 12px;background:#151c95;color:#fff;
+  font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 6px 15px rgba(21,28,149,.16);
+}
+.summary-edit-btn.hidden{display:none!important}
+.summary-cards-modal{width:min(100%,560px)!important}
+.summary-cards-help{margin:-3px 0 14px;color:#756654;font-size:12px;line-height:1.45}
+.summary-editor-tabs{display:flex;gap:8px;margin:0 0 14px}
+.summary-editor-tab{
+  flex:1;border:1px solid #dccbb9;border-radius:9px;background:#fbf7f0;color:#5b4631;
+  padding:10px 8px;font-weight:900;cursor:pointer;
+}
+.summary-editor-tab.active{background:#151c95;color:#fff;border-color:#151c95}
+#summaryDates{min-height:96px}
+.summary-modal-actions{display:grid;grid-template-columns:1fr 1.5fr;gap:10px;margin-top:14px}
+.summary-reset-btn{border:none;border-radius:10px;background:#ece6de;color:#66533d;font-weight:900;cursor:pointer}
+@media(max-width:640px){
+  .pengajuan-summary-head{align-items:flex-start;flex-direction:column}
+  .summary-modal-actions{grid-template-columns:1fr}
+}
+
+
+/* Filter tanggal Dashboard Izin */
+.izin-monitor-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:6px}
+.izin-monitor-top h2{margin:0 0 8px}
+.izin-date-filter{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid #e0cdb5;border-radius:12px;background:#fbf7f0;box-shadow:0 6px 16px rgba(61,42,20,.05)}
+.izin-date-filter label{font-size:11px;font-weight:900;color:#664d31;white-space:nowrap}
+.izin-date-filter input{border:1px solid #d7c4ae;border-radius:8px;padding:8px 10px;color:#3b2e22;background:#fff;font:inherit;font-size:12px}
+.izin-date-filter button{border:none;border-radius:8px;padding:8px 11px;background:#a97b43;color:#fff;font-weight:900;font-size:11px;cursor:pointer}
+.izin-date-filter button:hover{filter:brightness(1.06)}
+@media(max-width:720px){.izin-monitor-top{flex-direction:column}.izin-date-filter{width:100%;flex-wrap:wrap}.izin-date-filter input{flex:1;min-width:160px}}
+
+
+/* Logo Absensi Joni untuk tampilan HP */
+.logo.logo-image{
+  width:126px!important;
+  height:70px!important;
+  margin:0 auto 12px!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.logo.logo-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.mini-logo.mini-logo-image{
+  width:46px!important;
+  height:34px!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:transparent!important;
+  overflow:visible!important;
+}
+.mini-logo.mini-logo-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+
+/* Wallpaper khusus halaman Login HP */
+@media(max-width:767px){
+  #loginPage{
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(10,12,20,.38),rgba(10,12,20,.48)),
+      url('https://i.imgur.com/KuexN3Z.jpeg') center/cover no-repeat fixed !important;
+  }
+  #loginPage .wrap.login{
+    min-height:100vh;
+    background:transparent!important;
+  }
+  #loginPage .brand,
+  #loginPage .card{
+    position:relative;
+    z-index:1;
+  }
+}
+
+
+/* Login HP: teks lebih jelas, card elegan, dan efek kilau bergerak */
+@media(max-width:767px){
+  #loginPage{
+    position:relative;
+    overflow:hidden;
+  }
+  #loginPage:before{
+    content:'';
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(115deg,
+        transparent 0%,
+        transparent 36%,
+        rgba(255,232,172,.05) 43%,
+        rgba(255,244,212,.38) 50%,
+        rgba(255,232,172,.06) 57%,
+        transparent 64%,
+        transparent 100%);
+    background-size:240% 100%;
+    animation:loginLightSlide 5.8s ease-in-out infinite;
+    z-index:0;
+  }
+  #loginPage .brand h1{
+    color:#fff7dd!important;
+    text-shadow:
+      0 2px 0 rgba(34,17,4,.75),
+      0 0 10px rgba(255,214,121,.72),
+      0 0 22px rgba(255,185,62,.34)!important;
+    letter-spacing:.7px;
+    font-weight:950!important;
+  }
+  #loginPage .brand p{
+    color:#fff3d3!important;
+    text-shadow:0 1px 3px rgba(0,0,0,.7)!important;
+    font-weight:700!important;
+  }
+  #loginPage .card{
+    overflow:hidden;
+    border:1px solid rgba(244,208,142,.58)!important;
+    background:
+      linear-gradient(145deg,rgba(31,25,27,.88),rgba(66,43,27,.78))!important;
+    box-shadow:
+      0 20px 42px rgba(0,0,0,.42),
+      inset 0 1px 0 rgba(255,245,210,.19),
+      0 0 18px rgba(224,163,62,.17)!important;
+    backdrop-filter:blur(10px);
+  }
+  #loginPage .card:before{
+    content:'';
+    position:absolute;
+    inset:-30% -75%;
+    pointer-events:none;
+    background:linear-gradient(105deg,
+      transparent 42%,
+      rgba(255,246,209,.04) 47%,
+      rgba(255,229,158,.46) 50%,
+      rgba(255,246,209,.05) 53%,
+      transparent 58%);
+    transform:translateX(-35%) rotate(8deg);
+    animation:cardGoldShine 5s ease-in-out infinite;
+  }
+  #loginPage .card > *{
+    position:relative;
+    z-index:1;
+  }
+  #loginPage .card label{
+    color:#ffedbf!important;
+    text-shadow:0 1px 2px rgba(0,0,0,.65)!important;
+    font-weight:900!important;
+  }
+  #loginPage .card input{
+    color:#2f2017!important;
+    background:rgba(255,251,242,.94)!important;
+    border:1px solid rgba(245,207,139,.66)!important;
+    box-shadow:inset 0 1px 2px rgba(41,24,10,.13)!important;
+  }
+  #loginPage .card input::placeholder{
+    color:#8f7d70!important;
+  }
+  #loginPage .card button,
+  #loginPage .card .login-btn{
+    color:#fff8e9!important;
+    background:linear-gradient(90deg,#8b5b2a,#d8a354,#875326)!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,242,208,.35)!important;
+    text-shadow:0 1px 2px rgba(49,27,5,.65)!important;
+  }
+  #loginPage .card h2{
+    color:#fff1c7!important;
+    text-shadow:0 2px 3px rgba(0,0,0,.62)!important;
+  }
+  #loginPage .card p{
+    color:#f7dfb8!important;
+  }
+}
+@keyframes loginLightSlide{
+  0%,15%{background-position:150% 0}
+  55%,70%{background-position:-55% 0}
+  100%{background-position:-55% 0}
+}
+@keyframes cardGoldShine{
+  0%,22%{transform:translateX(-70%) rotate(8deg)}
+  60%,100%{transform:translateX(70%) rotate(8deg)}
+}
+
+
+
+/* ===== Premium elegant style for mobile interior pages ===== */
+@media(max-width:767px){
+  #appPage{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at top right, rgba(255,225,170,.16), transparent 28%),
+      radial-gradient(circle at top left, rgba(255,240,210,.20), transparent 26%),
+      linear-gradient(180deg,#f7f2ea 0%,#f1e9dd 42%,#efe6da 100%)!important;
+  }
+  #appPage:before{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(115deg,
+      transparent 0%, transparent 38%, rgba(255,245,218,.00) 44%, rgba(255,236,191,.20) 50%, rgba(255,245,218,.00) 56%, transparent 62%, transparent 100%);
+    background-size:240% 100%;
+    animation:insideLuxSweep 7.5s ease-in-out infinite;
+    z-index:0;
+  }
+  #appPage .wrap{
+    position:relative;
+    z-index:1;
+    padding-top:calc(env(safe-area-inset-top) + 10px);
+  }
+  #appPage .top{
+    margin-bottom:14px;
+    padding:14px 14px;
+    border-radius:22px;
+    background:linear-gradient(135deg, rgba(39,31,24,.97), rgba(22,20,19,.95));
+    border:1px solid rgba(214,176,116,.34);
+    box-shadow:0 18px 36px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,244,214,.12);
+  }
+  #appPage .mini-logo{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    box-shadow:0 10px 24px rgba(190,148,97,.24);
+  }
+  #appPage .top h2{
+    color:#fff0cf!important;
+    font-size:18px;
+    font-weight:950;
+    letter-spacing:.3px;
+    text-shadow:0 1px 2px rgba(0,0,0,.35);
+  }
+  #appPage .top p{
+    color:#ebd4ae!important;
+    font-weight:700;
+  }
+  #appPage .logout{
+    background:linear-gradient(135deg,#c29762,#9a7048)!important;
+    color:#fff7ea!important;
+    border:1px solid rgba(255,239,206,.18);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
+    border-radius:12px;
+    padding:9px 12px;
+  }
+  #appPage .hero{
+    border-radius:28px;
+    padding:24px 22px 54px;
+    background:linear-gradient(135deg,#2b2119 0%,#5f452f 48%,#b88956 100%)!important;
+    color:#fff7ec!important;
+    border:1px solid rgba(255,231,194,.25);
+    box-shadow:0 20px 40px rgba(64,41,20,.22), inset 0 1px 0 rgba(255,247,232,.18);
+  }
+  #appPage .hero:before{
+    content:'';
+    position:absolute;
+    inset:auto -16% -46% auto;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,248,227,.28), rgba(255,248,227,0) 72%);
+    pointer-events:none;
+  }
+  #appPage .hero:after{
+    width:240px;
+    height:240px;
+    right:-110px;
+    top:-122px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.06);
+  }
+  #appPage .small{color:#f7e8c5; font-weight:700; letter-spacing:.2px}
+  #appPage .clock{
+    color:#fff9f0;
+    text-shadow:0 5px 14px rgba(0,0,0,.18);
+    font-size:42px;
+  }
+  #appPage .date{color:#f6e6c7; font-weight:700}
+  #appPage .status{
+    background:rgba(255,249,238,.16);
+    border:1px solid rgba(255,249,238,.35);
+    color:#fff9f0;
+    backdrop-filter:blur(8px);
+    box-shadow:0 6px 14px rgba(0,0,0,.10);
+  }
+  #appPage .grid{
+    gap:13px;
+    margin:16px 0;
+  }
+  #appPage .info,
+  #appPage .card.section{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(180deg,#fffdfa 0%, #f9f4ec 100%)!important;
+    border:1px solid rgba(201,175,139,.48)!important;
+    box-shadow:0 14px 28px rgba(74,50,24,.08), inset 0 1px 0 rgba(255,255,255,.74)!important;
+  }
+  #appPage .info:before,
+  #appPage .card.section:before{
+    content:'';
+    position:absolute;
+    left:0; right:0; top:0;
+    height:3px;
+    background:linear-gradient(90deg,#b98953,#e8c387,#b98953);
+    opacity:.8;
+  }
+  #appPage .info .i-label,
+  #appPage .sub,
+  #appPage .loc-detail,
+  #appPage .row-main small,
+  #appPage .hint,
+  #appPage .empty{
+    color:#857565!important;
+  }
+  #appPage .info strong,
+  #appPage .section-title,
+  #appPage .loc-title,
+  #appPage .row-main b{
+    color:#2c241d!important;
+  }
+  #appPage .info span{
+    color:#a47745!important;
+  }
+  #appPage .loc-icon,
+  #appPage .day{
+    background:linear-gradient(135deg,#f3e1c8,#e5c59a)!important;
+    color:#8f6437!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  #appPage .location{
+    background:#fffaf4!important;
+    border:1px solid rgba(205,180,144,.46)!important;
+  }
+  #appPage .refresh{
+    color:#9c7045!important;
+    font-weight:900;
+  }
+  #appPage .actions,
+  #appPage .mobile-izin-actions,
+  #appPage .izin-input-actions{
+    gap:12px;
+  }
+  #appPage .action{
+    border-radius:20px;
+    min-height:92px;
+    padding:16px 13px;
+    box-shadow:0 14px 24px rgba(62,42,18,.09);
+  }
+  #appPage .action.in{
+    background:linear-gradient(135deg,#ad7a43,#d2a36e)!important;
+    color:#fffaf1!important;
+  }
+  #appPage .action.out{
+    background:linear-gradient(180deg,#fffdfa,#f0e7d9)!important;
+    color:#6d4d31!important;
+    border:1px solid rgba(200,174,136,.45)!important;
+  }
+  #appPage .action small{opacity:.9}
+  #appPage .tag{
+    background:#f0e1cf!important;
+    color:#8d6340!important;
+    border:1px solid rgba(196,164,123,.34);
+  }
+  #appPage .tag.out{
+    background:#f6efe6!important;
+    color:#81705e!important;
+  }
+  #appPage .row{
+    border-bottom:1px solid rgba(207,191,171,.38)!important;
+  }
+  #appPage .toast{
+    background:linear-gradient(135deg,#2d241d,#544030)!important;
+    color:#fff7eb!important;
+    border:1px solid rgba(214,176,116,.35);
+  }
+}
+@keyframes insideLuxSweep{
+  0%,18%{background-position:150% 0}
+  58%,100%{background-position:-60% 0}
+}
+
+
+/* Wallpaper khusus halaman Login Desktop */
+@media(min-width:768px){
+  #desktopLoginPage{
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(255,255,255,.10),rgba(14,16,22,.28)),
+      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover no-repeat fixed!important;
+  }
+  #desktopLoginPage .desktop-login-wrap,
+  #desktopLoginPage .desktop-login-shell{
+    min-height:100vh;
+    background:transparent!important;
+  }
+  #desktopLoginPage .desktop-login-card{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(145deg,rgba(46,34,26,.82),rgba(108,75,46,.68))!important;
+    border:1px solid rgba(244,208,142,.62)!important;
+    box-shadow:0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,243,214,.18)!important;
+    backdrop-filter:blur(10px);
+  }
+  #desktopLoginPage .desktop-login-card:before{
+    content:'';
+    position:absolute;
+    inset:-30% -65%;
+    pointer-events:none;
+    background:linear-gradient(105deg,transparent 43%,rgba(255,231,169,.40) 50%,transparent 57%);
+    transform:translateX(-60%) rotate(8deg);
+    animation:desktopLoginShine 5.5s ease-in-out infinite;
+  }
+  #desktopLoginPage .desktop-login-card > *{position:relative;z-index:1}
+  #desktopLoginPage .desktop-login-title,
+  #desktopLoginPage .desktop-login-card h2{
+    color:#fff2c8!important;
+    text-shadow:0 2px 4px rgba(0,0,0,.55)!important;
+  }
+  #desktopLoginPage .desktop-login-card p,
+  #desktopLoginPage .desktop-login-card label{
+    color:#f2ddbc!important;
+  }
+  #desktopLoginPage .desktop-login-card input{
+    background:rgba(255,251,243,.95)!important;
+    color:#332419!important;
+    border-color:rgba(244,208,142,.68)!important;
+  }
+  #desktopLoginPage .desktop-login-btn{
+    background:linear-gradient(90deg,#855326,#d7a153,#875327)!important;
+    color:#fff8eb!important;
+    box-shadow:0 10px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,241,209,.35)!important;
+  }
+}
+@keyframes desktopLoginShine{
+  0%,20%{transform:translateX(-65%) rotate(8deg)}
+  62%,100%{transform:translateX(70%) rotate(8deg)}
+}
+
+
+/* Pengajuan Cuti: font lebih besar dan lebih jelas */
+@media(min-width:768px){
+  #dashPengajuanCuti .pengajuan-summary-card .sum-top{
+    font-size:15px!important;
+  }
+  #dashPengajuanCuti .pengajuan-summary-card .sum-main{
+    font-size:18px!important;
+  }
+  #dashPengajuanCuti .pengajuan-summary-card .sum-meta{
+    font-size:14px!important;
+    color:#383838!important;
+  }
+  #dashPengajuanCuti .pengajuan-summary-card ul{
+    font-size:14px!important;
+    line-height:1.5!important;
+    color:#333!important;
+  }
+  #dashPengajuanCuti .pengajuan-add-btn{
+    font-size:15px!important;
+  }
+  #dashPengajuanCuti .pengajuan-tab{
+    font-size:15px!important;
+    padding:10px 18px!important;
+  }
+  #dashPengajuanCuti .pengajuan-filter select{
+    min-width:150px!important;
+    padding:11px 14px!important;
+    font-size:15px!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th,
+  #dashPengajuanCuti .pengajuan-table td{
+    padding:10px 6px!important;
+    font-size:12px!important;
+    line-height:1.3!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
+    white-space:normal!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th{
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-table .nama-cell{
+    font-size:13px!important;
+    font-weight:900!important;
+    color:#151515!important;
+  }
+  #dashPengajuanCuti .pengajuan-status{
+    font-size:13px!important;
+    padding:7px 12px!important;
+  }
+  #dashPengajuanCuti .pengajuan-eye{
+    width:36px!important;
+    height:36px!important;
+    font-size:16px!important;
+  }
+}
 
 </style>
 </head>
 <body>
 <section class="mobile" id="loginPage">
-  <div class="wrap login"><div class="brand"><div class="logo">◆</div><h1>ABSENSI KERJA</h1><p>Masuk untuk melakukan absensi hari ini</p></div>
+  <div class="wrap login"><div class="brand"><div class="logo logo-image"><img src="https://i.imgur.com/Dy45M4t.png" alt="Joni Togel"></div><h1>ABSENSI JONI</h1><p>Masuk untuk melakukan absensi hari ini</p></div>
   <div class="card"><label class="label">USERNAME</label><input id="username" autocomplete="username" placeholder="Masukkan username"><label class="label">PASSWORD</label><input id="password" autocomplete="current-password" type="password" placeholder="Masukkan password"><button class="primary" id="loginBtn">Masuk Absensi</button><div class="err" id="loginError"></div><div class="hint">Login memakai username, tanpa email yang ditampilkan.</div></div></div>
 </section>
 <main class="mobile hidden" id="appPage">
- <div class="wrap"><header class="top"><div class="top-left"><div class="mini-logo">◆</div><div><h2>ABSENSI KERJA</h2><p id="welcome">Selamat datang</p></div></div><button class="logout" id="logoutBtn">Keluar</button></header>
+ <div class="wrap"><header class="top"><div class="top-left"><div class="mini-logo mini-logo-image"><img src="https://i.imgur.com/Dy45M4t.png" alt="Joni Togel"></div><div><h2>ABSENSI JONI</h2><p id="welcome">Selamat datang</p></div></div><button class="logout" id="logoutBtn">Keluar</button></header>
  <section class="hero"><div class="small">Waktu sekarang</div><div class="clock" id="clock">00:00:00</div><div class="date" id="dateText">Memuat tanggal...</div><div class="status" id="todayStatus">Belum absensi</div></section>
  <section class="grid"><div class="info"><div class="i-label">JAM MASUK</div><strong id="inTime">--:--</strong><span id="inState">Belum check-in</span></div><div class="info"><div class="i-label">JAM PULANG</div><strong id="outTime">--:--</strong><span id="outState">Belum check-out</span></div></section>
  <section class="card section"><div class="section-head"><div><div class="section-title">Absensi Hari Ini</div><div class="sub">Pastikan lokasi GPS sudah benar</div></div></div><div class="location"><div class="loc-icon">⌖</div><div class="loc-info"><div class="loc-title" id="locTitle">Lokasi belum diambil</div><div class="loc-detail" id="locDetail">Tekan perbarui untuk mengambil GPS perangkat.</div></div><button class="refresh" id="getLocBtn">Perbarui</button></div><div class="actions"><button class="action in" id="checkInBtn"><span class="ico">☀</span><b>Check-in</b><small>Masuk kerja sekarang</small></button><button class="action out" id="checkOutBtn" disabled><span class="ico">☾</span><b>Check-out</b><small>Pulang kerja</small></button></div></section>
@@ -1793,6 +2424,10 @@ body.pc-app-mode #desktopApp{display:grid!important}
    <section class="dash-content extra-page" id="dashPengajuanCuti">
      <div class="pengajuan-cuti-wrap">
        <h1 class="pengajuan-cuti-title"><span class="shield">🛡</span> <span>Pengajuan Cuti</span></h1>
+       <div class="pengajuan-summary-head">
+         <span>Ringkasan Kuota Cuti</span>
+         <button type="button" class="summary-edit-btn hidden" id="editSummaryCardsBtn">⚙ Edit 3 Card</button>
+       </div>
        <div class="pengajuan-summary-grid" id="pengajuanSummaryGrid">
          <div class="pengajuan-summary-card" id="summaryCS"></div>
          <div class="pengajuan-summary-card" id="summaryKKS"></div>
@@ -1827,18 +2462,15 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>📝 Jenis Cuti</th>
                <th>🛫 Tanggal Cuti Lokal/Indo</th>
                <th>🗓 Jumlah Hari Cuti Lokal/Indo</th>
-               <th>💼 Tanggal Cuti Kerja</th>
-               <th>🗓 Jumlah Hari Cuti Kerja</th>
+               <th class="leader-approve-head">✓ Approved</th>
+               <th class="leader-reject-head">✕ Reject</th>
                <th>ℹ Status</th>
-               <th>⌛ Berapa Hari Lagi</th>
-               <th>💬 Keterangan Cuti</th>
                <th>👁 Keterangan</th>
-               <th>⧉ Copy Teks</th>
-               <th class="leader-action-head">⚙ Tindakan</th>
+               <th class="copy-text-head">⧉ Copy Teks</th>
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
-             <tr><td colspan="15" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
+             <tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
            </tbody>
          </table>
        </div>
@@ -1879,8 +2511,17 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <div class="dash-date" id="izinToday">Memuat tanggal...</div>
      </header>
      <section class="izin-monitor-card">
-       <h2>Monitor Jam Izin Staff</h2>
-       <div class="izin-monitor-note">◷ Dashboard ini memantau data izin yang tersimpan di Firebase.</div>
+       <div class="izin-monitor-top">
+         <div>
+           <h2>Monitor Jam Izin Staff</h2>
+           <div class="izin-monitor-note">◷ Dashboard ini memantau data izin yang tersimpan di Firebase.</div>
+         </div>
+         <div class="izin-date-filter">
+           <label for="izinFilterDate">Pilih Tanggal</label>
+           <input id="izinFilterDate" type="date">
+           <button type="button" id="izinTodayBtn">Hari Ini</button>
+         </div>
+       </div>
        <p id="izinListDesc">Timer izin aktif dan riwayat izin staff hari ini.</p>
        <div class="dash-table-wrap">
          <table class="izin-table">
@@ -1895,6 +2536,54 @@ body.pc-app-mode #desktopApp{display:grid!important}
 </section>
 
 
+
+<div class="pengajuan-modal-backdrop hidden" id="summaryCardsModal">
+  <div class="pengajuan-modal summary-cards-modal">
+    <button type="button" class="pengajuan-modal-close" id="closeSummaryCardsModal">×</button>
+    <h3>⚙ Edit Ringkasan 3 Card</h3>
+    <p class="summary-cards-help">Khusus LEADER. Isi manual sesuai kebutuhan; kosongkan tanggal bila tidak ingin ditampilkan.</p>
+
+    <div class="summary-editor-tabs">
+      <button type="button" class="summary-editor-tab active" data-summary-role="CS">Card CS</button>
+      <button type="button" class="summary-editor-tab" data-summary-role="KKS">Card KKS</button>
+      <button type="button" class="summary-editor-tab" data-summary-role="KS">Card KS</button>
+    </div>
+
+    <form id="summaryCardsForm" class="pengajuan-form">
+      <input type="hidden" id="summaryEditRole" value="CS">
+      <div class="pengajuan-form-grid">
+        <div class="pengajuan-form-row two">
+          <div>
+            <label for="summaryMax">Max Orang</label>
+            <input id="summaryMax" type="number" min="0" max="99" placeholder="Contoh: 2">
+          </div>
+          <div>
+            <label for="summaryReady">Ready</label>
+            <input id="summaryReady" type="number" min="0" max="99" placeholder="Contoh: 1">
+          </div>
+        </div>
+        <div>
+          <label for="summaryDates">Daftar Tanggal Cuti</label>
+          <textarea id="summaryDates" placeholder="Satu baris satu tanggal, contoh:&#10;20 Jun 2026 s/d 04 Jul 2026 (15 hari)"></textarea>
+        </div>
+        <div class="pengajuan-form-row two">
+          <div>
+            <label for="summaryHoliday">On Holiday</label>
+            <input id="summaryHoliday" type="number" min="0" max="99" placeholder="0">
+          </div>
+          <div>
+            <label for="summaryBelum">Belum Cuti</label>
+            <input id="summaryBelum" type="number" min="0" max="99" placeholder="0">
+          </div>
+        </div>
+      </div>
+      <div class="summary-modal-actions">
+        <button type="button" class="summary-reset-btn" id="summaryResetBtn">Reset Otomatis</button>
+        <button type="submit" class="pengajuan-submit-btn">Simpan Card</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <div class="pengajuan-modal-backdrop hidden" id="pengajuanCutiModal">
   <div class="pengajuan-modal">
@@ -2432,6 +3121,34 @@ const dateLabel=d=>d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',mo
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>e.classList.remove('show'),2500)}
 function recordPath(){return `absensi/${ymd(new Date())}/${currentUser.username}`}
 async function getToday(){const snap=await get(ref(db,recordPath()));return snap.exists()?snap.val():null}
+
+/* Check-in lama yang belum Check-out harus diselesaikan sebelum absensi baru. */
+async function getOpenAttendance(username=currentUser?.username){
+  if(!username) return null;
+  const snap=await get(ref(db,'absensi'));
+  if(!snap.exists()) return null;
+
+  const today=ymd(new Date());
+  const open=[];
+  Object.entries(snap.val()||{}).forEach(([date,group])=>{
+    const item=group?.[username];
+    // Semua absensi dari tanggal lain yang sudah Check-in tetapi belum Check-out
+    // harus diselesaikan lebih dulu.
+    if(date!==today && item?.checkIn && !item?.checkOut){
+      open.push({date,...item});
+    }
+  });
+  open.sort((a,b)=>b.date.localeCompare(a.date));
+  return open[0]||null;
+}
+function openAttendanceMessage(item){
+  if(!item) return '';
+  const dateText=new Date(item.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+  return `Check-out tanggal ${dateText} harus diselesaikan terlebih dahulu.`;
+}
+window.getOpenAttendance=getOpenAttendance;
+window.renderMobile=renderMobile;
+window.toast=toast;
 function updateClock(){
   const now=new Date();
   $('clock').textContent=now.toLocaleTimeString('id-ID',{hour12:false});
@@ -2481,11 +3198,18 @@ function logout(){
 }
 async function renderMobile(){
  $('welcome').textContent=`${currentUser.name} • ${currentUser.role}`;
- const r=await getToday();
+ const todayRecord=await getToday();
+ const oldOpen=!todayRecord?.checkIn ? await getOpenAttendance() : null;
+ const r=todayRecord||oldOpen;
+ const isOldOpen=!!oldOpen;
  $('inTime').textContent=r?.checkIn?.time||'--:--';$('outTime').textContent=r?.checkOut?.time||'--:--';
- $('inState').textContent=r?.checkIn?'Sudah check-in':'Belum check-in';$('outState').textContent=r?.checkOut?'Sudah check-out':'Belum check-out';
- $('todayStatus').textContent=r?.checkOut?'Absensi lengkap':r?.checkIn?'Sedang bekerja':'Belum absensi';
- $('checkInBtn').disabled=!!r?.checkIn;$('checkOutBtn').disabled=!r?.checkIn||!!r?.checkOut;
+ $('inState').textContent=r?.checkIn?(isOldOpen?'Check-in belum selesai':'Sudah check-in'):'Belum check-in';
+ $('outState').textContent=r?.checkOut?'Sudah check-out':'Belum check-out';
+ $('todayStatus').textContent=isOldOpen
+   ? `Wajib check-out dulu (${oldOpen.date})`
+   : (r?.checkOut?'Absensi lengkap':r?.checkIn?'Sedang bekerja':'Belum absensi');
+ $('checkInBtn').disabled=!!todayRecord?.checkIn||isOldOpen;
+ $('checkOutBtn').disabled=!r?.checkIn||!!r?.checkOut;
  const list=$('historyList'); list.innerHTML='<div class="empty">Memuat riwayat...</div>';
  try{const root=await get(ref(db,'absensi')),all=[];if(root.exists())Object.entries(root.val()).forEach(([date,group])=>{const x=group?.[currentUser.username];if(x)all.push({date,...x})});all.sort((a,b)=>b.date.localeCompare(a.date));list.innerHTML=all.length?all.slice(0,8).map(x=>{const d=new Date(x.date+'T00:00:00');return `<div class="row"><div class="day">${d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}).replace('.','')}</div><div class="row-main"><b>${d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long'})}</b><small>Masuk ${x.checkIn?.time||'--:--'} • Pulang ${x.checkOut?.time||'--:--'}</small></div><span class="tag ${x.checkOut?'out':''}">${x.checkOut?'Selesai':'Masuk'}</span></div>`}).join(''):'<div class="empty">Belum ada riwayat absensi.</div>'}catch(e){list.innerHTML='<div class="empty">Riwayat belum dapat dimuat.</div>'}
 }
@@ -2495,9 +3219,37 @@ function getLoc(){
  navigator.geolocation.getCurrentPosition(p=>{loc={lat:p.coords.latitude,lng:p.coords.longitude,accuracy:Math.round(p.coords.accuracy),takenAt:new Date().toISOString()};$('locTitle').textContent='Lokasi berhasil diambil';$('locDetail').textContent=`GPS akurasi ±${loc.accuracy} meter • ${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;toast('Lokasi GPS berhasil diperbarui.')},()=>{$('locTitle').textContent='Lokasi belum diambil';$('locDetail').textContent='Akses lokasi ditolak atau GPS belum aktif.';toast('Tidak dapat mengambil lokasi GPS.')},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 async function submit(type){
- if(!loc){toast('Ambil lokasi GPS terlebih dahulu.');return}
- const now=new Date(), item={time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),timestamp:now.toISOString(),location:loc};
- try{const existing=await getToday();if(type==='in'){if(existing?.checkIn)return toast('Anda sudah check-in hari ini.');await set(ref(db,recordPath()),{username:currentUser.username,name:currentUser.name,role:currentUser.role,date:ymd(now),checkIn:item,checkOut:null})}else{if(!existing?.checkIn)return toast('Silakan check-in terlebih dahulu.');await update(ref(db,recordPath()),{checkOut:item})}toast(type==='in'?'Check-in berhasil disimpan.':'Check-out berhasil disimpan.');await renderMobile()}catch(e){console.error(e);toast('Data belum tersimpan. Periksa Rules Database / internet.')}
+ if(type==='in' && !loc){toast('Ambil lokasi GPS terlebih dahulu untuk Check-in.');return}
+ const now=new Date(), item={
+   time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
+   timestamp:now.toISOString(),
+   location:type==='in' ? loc : (loc||null)
+ };
+ try{
+   const existing=await getToday();
+   const oldOpen=!existing?.checkIn ? await getOpenAttendance() : null;
+   if(type==='in'){
+     // Cek ulang langsung dari Firebase agar tidak bisa lolos karena tampilan HP belum refresh.
+     const hardOpen=await getOpenAttendance(currentUser.username);
+     if(hardOpen) return toast(openAttendanceMessage(hardOpen));
+     if(oldOpen) return toast(openAttendanceMessage(oldOpen));
+     if(existing?.checkIn)return toast('Anda sudah check-in hari ini.');
+     await set(ref(db,recordPath()),{
+       username:currentUser.username,name:currentUser.name,role:currentUser.role,
+       date:ymd(now),checkIn:item,checkOut:null
+     });
+   }else{
+     const target=existing?.checkIn ? {date:ymd(now),...existing} : oldOpen;
+     if(!target?.checkIn)return toast('Silakan check-in terlebih dahulu.');
+     await update(ref(db,`absensi/${target.date}/${currentUser.username}`),{
+       checkOut:item,
+       checkoutLateFromPreviousDay:target.date!==ymd(now),
+       checkoutCompletedAt:new Date().toISOString()
+     });
+   }
+   toast(type==='in'?'Check-in berhasil disimpan.':'Check-out berhasil disimpan.');
+   await renderMobile();
+ }catch(e){console.error(e);toast('Data belum tersimpan. Periksa Rules Database / internet.')}
 }
 function startApp(){
   updateClock();
@@ -2530,6 +3282,22 @@ function normalizeSchedule(raw, username){
   const category=(raw?.category||raw?.shift||preset||'').toUpperCase();
   const def=DEFAULT_TIMES[category]||{start:'',end:''};
   return {category,start:raw?.start??def.start,end:raw?.end??def.end};
+}
+
+/* Shift hasil edit berlaku terus sampai diedit lagi.
+   Untuk tanggal yang belum punya record sendiri, sistem memakai perubahan
+   terakhir dari tanggal sebelumnya. */
+function getInheritedShift(rawShiftHistory, targetDate, username){
+  const history=rawShiftHistory||{};
+  const sameDay=history?.[targetDate]?.[username];
+  if(sameDay) return sameDay;
+
+  const latestDate=Object.keys(history)
+    .filter(date=>date<=targetDate && history?.[date]?.[username])
+    .sort()
+    .pop();
+
+  return latestDate ? history[latestDate][username] : null;
 }
 function scheduleKind(category){
   if(category==='PAGI') return '<span class="schedule-kind">PAGI</span>';
@@ -2617,16 +3385,23 @@ async function renderDashboard(){
   $('dashToday').textContent=dateLabel(dateObj);
   holder.innerHTML='<div class="dash-empty">Memuat data shift dan absensi...</div>';
   try{
-    const [attendanceSnap, scheduleSnap, crosscheckSnap]=await Promise.all([
+    const [attendanceSnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
       get(ref(db,`absensi/${date}`)),
       get(ref(db,`shiftStaff/${date}`)),
+      get(ref(db,'shiftStaff')),
       get(ref(db,`crosschecks/${date}`))
     ]);
+    // Dashboard hanya menampilkan status Check-in/Check-out dari tanggal yang dipilih.
+    // Check-out tertunda hari sebelumnya tetap dikunci di HP, tetapi tidak ditampilkan di dashboard hari berikutnya.
     const attendance=attendanceSnap.exists()?attendanceSnap.val():{};
     const savedSchedules=scheduleSnap.exists()?scheduleSnap.val():{};
+    const shiftHistory=scheduleHistorySnap.exists()?scheduleHistorySnap.val():{};
     const crosschecks=crosscheckSnap.exists()?crosscheckSnap.val():{};
     const schedules={};
-    userList().forEach(u=>schedules[u.username]=normalizeSchedule(savedSchedules[u.username],u.username));
+    userList().forEach(u=>{
+      const saved=savedSchedules[u.username] || getInheritedShift(shiftHistory,date,u.username);
+      schedules[u.username]=normalizeSchedule(saved,u.username);
+    });
     const search=($('dashSearch').value||'').trim().toLowerCase();
     const role=$('dashRole').value;
     const allUsers=userList();
@@ -2691,8 +3466,14 @@ function openShiftModal(username){
   selectedShiftUser=username;
   $('shiftModalUser').innerHTML=`<b>${user.name}</b><br><span style="color:#8e7b68">${user.username} • ${user.role}</span>`;
   $('shiftModal').classList.remove('hidden');
-  get(ref(db,`shiftStaff/${currentDashboardDate()}/${username}`)).then(snap=>{
-    const schedule=normalizeSchedule(snap.exists()?snap.val():null,username);
+  Promise.all([
+    get(ref(db,`shiftStaff/${currentDashboardDate()}/${username}`)),
+    get(ref(db,'shiftStaff'))
+  ]).then(([todaySnap,historySnap])=>{
+    const todayRaw=todaySnap.exists()?todaySnap.val():null;
+    const history=historySnap.exists()?historySnap.val():{};
+    const raw=todayRaw || getInheritedShift(history,currentDashboardDate(),username);
+    const schedule=normalizeSchedule(raw,username);
     $('shiftModalSelect').value=schedule.category||'';
     $('shiftStart').value=schedule.start||'';
     $('shiftEnd').value=schedule.end||'';
@@ -2716,7 +3497,7 @@ async function saveShift(){
   try{
     if(!category) await remove(path);
     else await set(path,{category,shift:category,start:category==='CUTI'?'':start,end:category==='CUTI'?'':end,updatedAt:new Date().toISOString()});
-    toast(category?`${category} berhasil disimpan.`:'Shift dikosongkan.');
+    toast(category?`${category} berhasil disimpan dan berlaku sampai diubah lagi.`:'Shift dikosongkan dan kembali ke jadwal awal.');
     closeShiftModal(); renderDashboard();
   }catch(e){console.error(e);toast('Shift belum tersimpan. Periksa Rules Database.')}
 }
@@ -2757,8 +3538,13 @@ async function saveCrosscheck(){
 }
 async function getManualCheckinSchedule(username){
   const today=currentDashboardDate();
-  const snap=await get(ref(db,`shiftStaff/${today}/${username}`));
-  return normalizeSchedule(snap.exists()?snap.val():null,username);
+  const [todaySnap,historySnap]=await Promise.all([
+    get(ref(db,`shiftStaff/${today}/${username}`)),
+    get(ref(db,'shiftStaff'))
+  ]);
+  const history=historySnap.exists()?historySnap.val():{};
+  const raw=todaySnap.exists()?todaySnap.val():getInheritedShift(history,today,username);
+  return normalizeSchedule(raw,username);
 }
 async function openManualCheckinModal(username){
   const user=TEST_USERS[username];
@@ -3186,10 +3972,22 @@ function endDeskIzin(){
   renderIzin();
 }
 
+let selectedIzinDashboardDate=ymd(new Date());
+
+function formatIzinDashboardDate(dateKey){
+  if(!dateKey) return dateLabel(new Date());
+  const d=new Date(dateKey+'T00:00:00');
+  return dateLabel(d);
+}
+
 function renderIzin(){
-  const date=ymd(new Date());
-  if($('izinToday')) $('izinToday').textContent=dateLabel(new Date());
-  if($('izinListDesc')) $('izinListDesc').textContent='Data izin hari ini tersimpan di Firebase.';
+  const date=selectedIzinDashboardDate||ymd(new Date());
+  const isToday=date===ymd(new Date());
+  if($('izinToday')) $('izinToday').textContent=formatIzinDashboardDate(date);
+  if($('izinFilterDate') && $('izinFilterDate').value!==date) $('izinFilterDate').value=date;
+  if($('izinListDesc')) $('izinListDesc').textContent=isToday
+    ? 'Data izin hari ini tersimpan di Firebase.'
+    : `Menampilkan riwayat data izin pada ${formatIzinDashboardDate(date)}.`;
   const rows=$('izinRows');
   const list=readIzinStore(date).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
 
@@ -3270,6 +4068,15 @@ $('desktopLoginBtn').addEventListener('click',desktopLogin);
 $('desktopPassword').addEventListener('keydown',e=>{if(e.key==='Enter')desktopLogin()});
 /* desktop logout handled by the controller below */$('getLocBtn').addEventListener('click',getLoc);$('checkInBtn').addEventListener('click',()=>submit('in'));$('checkOutBtn').addEventListener('click',()=>submit('out'));$('dashRefresh').addEventListener('click',renderDashboard);$('dashSearch').addEventListener('input',renderDashboard);$('dashRole').addEventListener('change',renderDashboard);
 $('applyDateFilter').addEventListener('click',()=>{selectedDashboardDate=$('filterDate').value||ymd(new Date());renderDashboard()});
+$('izinFilterDate')?.addEventListener('change',()=>{
+  selectedIzinDashboardDate=$('izinFilterDate').value||ymd(new Date());
+  renderIzin();
+});
+$('izinTodayBtn')?.addEventListener('click',()=>{
+  selectedIzinDashboardDate=ymd(new Date());
+  if($('izinFilterDate')) $('izinFilterDate').value=selectedIzinDashboardDate;
+  renderIzin();
+});
 $('mobileIzinChoices').addEventListener('click',e=>{
   const btn=e.target.closest('[data-izin-choice]');
   if(!btn) return;
@@ -3317,6 +4124,8 @@ $('resetModal').addEventListener('click',e=>{if(e.target===$('resetModal'))close
 $('crosscheckModal').addEventListener('click',e=>{if(e.target===$('crosscheckModal'))closeCrosscheckModal()});
 setInterval(updateClock,1000);
 selectedDashboardDate=ymd(new Date());
+selectedIzinDashboardDate=ymd(new Date());
+if($('izinFilterDate')) $('izinFilterDate').value=selectedIzinDashboardDate;
 if($('filterDate'))$('filterDate').value=selectedDashboardDate;
 try{
  const saved=JSON.parse(sessionStorage.getItem('absensi_test_user')||'null');
@@ -3387,10 +4196,50 @@ const toastMsg=msg=>{
   if(typeof window.toast==='function') window.toast(msg);
   else console.log(msg);
 };
-async function getTodayIzin(){
-  const snap=await get(ref(izinDb,`${IZIN_PATH}/${dateKey()}`));
+async function getIzinByDate(selectedDate=dateKey()){
+  const snap=await get(ref(izinDb,`${IZIN_PATH}/${selectedDate}`));
   if(!snap.exists()) return [];
   return Object.entries(snap.val()).map(([key,v])=>({key,...v}));
+}
+async function getTodayIzin(){
+  return getIzinByDate(dateKey());
+}
+
+/* Jika staff lupa End Time lalu hari sudah berganti, izin otomatis ditutup
+   pada 23:59:59 tanggal izin tersebut agar tidak tersisa sebagai izin aktif. */
+let autoCloseIzinRunning=false;
+async function autoCloseOldOpenIzin(){
+  if(autoCloseIzinRunning) return;
+  autoCloseIzinRunning=true;
+  try{
+    const snap=await get(ref(izinDb,IZIN_PATH));
+    if(!snap.exists()) return;
+    const today=dateKey();
+    const jobs=[];
+    Object.entries(snap.val()||{}).forEach(([recordDate,items])=>{
+      if(recordDate>=today || !items) return;
+      Object.entries(items).forEach(([key,item])=>{
+        if(item && !item.endedAt){
+          const autoEnd=new Date(`${recordDate}T23:59:59`);
+          jobs.push(update(ref(izinDb,`${IZIN_PATH}/${recordDate}/${key}`),{
+            endedAt:autoEnd.toISOString(),
+            endTime:'23:59:59',
+            autoClosed:true,
+            autoClosedReason:'Otomatis ditutup karena pergantian hari',
+            autoClosedAt:new Date().toISOString()
+          }));
+        }
+      });
+    });
+    if(jobs.length){
+      await Promise.all(jobs);
+      console.log(`Jam izin otomatis ditutup: ${jobs.length} data.`);
+    }
+  }catch(err){
+    console.error('Auto close Jam Izin gagal:',err);
+  }finally{
+    autoCloseIzinRunning=false;
+  }
 }
 async function getActiveForCurrent(){
   const acc=currentAccount();
@@ -3500,8 +4349,16 @@ async function renderActiveIzinCard(){
 async function renderDashboardIzin(){
   const rows=$q('izinRows');
   if(!rows) return;
+  const selectedDate=$q('izinFilterDate')?.value||dateKey();
+  const isToday=selectedDate===dateKey();
   try{
-    const list=(await getTodayIzin()).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
+    const list=(await getIzinByDate(selectedDate)).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
+    if($q('izinListDesc')){
+      const label=new Date(selectedDate+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      $q('izinListDesc').textContent=isToday
+        ? 'Data izin hari ini tersimpan di Firebase.'
+        : `Menampilkan riwayat data izin pada ${label}.`;
+    }
     rows.innerHTML=list.length?list.map((x,i)=>{
       const minutes=Number(x.durationMinutes||15);
       const due=x.lateAt
@@ -3511,12 +4368,17 @@ async function renderDashboardIzin(){
       const now=Date.now();
       let status='Sedang Izin', cls='izin-active';
       if(ended){
-        const late=ended-due;
-        if(late<=0){status='Tepat Waktu';cls='izin-active'}
-        else{
-          const total=Math.ceil(late/60000), h=Math.floor(total/60), m=total%60;
-          status='Terlambat '+(h?(m?`${h} Jam ${m} Menit`:`${h} Jam`):`${m} Menit`);
+        if(x.autoClosed){
+          status='Otomatis Ditutup';
           cls='izin-expired';
+        }else{
+          const late=ended-due;
+          if(late<=0){status='Tepat Waktu';cls='izin-active'}
+          else{
+            const total=Math.ceil(late/60000), h=Math.floor(total/60), m=total%60;
+            status='Terlambat '+(h?(m?`${h} Jam ${m} Menit`:`${h} Jam`):`${m} Menit`);
+            cls='izin-expired';
+          }
         }
       }else if(now>due){status='Melebihi Batas';cls='izin-expired'}
       const duration=ended
@@ -3581,8 +4443,20 @@ window.izinPCEnd=async()=>{
   }
 };
 setChoice('Izin Keluar');
-setTimeout(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta()},300);
+$q('izinFilterDate')?.addEventListener('change',()=>renderDashboardIzin());
+$q('izinTodayBtn')?.addEventListener('click',()=>{
+  if($q('izinFilterDate')) $q('izinFilterDate').value=dateKey();
+  renderDashboardIzin();
+});
+setTimeout(async()=>{
+  await autoCloseOldOpenIzin();
+  renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta();
+},300);
 setInterval(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta()},1000);
+setInterval(async()=>{
+  await autoCloseOldOpenIzin();
+  renderDashboardIzin();
+},5*60*1000);
 </script>
 
 
@@ -4097,6 +4971,19 @@ document.addEventListener('keydown',e=>{
   const ps=id=>document.getElementById(id);
   const pad=n=>String(n).padStart(2,'0');
   const cutiState={status:'Pending',role:'Semua Role'};
+  const SUMMARY_STORAGE_KEY='absensi_pengajuan_summary_cards_v1';
+  let summaryOverrides={};
+  try{summaryOverrides=JSON.parse(localStorage.getItem(SUMMARY_STORAGE_KEY)||'{}')||{}}catch(e){summaryOverrides={};}
+  const escapeSummary=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  window.setSummaryCardOverrides=function(data){
+    summaryOverrides=(data&&typeof data==='object')?data:{};
+    localStorage.setItem(SUMMARY_STORAGE_KEY,JSON.stringify(summaryOverrides));
+    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+  };
+  function syncSummaryOverrides(){
+    localStorage.setItem(SUMMARY_STORAGE_KEY,JSON.stringify(summaryOverrides));
+    if(typeof window.syncSummaryCardsToFirebase==='function') window.syncSummaryCardsToFirebase(summaryOverrides);
+  };
 
   function safeUser(){
     let saved=null;
@@ -4112,6 +4999,9 @@ document.addEventListener('keydown',e=>{
   }
   function saveEntries(entries){
     localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));
+    if(typeof window.syncPengajuanCutiToFirebase==='function'){
+      window.syncPengajuanCutiToFirebase(entries);
+    }
   }
   function uid(){ return 'cuti_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
   function startEnd(entry){
@@ -4155,6 +5045,18 @@ document.addEventListener('keydown',e=>{
     return td>=start && td<=end;
   }
   function summaryHtml(roleKey,title,maxPeople,entries){
+    const manual=summaryOverrides?.[roleKey];
+    if(manual){
+      const lines=(manual.dates||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
+      return `
+        <div class="sum-top"><i>${roleKey==='CS'?'◔':roleKey==='KKS'?'◕':'◉'}</i> Total Cuti ${title}</div>
+        <h3>Max ${escapeSummary(manual.max||0)} Orang</h3>
+        <div class="sum-meta ready">🗓 Ready : ${escapeSummary(manual.ready||0)}</div>
+        ${lines.length?`<ul>${lines.map(line=>`<li>${escapeSummary(line)}</li>`).join('')}</ul>`:'<ul><li>Belum ada data cuti.</li></ul>'}
+        <div class="sum-meta">🛫 On Holiday : ${escapeSummary(manual.holiday||0)}</div>
+        <div class="sum-meta">👥 Belum Cuti : ${escapeSummary(manual.belum||0)}</div>
+      `;
+    }
     const active=entries.filter(isActiveApproved);
     const pending=entries.filter(x=>(x.status||'Pending')==='Pending');
     const ready=Math.max(0,maxPeople-active.length);
@@ -4239,31 +5141,21 @@ document.addEventListener('keydown',e=>{
         <td>${x.type||'-'}</td>
         <td>${fmtRange(x.lokalStart,x.lokalEnd)}</td>
         <td>${x.lokalDays||'-'}</td>
-        <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
-        <td>${x.kerjaDays||'-'}</td>
-        <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
-        <td><span class="cuti-remaining ${leaveState.className}">${isApproved ? leaveState.label : '-'}</span></td>
-        <td><span class="cuti-note-status ${leaveState.className}">${
-          isApproved
-            ? (leaveState.label==='Selesai Cuti'
-                ? '🗓 Selesai Cuti'
-                : leaveState.label==='Sedang Cuti'
-                  ? '🛫 Sedang Cuti'
-                  : leaveState.label==='-' ? '—' : '⏳ Menunggu Cuti')
-            : (x.status==='Rejected' ? '✖ Pengajuan Ditolak' : '⏳ Menunggu Persetujuan')
-        }</span></td>
-        <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
-        <td><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
-        <td class="leader-action-cell">${
+        <td class="leader-approve-cell">${
           isLeader && (x.status||'Pending')==='Pending'
-            ? `<div class="leader-row-actions">
-                 <button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>
-                 <button type="button" class="leader-reject-btn" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕ Reject</button>
-               </div>`
+            ? `<button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>`
             : '—'
         }</td>
+        <td class="leader-reject-cell">${
+          isLeader && (x.status||'Pending')==='Pending'
+            ? `<button type="button" class="leader-reject-btn" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕ Reject</button>`
+            : '—'
+        }</td>
+        <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
+        <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
+        <td class="copy-text-cell"><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
       </tr>`;
-    }).join('') : '<tr><td colspan="15" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
@@ -4274,14 +5166,21 @@ document.addEventListener('keydown',e=>{
     renderTabs();
     if(ps('pengajuanRoleFilter')) ps('pengajuanRoleFilter').value=cutiState.role;
     renderTable();
+    const page=ps('dashPengajuanCuti');
+    if(page) page.classList.toggle('pending-no-copy',cutiState.status==='Pending');
     const user=safeUser();
     const isLeader=user.role==='LEADER';
     if(ps('cutiNamaStaff')) ps('cutiNamaStaff').value=user.name;
     if(ps('cutiRoleStaff')) ps('cutiRoleStaff').value=user.role;
     const addBtn=ps('openPengajuanCutiBtn');
     if(addBtn) addBtn.style.display=isLeader?'none':'inline-flex';
-    document.querySelectorAll('.leader-action-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
-    document.querySelectorAll('.leader-action-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
+    const editCardsBtn=ps('editSummaryCardsBtn');
+    if(editCardsBtn) editCardsBtn.classList.toggle('hidden',!isLeader);
+    document.querySelectorAll('.leader-approve-head,.leader-reject-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
+    document.querySelectorAll('.leader-approve-cell,.leader-reject-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
+    const showCopy=cutiState.status!=='Pending';
+    document.querySelectorAll('.copy-text-head').forEach(th=>th.style.display=showCopy?'table-cell':'none');
+    document.querySelectorAll('.copy-text-cell').forEach(td=>td.style.display=showCopy?'table-cell':'none');
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
@@ -4349,6 +5248,61 @@ document.addEventListener('keydown',e=>{
     closeDetail();
     renderPengajuanCuti();
   }
+
+  function getDefaultSummary(roleKey){
+    const max=ROLE_QUOTA[roleKey]||0;
+    const entries=loadEntries().filter(x=>x.role===roleKey);
+    const active=entries.filter(isActiveApproved);
+    const pending=entries.filter(x=>(x.status||'Pending')==='Pending');
+    const preview=(active.length?active:pending).slice(0,2).map(x=>`${fmtRange(startEnd(x).start,startEnd(x).end)} (${Math.max(x.lokalDays||0,x.kerjaDays||0)||0} hari)`);
+    return {
+      max,
+      ready:Math.max(0,max-active.length),
+      dates:preview.join('\n'),
+      holiday:active.length,
+      belum:Math.max(0,max-active.length-pending.length)
+    };
+  }
+  function showSummaryEditor(roleKey='CS'){
+    if(safeUser().role!=='LEADER') return;
+    const role=roleKey||'CS';
+    ps('summaryEditRole').value=role;
+    document.querySelectorAll('[data-summary-role]').forEach(btn=>btn.classList.toggle('active',btn.dataset.summaryRole===role));
+    const value=summaryOverrides[role]||getDefaultSummary(role);
+    ps('summaryMax').value=value.max??'';
+    ps('summaryReady').value=value.ready??'';
+    ps('summaryDates').value=value.dates??'';
+    ps('summaryHoliday').value=value.holiday??'';
+    ps('summaryBelum').value=value.belum??'';
+    ps('summaryCardsModal').classList.remove('hidden');
+  }
+  function closeSummaryEditor(){ps('summaryCardsModal').classList.add('hidden')}
+  ps('editSummaryCardsBtn')?.addEventListener('click',()=>showSummaryEditor('CS'));
+  ps('closeSummaryCardsModal')?.addEventListener('click',closeSummaryEditor);
+  document.querySelectorAll('[data-summary-role]').forEach(btn=>btn.addEventListener('click',()=>showSummaryEditor(btn.dataset.summaryRole)));
+  ps('summaryCardsModal')?.addEventListener('click',e=>{if(e.target===ps('summaryCardsModal'))closeSummaryEditor()});
+  ps('summaryCardsForm')?.addEventListener('submit',e=>{
+    e.preventDefault();
+    if(safeUser().role!=='LEADER') return;
+    const role=ps('summaryEditRole').value;
+    summaryOverrides[role]={
+      max:ps('summaryMax').value||'0',
+      ready:ps('summaryReady').value||'0',
+      dates:ps('summaryDates').value||'',
+      holiday:ps('summaryHoliday').value||'0',
+      belum:ps('summaryBelum').value||'0'
+    };
+    syncSummaryOverrides();
+    closeSummaryEditor();
+    renderPengajuanCuti();
+  });
+  ps('summaryResetBtn')?.addEventListener('click',()=>{
+    const role=ps('summaryEditRole').value;
+    delete summaryOverrides[role];
+    syncSummaryOverrides();
+    showSummaryEditor(role);
+    renderPengajuanCuti();
+  });
 
   document.addEventListener('click',e=>{
     const addBtn=e.target.closest('#openPengajuanCutiBtn');
@@ -4457,6 +5411,126 @@ window.addEventListener('load',()=>{
       if(parentId) document.getElementById(parentId)?.classList.add('open');
     }
   }catch(e){ console.error('Menu restore error',e); }
+});
+</script>
+
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+
+const cutiSyncConfig={
+  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
+  authDomain:'absensi-joni.firebaseapp.com',
+  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'absensi-joni',
+  storageBucket:'absensi-joni.firebasestorage.app',
+  messagingSenderId:'784014108802',
+  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
+};
+
+const cutiSyncApp=getApps().length?getApp():initializeApp(cutiSyncConfig);
+const cutiSyncDb=getDatabase(cutiSyncApp);
+const cutiSyncRef=ref(cutiSyncDb,'pengajuanCutiShared');
+const CUTI_STORAGE_KEY='absensi_pengajuan_cuti_v1';
+let cutiRemoteReady=false;
+let cutiFirstSnapshot=true;
+
+window.syncPengajuanCutiToFirebase=(entries)=>{
+  if(!cutiRemoteReady) return;
+  set(cutiSyncRef,entries).catch(err=>console.error('Gagal simpan pengajuan cuti Firebase:',err));
+};
+
+onValue(cutiSyncRef,(snap)=>{
+  const remote=snap.exists()?snap.val():null;
+  if(Array.isArray(remote)){
+    localStorage.setItem(CUTI_STORAGE_KEY,JSON.stringify(remote));
+    cutiRemoteReady=true;
+    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+  }else if(cutiFirstSnapshot){
+    // Firebase masih kosong: ambil data lama dari browser pertama sebagai data awal bersama.
+    let local=[];
+    try{local=JSON.parse(localStorage.getItem(CUTI_STORAGE_KEY)||'[]')||[]}catch(e){}
+    cutiRemoteReady=true;
+    if(local.length){
+      set(cutiSyncRef,local).catch(err=>console.error('Gagal migrasi data cuti:',err));
+    }else if(typeof window.renderPengajuanCuti==='function'){
+      window.renderPengajuanCuti();
+    }
+  }
+  cutiFirstSnapshot=false;
+},err=>{
+  console.error('Gagal memuat data cuti Firebase:',err);
+  cutiRemoteReady=true;
+});
+</script>
+
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+
+const summaryFirebaseConfig={
+  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
+  authDomain:'absensi-joni.firebaseapp.com',
+  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'absensi-joni',
+  storageBucket:'absensi-joni.firebasestorage.app',
+  messagingSenderId:'784014108802',
+  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
+};
+const summaryApp=getApps().length?getApp():initializeApp(summaryFirebaseConfig);
+const summaryDb=getDatabase(summaryApp);
+const summaryRef=ref(summaryDb,'pengajuanCutiSummaryCards');
+let summaryReady=false;
+window.syncSummaryCardsToFirebase=(data)=>{
+  if(!summaryReady) return;
+  set(summaryRef,data||{}).catch(err=>console.error('Gagal simpan card ringkasan:',err));
+};
+onValue(summaryRef,(snap)=>{
+  summaryReady=true;
+  if(snap.exists() && typeof window.setSummaryCardOverrides==='function'){
+    window.setSummaryCardOverrides(snap.val()||{});
+  }
+},err=>{console.error('Gagal memuat card ringkasan:',err);summaryReady=true;});
+</script>
+
+
+<script>
+/* Pengaman Check-in HP: blokir langsung sebelum proses Check-in berjalan
+   jika ada absensi tanggal lain yang belum Check-out. */
+document.addEventListener('click', async (event) => {
+  const checkInButton = event.target.closest('#checkInBtn');
+  if (!checkInButton) return;
+
+  try {
+    const user = window.currentUser || JSON.parse(sessionStorage.getItem('absensi_test_user') || 'null');
+    if (!user?.username || typeof window.getOpenAttendance !== 'function') return;
+
+    const open = await window.getOpenAttendance(user.username);
+    if (open) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const dateText = new Date(open.date + 'T00:00:00').toLocaleDateString('id-ID',{
+        day:'2-digit',month:'long',year:'numeric'
+      });
+      const message = `Anda belum Check-out untuk absensi ${dateText}. Selesaikan Check-out terlebih dahulu.`;
+      if (typeof window.toast === 'function') window.toast(message);
+      if (typeof window.renderMobile === 'function') window.renderMobile();
+    }
+  } catch (error) {
+    console.error('Pemeriksaan Check-out tertunda gagal:', error);
+  }
+}, true);
+</script>
+
+
+<script>
+/* Pastikan tampilan Pengajuan Cuti dirender ulang setelah Firebase sync siap. */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+  },900);
 });
 </script>
 
