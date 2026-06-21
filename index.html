@@ -2747,8 +2747,12 @@ function getLoc(){
  navigator.geolocation.getCurrentPosition(p=>{loc={lat:p.coords.latitude,lng:p.coords.longitude,accuracy:Math.round(p.coords.accuracy),takenAt:new Date().toISOString()};$('locTitle').textContent='Lokasi berhasil diambil';$('locDetail').textContent=`GPS akurasi ±${loc.accuracy} meter • ${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;toast('Lokasi GPS berhasil diperbarui.')},()=>{$('locTitle').textContent='Lokasi belum diambil';$('locDetail').textContent='Akses lokasi ditolak atau GPS belum aktif.';toast('Tidak dapat mengambil lokasi GPS.')},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 async function submit(type){
- if(!loc){toast('Ambil lokasi GPS terlebih dahulu.');return}
- const now=new Date(), item={time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),timestamp:now.toISOString(),location:loc};
+ if(type==='in' && !loc){toast('Ambil lokasi GPS terlebih dahulu untuk Check-in.');return}
+ const now=new Date(), item={
+   time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
+   timestamp:now.toISOString(),
+   location:type==='in' ? loc : (loc||null)
+ };
  try{
    const existing=await getToday();
    const oldOpen=!existing?.checkIn ? await getOpenAttendance() : null;
@@ -2865,13 +2869,13 @@ function rowForStaff(u, r, schedule, crosscheck, no){
   const checkInStatus=category==='CUTI'
     ? '<span class="check-state wait">Cuti</span>'
     : r?.checkIn
-      ? `<span class="check-state in">${r.date&&r.date!==currentDashboardDate()?'Check In Sebelumnya':'Sudah Check In'} > ${r.checkIn.time} WIB</span>`
+      ? `<span class="check-state in">Sudah Check In > ${r.checkIn.time} WIB</span>`
       : '<span class="check-state wait">Belum Check In</span>';
   const checkOutStatus=category==='CUTI'
     ? '<span class="check-state wait">Cuti</span>'
     : r?.checkOut
       ? `<span class="check-state out">Sudah Check Out > ${r.checkOut.time} WIB</span>`
-      : `<span class="check-state wait">${r?.date&&r.date!==currentDashboardDate()?'Belum Check Out (Hari Sebelumnya)':'Belum Check Out'}</span>`;
+      : '<span class="check-state wait">Belum Check Out</span>';
   const crosscheckDisplay=crosscheck?.time
     ? `<span class="crosscheck-time">◌ ${crosscheck.time} WIB</span>`
     : (category==='CUTI' ? '—' : `<button class="crosscheck-btn" data-crosscheck="${u.username}">Crosscheck</button>`);
@@ -2909,30 +2913,15 @@ async function renderDashboard(){
   $('dashToday').textContent=dateLabel(dateObj);
   holder.innerHTML='<div class="dash-empty">Memuat data shift dan absensi...</div>';
   try{
-    const [attendanceSnap, attendanceHistorySnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
+    const [attendanceSnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
       get(ref(db,`absensi/${date}`)),
-      get(ref(db,'absensi')),
       get(ref(db,`shiftStaff/${date}`)),
       get(ref(db,'shiftStaff')),
       get(ref(db,`crosschecks/${date}`))
     ]);
+    // Dashboard hanya menampilkan status Check-in/Check-out dari tanggal yang dipilih.
+    // Check-out tertunda hari sebelumnya tetap dikunci di HP, tetapi tidak ditampilkan di dashboard hari berikutnya.
     const attendance=attendanceSnap.exists()?attendanceSnap.val():{};
-    const attendanceHistory=attendanceHistorySnap.exists()?attendanceHistorySnap.val():{};
-    const openPreviousByUser={};
-    Object.entries(attendanceHistory||{}).forEach(([recordDate,group])=>{
-      if(recordDate>=date || !group) return;
-      Object.entries(group).forEach(([username,item])=>{
-        if(item?.checkIn && !item?.checkOut){
-          const prev=openPreviousByUser[username];
-          if(!prev || recordDate>prev.date) openPreviousByUser[username]={date:recordDate,...item};
-        }
-      });
-    });
-    userList().forEach(u=>{
-      if(!attendance[u.username] && openPreviousByUser[u.username]){
-        attendance[u.username]=openPreviousByUser[u.username];
-      }
-    });
     const savedSchedules=scheduleSnap.exists()?scheduleSnap.val():{};
     const shiftHistory=scheduleHistorySnap.exists()?scheduleHistorySnap.val():{};
     const crosschecks=crosscheckSnap.exists()?crosscheckSnap.val():{};
