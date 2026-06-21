@@ -3627,10 +3627,13 @@ const toastMsg=msg=>{
   if(typeof window.toast==='function') window.toast(msg);
   else console.log(msg);
 };
-async function getTodayIzin(){
-  const snap=await get(ref(izinDb,`${IZIN_PATH}/${dateKey()}`));
+async function getIzinByDate(selectedDate=dateKey()){
+  const snap=await get(ref(izinDb,`${IZIN_PATH}/${selectedDate}`));
   if(!snap.exists()) return [];
   return Object.entries(snap.val()).map(([key,v])=>({key,...v}));
+}
+async function getTodayIzin(){
+  return getIzinByDate(dateKey());
 }
 async function getActiveForCurrent(){
   const acc=currentAccount();
@@ -3740,8 +3743,16 @@ async function renderActiveIzinCard(){
 async function renderDashboardIzin(){
   const rows=$q('izinRows');
   if(!rows) return;
+  const selectedDate=$q('izinFilterDate')?.value||dateKey();
+  const isToday=selectedDate===dateKey();
   try{
-    const list=(await getTodayIzin()).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
+    const list=(await getIzinByDate(selectedDate)).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
+    if($q('izinListDesc')){
+      const label=new Date(selectedDate+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      $q('izinListDesc').textContent=isToday
+        ? 'Data izin hari ini tersimpan di Firebase.'
+        : `Menampilkan riwayat data izin pada ${label}.`;
+    }
     rows.innerHTML=list.length?list.map((x,i)=>{
       const minutes=Number(x.durationMinutes||15);
       const due=x.lateAt
@@ -3821,6 +3832,11 @@ window.izinPCEnd=async()=>{
   }
 };
 setChoice('Izin Keluar');
+$q('izinFilterDate')?.addEventListener('change',()=>renderDashboardIzin());
+$q('izinTodayBtn')?.addEventListener('click',()=>{
+  if($q('izinFilterDate')) $q('izinFilterDate').value=dateKey();
+  renderDashboardIzin();
+});
 setTimeout(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta()},300);
 setInterval(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta()},1000);
 </script>
