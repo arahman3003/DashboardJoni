@@ -3635,6 +3635,43 @@ async function getIzinByDate(selectedDate=dateKey()){
 async function getTodayIzin(){
   return getIzinByDate(dateKey());
 }
+
+/* Jika staff lupa End Time lalu hari sudah berganti, izin otomatis ditutup
+   pada 23:59:59 tanggal izin tersebut agar tidak tersisa sebagai izin aktif. */
+let autoCloseIzinRunning=false;
+async function autoCloseOldOpenIzin(){
+  if(autoCloseIzinRunning) return;
+  autoCloseIzinRunning=true;
+  try{
+    const snap=await get(ref(izinDb,IZIN_PATH));
+    if(!snap.exists()) return;
+    const today=dateKey();
+    const jobs=[];
+    Object.entries(snap.val()||{}).forEach(([recordDate,items])=>{
+      if(recordDate>=today || !items) return;
+      Object.entries(items).forEach(([key,item])=>{
+        if(item && !item.endedAt){
+          const autoEnd=new Date(`${recordDate}T23:59:59`);
+          jobs.push(update(ref(izinDb,`${IZIN_PATH}/${recordDate}/${key}`),{
+            endedAt:autoEnd.toISOString(),
+            endTime:'23:59:59',
+            autoClosed:true,
+            autoClosedReason:'Otomatis ditutup karena pergantian hari',
+            autoClosedAt:new Date().toISOString()
+          }));
+        }
+      });
+    });
+    if(jobs.length){
+      await Promise.all(jobs);
+      console.log(`Jam izin otomatis ditutup: ${jobs.length} data.`);
+    }
+  }catch(err){
+    console.error('Auto close Jam Izin gagal:',err);
+  }finally{
+    autoCloseIzinRunning=false;
+  }
+}
 async function getActiveForCurrent(){
   const acc=currentAccount();
   const list=await getTodayIzin();
@@ -3762,12 +3799,17 @@ async function renderDashboardIzin(){
       const now=Date.now();
       let status='Sedang Izin', cls='izin-active';
       if(ended){
-        const late=ended-due;
-        if(late<=0){status='Tepat Waktu';cls='izin-active'}
-        else{
-          const total=Math.ceil(late/60000), h=Math.floor(total/60), m=total%60;
-          status='Terlambat '+(h?(m?`${h} Jam ${m} Menit`:`${h} Jam`):`${m} Menit`);
+        if(x.autoClosed){
+          status='Otomatis Ditutup';
           cls='izin-expired';
+        }else{
+          const late=ended-due;
+          if(late<=0){status='Tepat Waktu';cls='izin-active'}
+          else{
+            const total=Math.ceil(late/60000), h=Math.floor(total/60), m=total%60;
+            status='Terlambat '+(h?(m?`${h} Jam ${m} Menit`:`${h} Jam`):`${m} Menit`);
+            cls='izin-expired';
+          }
         }
       }else if(now>due){status='Melebihi Batas';cls='izin-expired'}
       const duration=ended
@@ -3837,8 +3879,15 @@ $q('izinTodayBtn')?.addEventListener('click',()=>{
   if($q('izinFilterDate')) $q('izinFilterDate').value=dateKey();
   renderDashboardIzin();
 });
-setTimeout(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta()},300);
+setTimeout(async()=>{
+  await autoCloseOldOpenIzin();
+  renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta();
+},300);
 setInterval(()=>{renderInput();renderDashboardIzin();renderActiveIzinCard();renderIzinInputLiveMeta()},1000);
+setInterval(async()=>{
+  await autoCloseOldOpenIzin();
+  renderDashboardIzin();
+},5*60*1000);
 </script>
 
 
