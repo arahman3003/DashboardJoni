@@ -2578,6 +2578,36 @@ body.pc-app-mode #desktopApp{display:grid!important}
   }
 }
 
+
+/* Shift Kerja dikembalikan ke ukuran tabel normal agar kolom staff dan tombol tidak tertekan saat zoom */
+@media(min-width:768px){
+  .dash-table-wrap{
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+  }
+  .dash-table-wrap .shift-table{
+    width:100%!important;
+    min-width:1120px!important;
+    max-width:none!important;
+    table-layout:auto!important;
+  }
+  .dash-table-wrap .shift-table th,
+  .dash-table-wrap .shift-table td{
+    white-space:nowrap!important;
+    word-break:normal!important;
+    overflow-wrap:normal!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  .dash-table-wrap .shift-table td:nth-child(2){
+    min-width:180px!important;
+    white-space:normal!important;
+  }
+  .dash-table-wrap .shift-table td:nth-child(12){
+    min-width:165px!important;
+  }
+}
+
 </style>
 </head>
 <body>
