@@ -5597,6 +5597,25 @@ document.addEventListener('keydown',e=>{
   });
 
   document.addEventListener('click',e=>{
+    // Tombol popup memakai event delegation karena popup dibuat setelah script utama.
+    const confirmCancel=e.target.closest('#cutiConfirmCancel');
+    const confirmSubmit=e.target.closest('#cutiConfirmSubmit');
+    if(confirmCancel){
+      e.preventDefault();
+      e.stopPropagation();
+      closeCutiConfirm();
+      return;
+    }
+    if(confirmSubmit){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!pendingCutiAction) return;
+      const {status,id}=pendingCutiAction;
+      closeCutiConfirm();
+      setStatus(status,id);
+      return;
+    }
+
     const addBtn=e.target.closest('#openPengajuanCutiBtn');
     const closeBtn=e.target.closest('#closePengajuanCutiModal');
     const closeDetailBtn=e.target.closest('#closePengajuanCutiDetailModal');
@@ -5632,13 +5651,6 @@ document.addEventListener('keydown',e=>{
   });
   ps('pengajuanRoleFilter')?.addEventListener('change',e=>{cutiState.role=e.target.value;renderPengajuanCuti();});
   ps('cutiJenis')?.addEventListener('change',toggleCutiFields);
-  ps('cutiConfirmCancel')?.addEventListener('click',closeCutiConfirm);
-  ps('cutiConfirmSubmit')?.addEventListener('click',()=>{
-    if(!pendingCutiAction) return;
-    const {status,id}=pendingCutiAction;
-    closeCutiConfirm();
-    setStatus(status,id);
-  });
   ps('cutiSetPending')?.addEventListener('click',()=>setStatus('Pending'));
   ps('cutiSetApproved')?.addEventListener('click',()=>setStatus('Approved'));
   ps('cutiSetRejected')?.addEventListener('click',()=>setStatus('Rejected'));
@@ -5836,32 +5848,6 @@ document.addEventListener('click', async (event) => {
     </div>
   </div>
 </div>
-
-
-<script>
-document.addEventListener('click', function(event){
-  const cancelButton = event.target.closest('#cutiConfirmCancel');
-  const submitButton = event.target.closest('#cutiConfirmSubmit');
-  const backdrop = event.target.id === 'cutiConfirmModal' ? event.target : null;
-
-  if(cancelButton || backdrop){
-    event.preventDefault();
-    event.stopPropagation();
-    if(typeof closeCutiConfirm === 'function') closeCutiConfirm();
-    return;
-  }
-
-  if(submitButton){
-    event.preventDefault();
-    event.stopPropagation();
-
-    if(typeof pendingCutiAction === 'undefined' || !pendingCutiAction) return;
-    const action = pendingCutiAction;
-    if(typeof closeCutiConfirm === 'function') closeCutiConfirm();
-    if(typeof setStatus === 'function') setStatus(action.status, action.id);
-  }
-}, true);
-</script>
 
 </body>
 </html>
