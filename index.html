@@ -2963,6 +2963,126 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .user-role-table-wrap{overflow-x:auto}
   .user-role-table{min-width:640px}
 }
+
+/* Edit role staff */
+.user-staff-role-cell{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.user-staff-edit-role{
+  min-height:28px;
+  padding:0 9px;
+  border-radius:8px;
+  background:#f1e5d6!important;
+  color:#805c37!important;
+  border:1px solid rgba(181,138,86,.30)!important;
+  font-size:10px;
+  font-weight:950;
+}
+.user-staff-edit-role:hover{background:#e8d6c1!important}
+.staff-role-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:71000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(17,20,28,.50);
+  backdrop-filter:blur(5px);
+}
+.staff-role-modal-backdrop.hidden{display:none!important}
+.staff-role-modal-card{
+  width:min(420px,100%);
+  padding:22px;
+  border-radius:20px;
+  background:linear-gradient(155deg,#fffdf9,#f6efe5);
+  border:1px solid rgba(190,148,97,.40);
+  box-shadow:0 28px 80px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.staff-role-modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:16px;
+}
+.staff-role-modal-head h3{
+  margin:0;
+  color:#30271f;
+  font-size:19px;
+  font-weight:950;
+}
+.staff-role-modal-head p{
+  margin:5px 0 0;
+  color:#766b60;
+  font-size:12px;
+  line-height:1.45;
+}
+.staff-role-modal-close{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:#f1e8dd!important;
+  color:#80603e!important;
+  font-size:24px;
+  line-height:1;
+}
+.staff-role-modal-card label{
+  display:block;
+  margin:0 0 7px;
+  color:#594a3c;
+  font-size:11px;
+  font-weight:900;
+}
+#staffRoleSelect{
+  width:100%;
+  height:43px;
+  padding:0 12px;
+  border-radius:11px;
+  background:#fff!important;
+  border:1px solid #d8cfbf!important;
+  color:#332f2a!important;
+  font-size:13px;
+  font-weight:850;
+}
+.staff-role-modal-note{
+  margin-top:12px;
+  padding:11px 12px;
+  border-radius:12px;
+  background:#faf2e7;
+  border:1px solid #ead7bd;
+  color:#7a6041;
+  font-size:11px;
+  line-height:1.55;
+}
+.staff-role-modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:18px;
+}
+.staff-role-cancel,.staff-role-save{
+  min-height:41px;
+  padding:0 15px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:900;
+}
+.staff-role-cancel{
+  background:#fff!important;
+  color:#6d655d!important;
+  border:1px solid #d9d0c4!important;
+}
+.staff-role-save{
+  background:linear-gradient(135deg,#b98a4d,#8c6438)!important;
+  color:#fff!important;
+}
+.staff-role-save:disabled{opacity:.58;cursor:not-allowed}
+
 </style>
 </head>
 <body>
@@ -4859,11 +4979,22 @@ function userRoleClass(role){
   const normalized=normalizeUserRole(role).toLowerCase();
   return normalized==='kapten' ? 'kapten' : normalized;
 }
+let selectedStaffRoleUser='';
+
+function isCurrentUserLeader(){
+  try{
+    return String(JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').role||'').toUpperCase()==='LEADER';
+  }catch(error){
+    return false;
+  }
+}
+
 function renderUserStaff(){
   const target=$('userStaffTableSections');
   if(!target) return;
 
   const search=String($('userStaffSearch')?.value||'').trim().toLowerCase();
+  const canEditRole=isCurrentUserLeader();
   const users=Object.entries(TEST_USERS||{}).map(([username,data])=>({
     username,
     name:data?.name||username,
@@ -4889,7 +5020,12 @@ function renderUserStaff(){
         <td><span class="user-staff-num">${index+1}</span></td>
         <td class="user-staff-name-cell"><b>${user.name}</b><small>@${user.username}</small></td>
         <td>${user.username}</td>
-        <td><span class="user-staff-role-badge">${displayUserRole(user.role)}</span></td>
+        <td>
+          <div class="user-staff-role-cell">
+            <span class="user-staff-role-badge">${displayUserRole(user.role)}</span>
+            ${canEditRole ? `<button type="button" class="user-staff-edit-role" data-edit-staff-role="${user.username}">✎ Edit</button>` : ''}
+          </div>
+        </td>
       </tr>
     `).join('') : `<tr><td colspan="4" class="user-staff-empty-row">Tidak ada staff ${category.label}${search?' yang cocok dengan pencarian.':'.'}</td></tr>`;
 
@@ -4906,6 +5042,65 @@ function renderUserStaff(){
       </div>
     </section>`;
   }).join('');
+}
+
+
+
+function openStaffRoleModal(username){
+  if(!isCurrentUserLeader()) return;
+  const user=TEST_USERS?.[username];
+  if(!user) return;
+  selectedStaffRoleUser=username;
+  $('staffRoleModalInfo').innerHTML=`<b>${user.name||username}</b><br><span>@${username} • Role saat ini: ${displayUserRole(user.role)}</span>`;
+  $('staffRoleSelect').value=normalizeUserRole(user.role)==='KAPTEN'?'KAPTEN':normalizeUserRole(user.role);
+  $('staffRoleModal').classList.remove('hidden');
+}
+function closeStaffRoleModal(){
+  selectedStaffRoleUser='';
+  $('staffRoleModal')?.classList.add('hidden');
+}
+async function saveStaffRole(){
+  if(!isCurrentUserLeader() || !selectedStaffRoleUser) return;
+  const newRole=$('staffRoleSelect')?.value||'';
+  const validRoles=['LEADER','CS','KAPTEN','KASIR'];
+  if(!validRoles.includes(newRole)) return;
+
+  const user=TEST_USERS?.[selectedStaffRoleUser];
+  if(!user) return;
+  const saveButton=$('staffRoleSave');
+  if(saveButton) saveButton.disabled=true;
+
+  try{
+    await update(ref(db,`profiles/${selectedStaffRoleUser}`),{
+      role:newRole,
+      roleUpdatedAt:new Date().toISOString(),
+      roleUpdatedBy:JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').username||'-'
+    });
+
+    // Update daftar yang sedang aktif supaya berpindah tabel tanpa reload.
+    TEST_USERS[selectedStaffRoleUser].role=newRole;
+    if(typeof AUTH_USERS!=='undefined' && AUTH_USERS[selectedStaffRoleUser]){
+      AUTH_USERS[selectedStaffRoleUser].role=newRole;
+    }
+
+    const sessionRaw=sessionStorage.getItem('absensi_test_user');
+    if(sessionRaw){
+      const current=JSON.parse(sessionRaw);
+      if(current.username===selectedStaffRoleUser){
+        current.role=newRole;
+        sessionStorage.setItem('absensi_test_user',JSON.stringify(current));
+      }
+    }
+
+    closeStaffRoleModal();
+    renderUserStaff();
+    if(typeof window.toast==='function') window.toast('Role staff berhasil diperbarui.');
+  }catch(error){
+    console.error('Gagal menyimpan role staff:',error);
+    if(typeof window.toast==='function') window.toast('Role staff belum tersimpan. Periksa koneksi atau Rules Database.');
+  }finally{
+    if(saveButton) saveButton.disabled=false;
+  }
 }
 
 
@@ -4947,6 +5142,18 @@ function switchDash(view){
   if(isPengajuanCuti && typeof renderPengajuanCuti==='function') renderPengajuanCuti();
 }
 $('userStaffSearch')?.addEventListener('input',renderUserStaff);
+document.addEventListener('click',event=>{
+  const editButton=event.target.closest('[data-edit-staff-role]');
+  if(editButton){
+    event.preventDefault();
+    openStaffRoleModal(editButton.dataset.editStaffRole);
+    return;
+  }
+  if(event.target.closest('#staffRoleModalClose') || event.target.closest('#staffRoleCancel') || event.target===$('staffRoleModal')){
+    closeStaffRoleModal();
+  }
+});
+$('staffRoleSave')?.addEventListener('click',saveStaffRole);
 
 $('loginBtn').addEventListener('click',login);
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
@@ -5582,7 +5789,7 @@ async function loadProfile(){
     const snap=await get(ref(profileDb,`profiles/${user.username}`));
     if(!snap.exists()) { applyProfileUi(user); return; }
     const profile=snap.val()||{};
-    const merged={...user,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{})};
+    const merged={...user,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{}),...(profile.role?{role:profile.role}:{})};
     sessionStorage.setItem('absensi_test_user',JSON.stringify(merged));
     applyProfileUi(merged);
   }catch(e){
@@ -5767,10 +5974,10 @@ async function verifyDashboardLogin(username,password){
     if(profile.passwordHash){
       const hash=await authHash(password);
       if(hash!==profile.passwordHash) return null;
-      return {username,...base,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{})};
+      return {username,...base,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{}),...(profile.role?{role:profile.role}:{})};
     }
     if(base.password!==password) return null;
-    return {username,...base,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{})};
+    return {username,...base,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{}),...(profile.role?{role:profile.role}:{})};
   }catch(err){
     console.error('Firebase login check error',err);
     // Fallback only for accounts that have never changed password.
@@ -6968,6 +7175,32 @@ window.renderPengajuanResign=renderResignRows;
     <div class="resign-confirm-actions">
       <button type="button" class="resign-confirm-cancel" id="resignConfirmCancel">Batal</button>
       <button type="button" class="resign-confirm-submit approve" id="resignConfirmSubmit">✓ Setujui</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Role Staff: khusus Leader -->
+<div class="staff-role-modal-backdrop hidden" id="staffRoleModal" role="dialog" aria-modal="true" aria-labelledby="staffRoleModalTitle">
+  <div class="staff-role-modal-card">
+    <div class="staff-role-modal-head">
+      <div>
+        <h3 id="staffRoleModalTitle">Edit Role Staff</h3>
+        <p id="staffRoleModalInfo">Pindahkan role staff.</p>
+      </div>
+      <button type="button" class="staff-role-modal-close" id="staffRoleModalClose" aria-label="Tutup">×</button>
+    </div>
+    <label for="staffRoleSelect">Pilih Role Baru</label>
+    <select id="staffRoleSelect">
+      <option value="LEADER">LEADER</option>
+      <option value="CS">CS</option>
+      <option value="KAPTEN">KAPTEN / KKS</option>
+      <option value="KASIR">KASIR</option>
+    </select>
+    <div class="staff-role-modal-note">Perubahan role langsung tersimpan dan berlaku saat staff login kembali.</div>
+    <div class="staff-role-modal-actions">
+      <button type="button" class="staff-role-cancel" id="staffRoleCancel">Batal</button>
+      <button type="button" class="staff-role-save" id="staffRoleSave">Simpan Role</button>
     </div>
   </div>
 </div>
