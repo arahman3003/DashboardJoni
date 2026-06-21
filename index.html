@@ -2887,129 +2887,82 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .resign-confirm-submit.reject{background:linear-gradient(135deg,#df5e58,#bd3935)!important}
 
 
-/* ===== User Staff Directory ===== */
+/* ===== User Staff Directory: tabel memanjang ke bawah ===== */
 #dashUserStaff{
   padding:30px 34px 40px!important;
   min-height:calc(100vh - 72px)!important;
 }
-.user-staff-wrap{width:100%}
+.user-staff-wrap{width:100%;max-width:none}
 .user-staff-head{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
-  margin-bottom:20px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+  margin-bottom:22px;
 }
-.user-staff-head h1{
-  margin:0;color:#312b24;font-size:24px;font-weight:950;
-}
-.user-staff-head p{
-  margin:7px 0 0;color:#7a746d;font-size:12px;line-height:1.55;
-}
-.user-staff-total{
-  flex:none;padding:10px 14px;border-radius:12px;
-  background:#fffaf3;border:1px solid rgba(181,138,86,.30);
-  color:#87613b;font-size:12px;font-weight:950;
-  box-shadow:0 8px 18px rgba(84,61,35,.07);
-}
-.user-staff-tools{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  margin:0 0 18px;
-}
-.user-staff-tabs{display:flex;gap:8px;flex-wrap:wrap}
-.user-staff-tab{
-  min-height:38px;padding:0 14px;border-radius:9px;
-  background:#e7e4df!important;color:#2c2925!important;
-  font-size:12px;font-weight:900;
-}
-.user-staff-tab.active{
-  background:linear-gradient(135deg,#b58a56,#8d6844)!important;
-  color:#fffdf8!important;
-  box-shadow:0 8px 18px rgba(141,104,68,.18);
-}
+.user-staff-head h1{margin:0;color:#312b24;font-size:24px;font-weight:950}
+.user-staff-head p{margin:7px 0 0;color:#7a746d;font-size:12px;line-height:1.55}
 #userStaffSearch{
-  width:min(280px,100%);
-  height:39px;padding:0 12px;border-radius:10px;
-  background:#fff!important;border:1px solid #d8d0c6!important;
-  color:#332f2a!important;font-size:12px;
+  width:min(290px,100%);height:40px;padding:0 13px;border-radius:10px;
+  background:#fff!important;border:1px solid #d8d0c6!important;color:#332f2a!important;font-size:12px;
 }
-.user-staff-summary{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;
-  margin-bottom:18px;
+.user-staff-table-sections{display:grid;gap:18px}
+.user-role-table-section{
+  overflow:hidden;border-radius:18px;background:#fff;border:1px solid #ded5c8;
+  box-shadow:0 10px 24px rgba(65,48,30,.07);
 }
-.user-role-summary{
-  padding:15px 16px;border-radius:17px;
-  background:linear-gradient(180deg,#fffdfa,#f3ece3);
-  border:1px solid #ded4c7;
-  box-shadow:0 8px 20px rgba(71,52,31,.07);
+.user-role-table-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 17px;background:linear-gradient(90deg,#faf5ed 0%,#fff 100%);
+  border-bottom:1px solid #e5ddd2;
 }
-.user-role-summary .lab{
-  color:#7a6b5c;font-size:11px;font-weight:900;
+.user-role-table-title{display:flex;align-items:center;gap:9px;color:#342a20;font-size:15px;font-weight:950}
+.user-role-table-title .role-dot{width:10px;height:10px;border-radius:50%;background:#b58a56}
+.user-role-table-count{
+  padding:6px 10px;border-radius:999px;background:#f3e6d6;color:#805a34;font-size:10px;font-weight:950;
 }
-.user-role-summary .num{
-  margin-top:6px;color:#332a21;font-size:24px;line-height:1;font-weight:950;
+.user-role-table-wrap{width:100%;overflow:hidden}
+.user-role-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.user-role-table th{
+  padding:11px 12px;background:#2d2d2d;color:#fff;border-right:1px solid rgba(255,255,255,.12);
+  font-size:11px;font-weight:900;text-align:left;
 }
-.user-role-summary .cap{
-  margin-top:6px;color:#9a7957;font-size:10px;font-weight:800;
+.user-role-table td{
+  padding:13px 12px;color:#302a24;border-right:1px solid #e2ddd6;border-bottom:1px solid #ece7e0;
+  background:#fff;font-size:12px;vertical-align:middle;
 }
-.user-staff-grid{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
+.user-role-table tr:nth-child(even) td{background:#fcfbf9}
+.user-role-table th:last-child,.user-role-table td:last-child{border-right:none}
+.user-role-table tr:last-child td{border-bottom:none}
+.user-role-table th:nth-child(1),.user-role-table td:nth-child(1){width:68px;text-align:center}
+.user-role-table th:nth-child(2),.user-role-table td:nth-child(2){width:34%}
+.user-role-table th:nth-child(3),.user-role-table td:nth-child(3){width:32%}
+.user-role-table th:nth-child(4),.user-role-table td:nth-child(4){width:34%}
+.user-staff-num{
+  display:inline-grid;place-items:center;width:27px;height:27px;border-radius:8px;
+  background:#f2e7d8;color:#8c673f;font-size:11px;font-weight:950;
 }
-.user-staff-card{
-  position:relative;overflow:hidden;
-  min-height:132px;padding:16px;border-radius:18px;
-  background:#fff;border:1px solid #ded7ce;
-  box-shadow:0 9px 22px rgba(65,48,30,.07);
+.user-staff-name-cell b{display:block;font-size:12px;color:#27211b}
+.user-staff-name-cell small{display:block;margin-top:3px;color:#86786a;font-size:10px;font-weight:800}
+.user-staff-role-badge{
+  display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;
+  background:#f4e7d7;border:1px solid rgba(181,138,86,.18);color:#765535;font-size:10px;font-weight:950;
 }
-.user-staff-card:before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:#b58a56;
+.user-staff-empty-row{
+  padding:24px 12px!important;text-align:center!important;color:#85796d!important;font-weight:800!important;
 }
-.user-staff-avatar{
-  width:40px;height:40px;border-radius:50%;
-  display:grid;place-items:center;
-  background:linear-gradient(135deg,#c49b68,#8a643e);
-  color:#fffdf8;font-size:14px;font-weight:950;
-  box-shadow:0 7px 14px rgba(181,138,86,.20);
-}
-.user-staff-name{
-  margin-top:11px;color:#28231e;font-size:13px;font-weight:950;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.user-staff-username{
-  margin-top:3px;color:#81776c;font-size:10px;font-weight:800;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.user-staff-role{
-  position:absolute;right:14px;top:15px;
-  padding:6px 9px;border-radius:999px;
-  background:#f4e7d7;border:1px solid rgba(181,138,86,.20);
-  color:#775733;font-size:9px;font-weight:950;
-}
-.user-staff-empty{
-  grid-column:1/-1;padding:35px 16px;border-radius:16px;
-  text-align:center;color:#85796d;font-size:12px;font-weight:800;
-  background:#fff;border:1px dashed #d6c7b6;
-}
-.user-staff-card.role-leader:before{background:#6e4aa0}
-.user-staff-card.role-leader .user-staff-role{background:#efe8ff;color:#694994;border-color:#d9c8f2}
-.user-staff-card.role-cs:before{background:#36896a}
-.user-staff-card.role-cs .user-staff-role{background:#e8f6ed;color:#2f7b56;border-color:#c7e6d1}
-.user-staff-card.role-kapten:before{background:#b2742b}
-.user-staff-card.role-kapten .user-staff-role{background:#fff3df;color:#a16923;border-color:#efd7ae}
-.user-staff-card.role-kasir:before{background:#4f759f}
-.user-staff-card.role-kasir .user-staff-role{background:#e9f2fb;color:#476f98;border-color:#cfe0f2}
-@media(max-width:1250px){
-  .user-staff-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:980px){
-  .user-staff-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .user-staff-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
+.user-role-table-section.role-leader .role-dot{background:#6e4aa0}
+.user-role-table-section.role-leader .user-role-table-count,.user-role-table-section.role-leader .user-staff-role-badge{background:#efe8ff;color:#694994;border-color:#d9c8f2}
+.user-role-table-section.role-cs .role-dot{background:#36896a}
+.user-role-table-section.role-cs .user-role-table-count,.user-role-table-section.role-cs .user-staff-role-badge{background:#e8f6ed;color:#2f7b56;border-color:#c7e6d1}
+.user-role-table-section.role-kapten .role-dot{background:#b2742b}
+.user-role-table-section.role-kapten .user-role-table-count,.user-role-table-section.role-kapten .user-staff-role-badge{background:#fff3df;color:#a16923;border-color:#efd7ae}
+.user-role-table-section.role-kasir .role-dot{background:#4f759f}
+.user-role-table-section.role-kasir .user-role-table-count,.user-role-table-section.role-kasir .user-staff-role-badge{background:#e9f2fb;color:#476f98;border-color:#cfe0f2}
 @media(max-width:767px){
   #dashUserStaff{padding:18px!important}
-  .user-staff-head,.user-staff-tools{align-items:stretch;flex-direction:column}
+  .user-staff-head{align-items:stretch;flex-direction:column}
   #userStaffSearch{width:100%}
-  .user-staff-summary,.user-staff-grid{grid-template-columns:1fr}
+  .user-role-table-wrap{overflow-x:auto}
+  .user-role-table{min-width:640px}
 }
-
 </style>
 </head>
 <body>
@@ -3162,24 +3115,11 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <div class="user-staff-head">
          <div>
            <h1>👥 User Staff</h1>
-           <p>Daftar seluruh staff berdasarkan role LEADER, CS, KAPTEN / KKS, dan KASIR.</p>
-         </div>
-         <div class="user-staff-total" id="userStaffTotal">0 Staff</div>
-       </div>
-
-       <div class="user-staff-tools">
-         <div class="user-staff-tabs">
-           <button type="button" class="user-staff-tab active" data-user-role="ALL">Semua</button>
-           <button type="button" class="user-staff-tab" data-user-role="LEADER">Leader</button>
-           <button type="button" class="user-staff-tab" data-user-role="CS">CS</button>
-           <button type="button" class="user-staff-tab" data-user-role="KAPTEN">Kapten / KKS</button>
-           <button type="button" class="user-staff-tab" data-user-role="KASIR">Kasir</button>
+           <p>Daftar staff berurutan dari LEADER, CS, KAPTEN / KKS, sampai KASIR.</p>
          </div>
          <input id="userStaffSearch" type="search" placeholder="Cari nama atau username">
        </div>
-
-       <div class="user-staff-summary" id="userStaffSummary"></div>
-       <div class="user-staff-grid" id="userStaffGrid"></div>
+       <div class="user-staff-table-sections" id="userStaffTableSections"></div>
      </div>
    </section>
 
@@ -4903,8 +4843,6 @@ function startIzinTicker(){
     if(needRender) renderIzin();
   },1000);
 }
-let userStaffRoleFilter='ALL';
-
 function normalizeUserRole(role){
   const value=String(role||'').trim().toUpperCase();
   if(value==='LEADER') return 'LEADER';
@@ -4915,67 +4853,61 @@ function normalizeUserRole(role){
 }
 function displayUserRole(role){
   const normalized=normalizeUserRole(role);
-  if(normalized==='KAPTEN') return 'KAPTEN / KKS';
-  return normalized;
+  return normalized==='KAPTEN' ? 'KAPTEN / KKS' : normalized;
 }
 function userRoleClass(role){
   const normalized=normalizeUserRole(role).toLowerCase();
   return normalized==='kapten' ? 'kapten' : normalized;
 }
 function renderUserStaff(){
-  const grid=$('userStaffGrid');
-  const summary=$('userStaffSummary');
-  const total=$('userStaffTotal');
+  const target=$('userStaffTableSections');
+  if(!target) return;
+
   const search=String($('userStaffSearch')?.value||'').trim().toLowerCase();
-
-  if(!grid || !summary || !total) return;
-
   const users=Object.entries(TEST_USERS||{}).map(([username,data])=>({
     username,
     name:data?.name||username,
     role:data?.role||'LAINNYA',
     normalizedRole:normalizeUserRole(data?.role)
-  })).sort((a,b)=>a.name.localeCompare(b.name,'id'));
+  }));
 
   const categories=[
-    {key:'LEADER',label:'LEADER',cap:'Akses penuh'},
-    {key:'CS',label:'CS',cap:'Customer Service'},
-    {key:'KAPTEN',label:'KAPTEN / KKS',cap:'Kapten Kasir'},
-    {key:'KASIR',label:'KASIR',cap:'Kasir'}
+    {key:'LEADER',label:'LEADER',className:'leader'},
+    {key:'CS',label:'CS',className:'cs'},
+    {key:'KAPTEN',label:'KAPTEN / KKS',className:'kapten'},
+    {key:'KASIR',label:'KASIR',className:'kasir'}
   ];
 
-  summary.innerHTML=categories.map(category=>{
-    const count=users.filter(user=>user.normalizedRole===category.key).length;
-    return `<div class="user-role-summary">
-      <div class="lab">${category.label}</div>
-      <div class="num">${count}</div>
-      <div class="cap">${category.cap}</div>
-    </div>`;
+  target.innerHTML=categories.map(category=>{
+    const list=users
+      .filter(user=>user.normalizedRole===category.key)
+      .filter(user=>!search || user.name.toLowerCase().includes(search) || user.username.toLowerCase().includes(search))
+      .sort((a,b)=>a.name.localeCompare(b.name,'id'));
+
+    const rows=list.length ? list.map((user,index)=>`
+      <tr>
+        <td><span class="user-staff-num">${index+1}</span></td>
+        <td class="user-staff-name-cell"><b>${user.name}</b><small>@${user.username}</small></td>
+        <td>${user.username}</td>
+        <td><span class="user-staff-role-badge">${displayUserRole(user.role)}</span></td>
+      </tr>
+    `).join('') : `<tr><td colspan="4" class="user-staff-empty-row">Tidak ada staff ${category.label}${search?' yang cocok dengan pencarian.':'.'}</td></tr>`;
+
+    return `<section class="user-role-table-section role-${category.className}">
+      <div class="user-role-table-head">
+        <div class="user-role-table-title"><span class="role-dot"></span>${category.label}</div>
+        <div class="user-role-table-count">${list.length} Staff</div>
+      </div>
+      <div class="user-role-table-wrap">
+        <table class="user-role-table">
+          <thead><tr><th>No</th><th>Nama Staff</th><th>Username</th><th>Role</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </section>`;
   }).join('');
-
-  const filtered=users.filter(user=>{
-    const byRole=userStaffRoleFilter==='ALL'||user.normalizedRole===userStaffRoleFilter;
-    const bySearch=!search || user.name.toLowerCase().includes(search) || user.username.toLowerCase().includes(search);
-    return byRole && bySearch;
-  });
-
-  total.textContent=`${filtered.length} Staff`;
-
-  grid.innerHTML=filtered.length ? filtered.map(user=>{
-    const initials=user.name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'?';
-    const roleClass=userRoleClass(user.role);
-    return `<article class="user-staff-card role-${roleClass}">
-      <div class="user-staff-avatar">${initials}</div>
-      <div class="user-staff-role">${displayUserRole(user.role)}</div>
-      <div class="user-staff-name" title="${user.name}">${user.name}</div>
-      <div class="user-staff-username">@${user.username}</div>
-    </article>`;
-  }).join('') : '<div class="user-staff-empty">Staff tidak ditemukan.</div>';
-
-  document.querySelectorAll('[data-user-role]').forEach(button=>{
-    button.classList.toggle('active',button.dataset.userRole===userStaffRoleFilter);
-  });
 }
+
 
 function switchDash(view){
   document.querySelectorAll('.dash-nav button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
@@ -5014,12 +4946,6 @@ function switchDash(view){
   if(isIzinDashboard) renderIzin();
   if(isPengajuanCuti && typeof renderPengajuanCuti==='function') renderPengajuanCuti();
 }
-document.addEventListener('click',event=>{
-  const roleTab=event.target.closest('[data-user-role]');
-  if(!roleTab) return;
-  userStaffRoleFilter=roleTab.dataset.userRole||'ALL';
-  renderUserStaff();
-});
 $('userStaffSearch')?.addEventListener('input',renderUserStaff);
 
 $('loginBtn').addEventListener('click',login);
