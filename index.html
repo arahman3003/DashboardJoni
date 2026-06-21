@@ -2370,6 +2370,68 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .cuti-confirm-submit.approve{background:linear-gradient(135deg,#2aa963,#178545)!important}
 .cuti-confirm-submit.reject{background:linear-gradient(135deg,#df5e58,#bd3935)!important}
 
+
+/* Popup minimum hari cuti */
+.cuti-minimum-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:66000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(17,20,28,.48);
+  backdrop-filter:blur(5px);
+}
+.cuti-minimum-backdrop.hidden{display:none!important}
+.cuti-minimum-card{
+  width:min(400px,100%);
+  padding:26px 24px 22px;
+  border-radius:22px;
+  text-align:center;
+  background:linear-gradient(155deg,#fffdf9,#f6efe5);
+  border:1px solid rgba(211,158,82,.42);
+  box-shadow:0 28px 80px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.cuti-minimum-icon{
+  width:58px;
+  height:58px;
+  margin:0 auto 13px;
+  border-radius:19px;
+  display:grid;
+  place-items:center;
+  background:#fff1d5;
+  color:#b97816;
+  border:1px solid #f0cf94;
+  box-shadow:0 10px 20px rgba(185,120,22,.14);
+  font-size:30px;
+  font-weight:950;
+}
+.cuti-minimum-card h3{
+  margin:0;
+  color:#30271f;
+  font-size:20px;
+  font-weight:950;
+}
+.cuti-minimum-card p{
+  margin:9px auto 20px;
+  max-width:325px;
+  color:#74695d;
+  font-size:13px;
+  line-height:1.6;
+}
+.cuti-minimum-close{
+  width:100%;
+  min-height:44px;
+  border-radius:12px;
+  border:0;
+  background:linear-gradient(135deg,#b98a4d,#8c6438)!important;
+  color:#fffaf2!important;
+  font-size:13px;
+  font-weight:900;
+  box-shadow:0 10px 18px rgba(0,0,0,.13);
+}
+
 </style>
 </head>
 <body>
@@ -5598,6 +5660,14 @@ document.addEventListener('keydown',e=>{
 
   document.addEventListener('click',e=>{
     // Tombol popup memakai event delegation karena popup dibuat setelah script utama.
+    const minimumClose=e.target.closest('#cutiMinimumClose');
+    if(minimumClose || e.target===ps('cutiMinimumModal')){
+      e.preventDefault();
+      e.stopPropagation();
+      closeMinimumCutiModal();
+      return;
+    }
+
     const confirmCancel=e.target.closest('#cutiConfirmCancel');
     const confirmSubmit=e.target.closest('#cutiConfirmSubmit');
     if(confirmCancel){
@@ -5654,6 +5724,26 @@ document.addEventListener('keydown',e=>{
   ps('cutiSetPending')?.addEventListener('click',()=>setStatus('Pending'));
   ps('cutiSetApproved')?.addEventListener('click',()=>setStatus('Approved'));
   ps('cutiSetRejected')?.addEventListener('click',()=>setStatus('Rejected'));
+  function getMinimumCutiDays(role){
+    const normalized=String(role||'').trim().toUpperCase();
+    if(normalized==='KASIR' || normalized==='KS') return 12;
+    if(normalized==='KAPTEN' || normalized==='KKS' || normalized==='CS') return 14;
+    return 0;
+  }
+  function showMinimumCutiModal(role,requested,minDays){
+    const modal=ps('cutiMinimumModal');
+    if(!modal) return;
+    const roleName=String(role||'').trim().toUpperCase()==='KAPTEN' ? 'KAPTEN (KKS)' : (role||'-');
+    ps('cutiMinimumTitle').textContent='Hari Cuti Belum Memenuhi Ketentuan';
+    ps('cutiMinimumText').innerHTML=
+      `Role <b>${roleName}</b> minimal mengajukan <b>${minDays} hari</b> cuti. `+
+      `Pengajuan ini hanya <b>${requested} hari</b>. Silakan ubah tanggal cuti terlebih dahulu.`;
+    modal.classList.remove('hidden');
+  }
+  function closeMinimumCutiModal(){
+    ps('cutiMinimumModal')?.classList.add('hidden');
+  }
+
   ps('pengajuanCutiForm')?.addEventListener('submit',e=>{
     e.preventDefault();
     const user=safeUser();
@@ -5676,6 +5766,18 @@ document.addEventListener('keydown',e=>{
       alert('Untuk jenis cuti ini, isi tanggal cuti Lokal / Indo dan tanggal cuti kerja.');
       return;
     }
+    const lokalDays=daysInclusive(lokalStart,lokalEnd);
+    const kerjaDays=daysInclusive(kerjaStart,kerjaEnd);
+    const requestedDays=mode==='both'
+      ? (lokalDays+kerjaDays)
+      : (mode==='kerja' ? kerjaDays : lokalDays);
+    const minimumDays=getMinimumCutiDays(user.role);
+
+    if(minimumDays && requestedDays<minimumDays){
+      showMinimumCutiModal(user.role,requestedDays,minimumDays);
+      return;
+    }
+
     const entry={
       id:uid(),
       username:user.username,
@@ -5684,9 +5786,9 @@ document.addEventListener('keydown',e=>{
       passport:(ps('cutiNomorPaspor').value||'').trim(),
       type,
       lokalStart,lokalEnd,
-      lokalDays: daysInclusive(lokalStart,lokalEnd),
+      lokalDays,
       kerjaStart,kerjaEnd,
-      kerjaDays: daysInclusive(kerjaStart,kerjaEnd),
+      kerjaDays,
       notes:(ps('cutiKeterangan').value||'').trim(),
       status:'Pending',
       submittedAt:new Date().toISOString()
@@ -5848,6 +5950,30 @@ document.addEventListener('click', async (event) => {
     </div>
   </div>
 </div>
+
+
+<!-- Popup ketentuan minimum hari cuti -->
+<div class="cuti-minimum-backdrop hidden" id="cutiMinimumModal" role="dialog" aria-modal="true" aria-labelledby="cutiMinimumTitle">
+  <div class="cuti-minimum-card">
+    <div class="cuti-minimum-icon">!</div>
+    <h3 id="cutiMinimumTitle">Hari Cuti Belum Cukup</h3>
+    <p id="cutiMinimumText">Jumlah hari cuti belum memenuhi ketentuan.</p>
+    <button type="button" class="cuti-minimum-close" id="cutiMinimumClose">Mengerti</button>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('click',function(event){
+  const button=event.target.closest('#cutiMinimumClose');
+  const backdrop=event.target.id==='cutiMinimumModal' ? event.target : null;
+  if(button || backdrop){
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('cutiMinimumModal')?.classList.add('hidden');
+  }
+},true);
+</script>
 
 </body>
 </html>
