@@ -2506,6 +2506,40 @@ body.pc-app-mode #desktopApp{display:grid!important}
   box-shadow:0 10px 18px rgba(0,0,0,.13);
 }
 
+
+/* Header desktop tetap terkunci di tempatnya saat browser Zoom In / Zoom Out */
+@media(min-width:768px){
+  .dash-main{
+    position:relative!important;
+    margin-left:255px!important;
+    padding-top:72px!important;
+    height:auto!important;
+    min-height:100vh!important;
+    overflow:visible!important;
+  }
+  .dash-topbar{
+    position:fixed!important;
+    top:0!important;
+    left:255px!important;
+    right:0!important;
+    width:auto!important;
+    min-height:72px!important;
+    z-index:5000!important;
+  }
+  .dash-topbar-left,
+  .dash-topbar-right{
+    min-width:0!important;
+  }
+}
+@media(min-width:768px) and (max-width:1050px){
+  .dash-main{
+    margin-left:80px!important;
+  }
+  .dash-topbar{
+    left:80px!important;
+  }
+}
+
 </style>
 </head>
 <body>
