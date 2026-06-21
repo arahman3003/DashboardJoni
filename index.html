@@ -2432,6 +2432,80 @@ body.pc-app-mode #desktopApp{display:grid!important}
   box-shadow:0 10px 18px rgba(0,0,0,.13);
 }
 
+
+/* Popup informasi umum pengganti alert bawaan browser */
+.app-alert-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:67000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(17,20,28,.48);
+  backdrop-filter:blur(5px);
+}
+.app-alert-backdrop.hidden{display:none!important}
+.app-alert-card{
+  width:min(395px,100%);
+  padding:26px 24px 22px;
+  border-radius:22px;
+  text-align:center;
+  background:linear-gradient(155deg,#fffdf9,#f6efe5);
+  border:1px solid rgba(190,148,97,.40);
+  box-shadow:0 28px 80px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.app-alert-icon{
+  width:58px;
+  height:58px;
+  margin:0 auto 13px;
+  border-radius:19px;
+  display:grid;
+  place-items:center;
+  background:#edf4ff;
+  color:#3273ba;
+  border:1px solid #c8def5;
+  box-shadow:0 10px 20px rgba(50,115,186,.14);
+  font-size:28px;
+  font-weight:950;
+  font-family:Georgia,serif;
+}
+.app-alert-card.warning .app-alert-icon{
+  background:#fff1d5;
+  color:#b97816;
+  border-color:#f0cf94;
+}
+.app-alert-card.success .app-alert-icon{
+  background:#e6faed;
+  color:#168645;
+  border-color:#c5ebd2;
+  font-family:inherit;
+}
+.app-alert-card h3{
+  margin:0;
+  color:#30271f;
+  font-size:20px;
+  font-weight:950;
+}
+.app-alert-card p{
+  margin:9px auto 20px;
+  max-width:325px;
+  color:#74695d;
+  font-size:13px;
+  line-height:1.6;
+}
+.app-alert-close{
+  width:100%;
+  min-height:44px;
+  border-radius:12px;
+  border:0;
+  background:linear-gradient(135deg,#b98a4d,#8c6438)!important;
+  color:#fffaf2!important;
+  font-size:13px;
+  font-weight:900;
+  box-shadow:0 10px 18px rgba(0,0,0,.13);
+}
+
 </style>
 </head>
 <body>
@@ -5587,7 +5661,7 @@ document.addEventListener('keydown',e=>{
   function setStatus(status,id=currentDetailId){
     const leader=safeUser();
     if(leader.role!=='LEADER'){
-      alert('Hanya role LEADER yang dapat menyetujui atau menolak pengajuan cuti.');
+      showAppAlert('Hanya role LEADER yang dapat menyetujui atau menolak pengajuan cuti.','warning','Akses Ditolak');
       return;
     }
     if(!id) return;
@@ -5660,6 +5734,14 @@ document.addEventListener('keydown',e=>{
 
   document.addEventListener('click',e=>{
     // Tombol popup memakai event delegation karena popup dibuat setelah script utama.
+    const appAlertClose=e.target.closest('#appAlertClose');
+    if(appAlertClose || e.target===ps('appAlertModal')){
+      e.preventDefault();
+      e.stopPropagation();
+      closeAppAlert();
+      return;
+    }
+
     const minimumClose=e.target.closest('#cutiMinimumClose');
     if(minimumClose || e.target===ps('cutiMinimumModal')){
       e.preventDefault();
@@ -5724,6 +5806,23 @@ document.addEventListener('keydown',e=>{
   ps('cutiSetPending')?.addEventListener('click',()=>setStatus('Pending'));
   ps('cutiSetApproved')?.addEventListener('click',()=>setStatus('Approved'));
   ps('cutiSetRejected')?.addEventListener('click',()=>setStatus('Rejected'));
+  function showAppAlert(message, type='info', title='Informasi'){
+    const modal=ps('appAlertModal');
+    const card=modal?.querySelector('.app-alert-card');
+    if(!modal||!card) return;
+    card.classList.remove('warning','success');
+    if(type==='warning') card.classList.add('warning');
+    if(type==='success') card.classList.add('success');
+
+    ps('appAlertTitle').textContent=title;
+    ps('appAlertText').textContent=message;
+    ps('appAlertIcon').textContent=type==='success' ? '✓' : (type==='warning' ? '!' : 'i');
+    modal.classList.remove('hidden');
+  }
+  function closeAppAlert(){
+    ps('appAlertModal')?.classList.add('hidden');
+  }
+
   function getMinimumCutiDays(role){
     const normalized=String(role||'').trim().toUpperCase();
     if(normalized==='KASIR' || normalized==='KS') return 12;
@@ -5753,17 +5852,17 @@ document.addEventListener('keydown',e=>{
     const kerjaStart=ps('cutiKerjaStart').value;
     const kerjaEnd=ps('cutiKerjaEnd').value;
     const mode=getCutiMode(type);
-    if(!type){ alert('Pilih jenis cuti dulu.'); return; }
+    if(!type){ showAppAlert('Pilih jenis cuti terlebih dahulu.','warning','Jenis Cuti Belum Dipilih'); return; }
     if(mode==='lokal' && !(lokalStart&&lokalEnd)){
-      alert('Isi tanggal cuti Lokal / Indo terlebih dahulu.');
+      showAppAlert('Isi tanggal cuti Lokal / Indo terlebih dahulu.','warning','Tanggal Cuti Belum Lengkap');
       return;
     }
     if(mode==='kerja' && !(kerjaStart&&kerjaEnd)){
-      alert('Isi tanggal cuti kerja terlebih dahulu.');
+      showAppAlert('Isi tanggal cuti kerja terlebih dahulu.','warning','Tanggal Cuti Belum Lengkap');
       return;
     }
     if(mode==='both' && (!(lokalStart&&lokalEnd) || !(kerjaStart&&kerjaEnd))){
-      alert('Untuk jenis cuti ini, isi tanggal cuti Lokal / Indo dan tanggal cuti kerja.');
+      showAppAlert('Untuk jenis cuti ini, isi tanggal cuti Lokal / Indo dan tanggal cuti kerja.','warning','Tanggal Cuti Belum Lengkap');
       return;
     }
     const lokalDays=daysInclusive(lokalStart,lokalEnd);
@@ -5798,7 +5897,7 @@ document.addEventListener('keydown',e=>{
     saveEntries(entries);
     closeForm();
     renderPengajuanCuti();
-    alert('Pengajuan cuti berhasil dikirim.');
+    showAppAlert('Pengajuan cuti berhasil dikirim.','success','Pengajuan Berhasil Dikirim');
   });
   window.addEventListener('load',()=>{setTimeout(()=>{ if(typeof renderPengajuanCuti==='function') renderPengajuanCuti(); toggleCutiFields(); },120);});
 })();
@@ -5971,6 +6070,30 @@ document.addEventListener('click',function(event){
     event.preventDefault();
     event.stopPropagation();
     document.getElementById('cutiMinimumModal')?.classList.add('hidden');
+  }
+},true);
+</script>
+
+
+<!-- Popup informasi umum (pengganti alert browser) -->
+<div class="app-alert-backdrop hidden" id="appAlertModal" role="dialog" aria-modal="true" aria-labelledby="appAlertTitle">
+  <div class="app-alert-card">
+    <div class="app-alert-icon" id="appAlertIcon">i</div>
+    <h3 id="appAlertTitle">Informasi</h3>
+    <p id="appAlertText"></p>
+    <button type="button" class="app-alert-close" id="appAlertClose">Mengerti</button>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('click',function(event){
+  const button=event.target.closest('#appAlertClose');
+  const backdrop=event.target.id==='appAlertModal' ? event.target : null;
+  if(button || backdrop){
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('appAlertModal')?.classList.add('hidden');
   }
 },true);
 </script>
