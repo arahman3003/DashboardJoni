@@ -2131,61 +2131,25 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 
 
-/* Pengajuan kosong tetap rapi dan memenuhi posisi tabel seperti saat ada data */
+/* Saat tabel Pengajuan Cuti kosong, semua kolom yang terlihat dibagi rata hingga penuh. */
 @media(min-width:768px){
+  #dashPengajuanCuti .pengajuan-table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow:hidden!important;
+  }
   #dashPengajuanCuti .pengajuan-table.is-empty-table{
     width:100%!important;
     min-width:0!important;
     table-layout:fixed!important;
   }
-  #dashPengajuanCuti .pengajuan-table.is-empty-table th,
-  #dashPengajuanCuti .pengajuan-table.is-empty-table td{
-    width:auto!important;
-  }
   #dashPengajuanCuti .pengajuan-table.is-empty-table .pengajuan-empty-row{
-    height:48px!important;
+    height:46px!important;
     text-align:center!important;
-    font-size:11px!important;
-  }
-  #dashPengajuanCuti .pengajuan-table-wrap{
-    width:100%!important;
-    overflow:hidden!important;
   }
 }
 
 </style>
-
-<style id="empty-pengajuan-full-width-fix">
-@media(min-width:768px){
-  #dashPengajuanCuti .pengajuan-table-wrap{
-    display:block!important;
-    width:100%!important;
-    max-width:100%!important;
-    overflow:hidden!important;
-  }
-  #dashPengajuanCuti .pengajuan-table.is-empty-table,
-  #dashPengajuanCuti .pengajuan-table.is-empty-table thead,
-  #dashPengajuanCuti .pengajuan-table.is-empty-table tbody,
-  #dashPengajuanCuti .pengajuan-table.is-empty-table tr{
-    width:100%!important;
-    min-width:100%!important;
-    max-width:100%!important;
-  }
-  #dashPengajuanCuti .pengajuan-table.is-empty-table{
-    display:table!important;
-    table-layout:fixed!important;
-    border-collapse:separate!important;
-  }
-  #dashPengajuanCuti .pengajuan-table.is-empty-table .pengajuan-empty-row{
-    display:table-cell!important;
-    width:100%!important;
-    min-width:100%!important;
-    height:48px!important;
-    text-align:center!important;
-  }
-}
-</style>
-
 </head>
 <body>
 <section class="mobile" id="loginPage">
@@ -5102,24 +5066,6 @@ document.addEventListener('keydown',e=>{
     if(!rows) return;
     const isLeader=safeUser().role==='LEADER';
     const entries=getFilteredEntries();
-    const table=rows.closest('.pengajuan-table');
-    if(table){
-      const isEmpty=!entries.length;
-      table.classList.toggle('is-empty-table',isEmpty);
-
-      // Saat data kosong, paksa seluruh lebar tabel tetap penuh seperti saat ada data.
-      table.style.setProperty('width','100%','important');
-      table.style.setProperty('min-width','100%','important');
-      table.style.setProperty('table-layout','fixed','important');
-
-      const heads=[...table.querySelectorAll('thead th')];
-      if(isEmpty && heads.length){
-        const colWidth=(100/heads.length).toFixed(4)+'%';
-        heads.forEach(th=>th.style.setProperty('width',colWidth,'important'));
-      }else{
-        heads.forEach(th=>th.style.removeProperty('width'));
-      }
-    }
     rows.innerHTML=entries.length ? entries.map(x=>{
       const rawLeaveState=cutiReferenceDate(x);
       const isApproved=(x.status||'Pending')==='Approved';
@@ -5172,6 +5118,42 @@ document.addEventListener('keydown',e=>{
       </tr>`;
     }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
+  function syncEmptyPengajuanTable(){
+    const table=ps('pengajuanCutiRows')?.closest('.pengajuan-table');
+    const rows=ps('pengajuanCutiRows');
+    if(!table||!rows) return;
+
+    const isEmpty=!rows.querySelector('tr:not(.pengajuan-empty-row)');
+    const heads=[...table.querySelectorAll('thead th')];
+    const visibleHeads=heads.filter(th=>getComputedStyle(th).display!=='none');
+
+    if(!isEmpty || !visibleHeads.length){
+      table.classList.remove('is-empty-table');
+      heads.forEach(th=>th.style.removeProperty('width'));
+      return;
+    }
+
+    table.classList.add('is-empty-table');
+    table.style.setProperty('width','100%','important');
+    table.style.setProperty('min-width','0','important');
+    table.style.setProperty('table-layout','fixed','important');
+
+    const width=(100/visibleHeads.length).toFixed(4)+'%';
+    heads.forEach(th=>{
+      if(getComputedStyle(th).display!=='none'){
+        th.style.setProperty('width',width,'important');
+      }else{
+        th.style.removeProperty('width');
+      }
+    });
+
+    const emptyCell=rows.querySelector('.pengajuan-empty-row');
+    if(emptyCell){
+      emptyCell.colSpan=visibleHeads.length;
+      emptyCell.style.setProperty('width','100%','important');
+    }
+  }
+
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
   }
@@ -5196,6 +5178,7 @@ document.addEventListener('keydown',e=>{
     const showCopy=cutiState.status!=='Pending';
     document.querySelectorAll('.copy-text-head').forEach(th=>th.style.display=showCopy?'table-cell':'none');
     document.querySelectorAll('.copy-text-cell').forEach(td=>td.style.display=showCopy?'table-cell':'none');
+    requestAnimationFrame(syncEmptyPengajuanTable);
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
