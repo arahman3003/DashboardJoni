@@ -1875,6 +1875,204 @@ body.pc-app-mode #desktopApp{display:grid!important}
   60%,100%{transform:translateX(70%) rotate(8deg)}
 }
 
+
+
+/* ===== Premium elegant style for mobile interior pages ===== */
+@media(max-width:767px){
+  #appPage{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at top right, rgba(255,225,170,.16), transparent 28%),
+      radial-gradient(circle at top left, rgba(255,240,210,.20), transparent 26%),
+      linear-gradient(180deg,#f7f2ea 0%,#f1e9dd 42%,#efe6da 100%)!important;
+  }
+  #appPage:before{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(115deg,
+      transparent 0%, transparent 38%, rgba(255,245,218,.00) 44%, rgba(255,236,191,.20) 50%, rgba(255,245,218,.00) 56%, transparent 62%, transparent 100%);
+    background-size:240% 100%;
+    animation:insideLuxSweep 7.5s ease-in-out infinite;
+    z-index:0;
+  }
+  #appPage .wrap{
+    position:relative;
+    z-index:1;
+    padding-top:calc(env(safe-area-inset-top) + 10px);
+  }
+  #appPage .top{
+    margin-bottom:14px;
+    padding:14px 14px;
+    border-radius:22px;
+    background:linear-gradient(135deg, rgba(39,31,24,.97), rgba(22,20,19,.95));
+    border:1px solid rgba(214,176,116,.34);
+    box-shadow:0 18px 36px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,244,214,.12);
+  }
+  #appPage .mini-logo{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    box-shadow:0 10px 24px rgba(190,148,97,.24);
+  }
+  #appPage .top h2{
+    color:#fff0cf!important;
+    font-size:18px;
+    font-weight:950;
+    letter-spacing:.3px;
+    text-shadow:0 1px 2px rgba(0,0,0,.35);
+  }
+  #appPage .top p{
+    color:#ebd4ae!important;
+    font-weight:700;
+  }
+  #appPage .logout{
+    background:linear-gradient(135deg,#c29762,#9a7048)!important;
+    color:#fff7ea!important;
+    border:1px solid rgba(255,239,206,.18);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);
+    border-radius:12px;
+    padding:9px 12px;
+  }
+  #appPage .hero{
+    border-radius:28px;
+    padding:24px 22px 54px;
+    background:linear-gradient(135deg,#2b2119 0%,#5f452f 48%,#b88956 100%)!important;
+    color:#fff7ec!important;
+    border:1px solid rgba(255,231,194,.25);
+    box-shadow:0 20px 40px rgba(64,41,20,.22), inset 0 1px 0 rgba(255,247,232,.18);
+  }
+  #appPage .hero:before{
+    content:'';
+    position:absolute;
+    inset:auto -16% -46% auto;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,248,227,.28), rgba(255,248,227,0) 72%);
+    pointer-events:none;
+  }
+  #appPage .hero:after{
+    width:240px;
+    height:240px;
+    right:-110px;
+    top:-122px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.06);
+  }
+  #appPage .small{color:#f7e8c5; font-weight:700; letter-spacing:.2px}
+  #appPage .clock{
+    color:#fff9f0;
+    text-shadow:0 5px 14px rgba(0,0,0,.18);
+    font-size:42px;
+  }
+  #appPage .date{color:#f6e6c7; font-weight:700}
+  #appPage .status{
+    background:rgba(255,249,238,.16);
+    border:1px solid rgba(255,249,238,.35);
+    color:#fff9f0;
+    backdrop-filter:blur(8px);
+    box-shadow:0 6px 14px rgba(0,0,0,.10);
+  }
+  #appPage .grid{
+    gap:13px;
+    margin:16px 0;
+  }
+  #appPage .info,
+  #appPage .card.section{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(180deg,#fffdfa 0%, #f9f4ec 100%)!important;
+    border:1px solid rgba(201,175,139,.48)!important;
+    box-shadow:0 14px 28px rgba(74,50,24,.08), inset 0 1px 0 rgba(255,255,255,.74)!important;
+  }
+  #appPage .info:before,
+  #appPage .card.section:before{
+    content:'';
+    position:absolute;
+    left:0; right:0; top:0;
+    height:3px;
+    background:linear-gradient(90deg,#b98953,#e8c387,#b98953);
+    opacity:.8;
+  }
+  #appPage .info .i-label,
+  #appPage .sub,
+  #appPage .loc-detail,
+  #appPage .row-main small,
+  #appPage .hint,
+  #appPage .empty{
+    color:#857565!important;
+  }
+  #appPage .info strong,
+  #appPage .section-title,
+  #appPage .loc-title,
+  #appPage .row-main b{
+    color:#2c241d!important;
+  }
+  #appPage .info span{
+    color:#a47745!important;
+  }
+  #appPage .loc-icon,
+  #appPage .day{
+    background:linear-gradient(135deg,#f3e1c8,#e5c59a)!important;
+    color:#8f6437!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  #appPage .location{
+    background:#fffaf4!important;
+    border:1px solid rgba(205,180,144,.46)!important;
+  }
+  #appPage .refresh{
+    color:#9c7045!important;
+    font-weight:900;
+  }
+  #appPage .actions,
+  #appPage .mobile-izin-actions,
+  #appPage .izin-input-actions{
+    gap:12px;
+  }
+  #appPage .action{
+    border-radius:20px;
+    min-height:92px;
+    padding:16px 13px;
+    box-shadow:0 14px 24px rgba(62,42,18,.09);
+  }
+  #appPage .action.in{
+    background:linear-gradient(135deg,#ad7a43,#d2a36e)!important;
+    color:#fffaf1!important;
+  }
+  #appPage .action.out{
+    background:linear-gradient(180deg,#fffdfa,#f0e7d9)!important;
+    color:#6d4d31!important;
+    border:1px solid rgba(200,174,136,.45)!important;
+  }
+  #appPage .action small{opacity:.9}
+  #appPage .tag{
+    background:#f0e1cf!important;
+    color:#8d6340!important;
+    border:1px solid rgba(196,164,123,.34);
+  }
+  #appPage .tag.out{
+    background:#f6efe6!important;
+    color:#81705e!important;
+  }
+  #appPage .row{
+    border-bottom:1px solid rgba(207,191,171,.38)!important;
+  }
+  #appPage .toast{
+    background:linear-gradient(135deg,#2d241d,#544030)!important;
+    color:#fff7eb!important;
+    border:1px solid rgba(214,176,116,.35);
+  }
+}
+@keyframes insideLuxSweep{
+  0%,18%{background-position:150% 0}
+  58%,100%{background-position:-60% 0}
+}
+
 </style>
 </head>
 <body>
