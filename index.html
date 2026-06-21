@@ -1641,8 +1641,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
   #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:4.8%!important}
   #dashPengajuanCuti .pengajuan-table th:nth-child(13),
   #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:6%!important}
-  #dashPengajuanCuti .cuti-remaining,
-  #dashPengajuanCuti .cuti-note-status{display:none!important}
+  /* Kolom Berapa Hari Lagi dan Keterangan Cuti tetap ditampilkan. */
 }
 
 
@@ -2130,6 +2129,125 @@ body.pc-app-mode #desktopApp{display:grid!important}
   62%,100%{transform:translateX(70%) rotate(8deg)}
 }
 
+
+/* Pengajuan Cuti: font lebih besar dan lebih jelas */
+@media(min-width:768px){
+  #dashPengajuanCuti .pengajuan-summary-card .sum-top{
+    font-size:15px!important;
+  }
+  #dashPengajuanCuti .pengajuan-summary-card .sum-main{
+    font-size:18px!important;
+  }
+  #dashPengajuanCuti .pengajuan-summary-card .sum-meta{
+    font-size:14px!important;
+    color:#383838!important;
+  }
+  #dashPengajuanCuti .pengajuan-summary-card ul{
+    font-size:14px!important;
+    line-height:1.5!important;
+    color:#333!important;
+  }
+  #dashPengajuanCuti .pengajuan-add-btn{
+    font-size:15px!important;
+  }
+  #dashPengajuanCuti .pengajuan-tab{
+    font-size:15px!important;
+    padding:10px 18px!important;
+  }
+  #dashPengajuanCuti .pengajuan-filter select{
+    min-width:150px!important;
+    padding:11px 14px!important;
+    font-size:15px!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th,
+  #dashPengajuanCuti .pengajuan-table td{
+    padding:10px 6px!important;
+    font-size:12px!important;
+    line-height:1.3!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
+    white-space:normal!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th{
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-table .nama-cell{
+    font-size:13px!important;
+    font-weight:900!important;
+    color:#151515!important;
+  }
+  #dashPengajuanCuti .pengajuan-status{
+    font-size:13px!important;
+    padding:7px 12px!important;
+  }
+  #dashPengajuanCuti .pengajuan-eye{
+    width:36px!important;
+    height:36px!important;
+    font-size:16px!important;
+  }
+}
+
+
+/* Pengajuan Cuti: tampilkan semua kategori kolom seperti tabel referensi */
+@media(min-width:768px){
+  #dashPengajuanCuti .pengajuan-table-wrap{
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    padding-bottom:8px;
+  }
+  #dashPengajuanCuti .pengajuan-table{
+    min-width:1860px!important;
+    width:max-content!important;
+    table-layout:auto!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th,
+  #dashPengajuanCuti .pengajuan-table td{
+    min-width:92px!important;
+    padding:12px 12px!important;
+    font-size:12px!important;
+    line-height:1.35!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th{
+    font-size:12px!important;
+    font-weight:900!important;
+    color:#fff!important;
+  }
+  #dashPengajuanCuti .pengajuan-table th:nth-child(2),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(2){min-width:150px!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(4),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(4){min-width:180px!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(5),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(5){min-width:150px!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(6),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(6),
+  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(8){min-width:155px!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table th:nth-child(14),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(14){min-width:125px!important}
+  #dashPengajuanCuti .pengajuan-table .nama-cell{font-size:13px!important}
+  #dashPengajuanCuti .cuti-note-pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:68px;
+    padding:7px 10px;
+    border-radius:7px;
+    background:#e8ebee;
+    color:#4d5660;
+    font-size:11px;
+    font-weight:900;
+  }
+  #dashPengajuanCuti .cuti-upcoming{color:#c4841a;font-weight:900}
+  #dashPengajuanCuti .cuti-active{color:#188646;font-weight:900}
+  #dashPengajuanCuti .cuti-finished{color:#69727b;font-weight:900}
+  #dashPengajuanCuti .cuti-none{color:#69727b;font-weight:800}
+}
+
 </style>
 </head>
 <body>
@@ -2404,9 +2522,13 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>📝 Jenis Cuti</th>
                <th>🛫 Tanggal Cuti Lokal/Indo</th>
                <th>🗓 Jumlah Hari Cuti Lokal/Indo</th>
+               <th>💼 Tanggal Cuti Kerja</th>
+               <th>🗓 Jumlah Hari Cuti Kerja</th>
                <th class="leader-approve-head">✓ Approved</th>
                <th class="leader-reject-head">✕ Reject</th>
                <th>ℹ Status</th>
+               <th class="cuti-remaining">⌛ Berapa Hari Lagi</th>
+               <th class="cuti-note-status">💬 Keterangan Cuti</th>
                <th>👁 Keterangan</th>
                <th class="copy-text-head">⧉ Copy Teks</th>
              </tr>
@@ -5047,23 +5169,29 @@ document.addEventListener('keydown',e=>{
     if(!rows) return;
     const isLeader=safeUser().role==='LEADER';
     const entries=getFilteredEntries();
+
     rows.innerHTML=entries.length ? entries.map(x=>{
       const rawLeaveState=cutiReferenceDate(x);
       const isApproved=(x.status||'Pending')==='Approved';
       const leaveState=isApproved ? rawLeaveState : {label:'-',className:'cuti-none'};
       const isKerjaOnly=(x.type||'')==='CUTI KERJA';
       const isBoth=(x.type||'').includes('CUTI LOKAL & CUTI KERJA');
+
       const rangeText=isKerjaOnly
         ? fmtRange(x.kerjaStart,x.kerjaEnd)
         : (isBoth
           ? `${fmtRange(x.lokalStart,x.lokalEnd)} | Cuti Kerja: ${fmtRange(x.kerjaStart,x.kerjaEnd)}`
           : fmtRange(x.lokalStart,x.lokalEnd));
+
       const totalText=isKerjaOnly
         ? `${x.kerjaDays||'-'} Hari`
         : (isBoth
           ? `${x.lokalDays||0} Hari Lokal/Indo + ${x.kerjaDays||0} Hari Kerja`
           : `${x.lokalDays||'-'} Hari`);
+
       const labelRange=isKerjaOnly ? 'Start Cuti Kerja s/d' : 'Start Cuti Lokal/Indo s/d';
+      const noteText=x.notes||x.note||x.keterangan||'-';
+
       const textToCopy=[
         `PENGAJUAN CUTI : ${x.type||'-'}`,
         `No Paspor : ${x.passport||'-'}`,
@@ -5074,15 +5202,19 @@ document.addEventListener('keydown',e=>{
         `Total Cuti : ${totalText}`,
         '',
         'ACC LDR : '
-      ].join('\n');
+      ].join('
+');
+
       return `<tr>
-        <td>${x.role}</td>
-        <td class="nama-cell">${x.name}</td>
+        <td>${x.role||'-'}</td>
+        <td class="nama-cell">${x.name||'-'}</td>
         <td>${x.passport||'-'}</td>
         <td>${fmtSubmitted(x.submittedAt)}</td>
         <td>${x.type||'-'}</td>
         <td>${fmtRange(x.lokalStart,x.lokalEnd)}</td>
         <td>${x.lokalDays||'-'}</td>
+        <td>${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
+        <td>${x.kerjaDays||'-'}</td>
         <td class="leader-approve-cell">${
           isLeader && (x.status||'Pending')==='Pending'
             ? `<button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>`
@@ -5094,10 +5226,12 @@ document.addEventListener('keydown',e=>{
             : '—'
         }</td>
         <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
+        <td class="cuti-remaining"><span class="${leaveState.className}">${leaveState.label}</span></td>
+        <td class="cuti-note-status"><span class="cuti-note-pill">${noteText}</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
         <td class="copy-text-cell"><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
       </tr>`;
-    }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    }).join('') : '<tr><td colspan="16" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
   function renderTabs(){
     document.querySelectorAll('[data-cuti-filter-status]').forEach(btn=>btn.classList.toggle('active',btn.dataset.cutiFilterStatus===cutiState.status));
@@ -5123,6 +5257,7 @@ document.addEventListener('keydown',e=>{
     const showCopy=cutiState.status!=='Pending';
     document.querySelectorAll('.copy-text-head').forEach(th=>th.style.display=showCopy?'table-cell':'none');
     document.querySelectorAll('.copy-text-cell').forEach(td=>td.style.display=showCopy?'table-cell':'none');
+    document.querySelectorAll('.cuti-remaining,.cuti-note-status').forEach(el=>el.style.display='table-cell');
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
@@ -5464,6 +5599,16 @@ document.addEventListener('click', async (event) => {
     console.error('Pemeriksaan Check-out tertunda gagal:', error);
   }
 }, true);
+</script>
+
+
+<script>
+/* Pastikan tampilan Pengajuan Cuti dirender ulang setelah Firebase sync siap. */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+  },900);
+});
 </script>
 
 </body>
