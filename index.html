@@ -2150,31 +2150,53 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 
 
-/* Tabel Pending / Approved / Rejected selalu memakai lebar dan posisi yang sama */
+/* Pengajuan Cuti: tanpa kolom Approve/Reject, struktur mengikuti Pending/Approved/Rejected */
 @media(min-width:768px){
   #dashPengajuanCuti .pengajuan-table-wrap{
-    display:block!important;
     width:100%!important;
-    max-width:100%!important;
-    min-width:100%!important;
     overflow:hidden!important;
   }
-  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout{
+  #dashPengajuanCuti .pengajuan-table{
     width:100%!important;
     min-width:0!important;
-    max-width:100%!important;
     table-layout:fixed!important;
   }
-  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout thead,
-  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout tbody,
-  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout tr{
-    width:100%!important;
+  #dashPengajuanCuti .pengajuan-table th,
+  #dashPengajuanCuti .pengajuan-table td{
+    padding:10px 6px!important;
+    font-size:11px!important;
+    line-height:1.28!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:break-word!important;
   }
-  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout .pengajuan-empty-row{
-    height:48px!important;
+  #dashPengajuanCuti .pengajuan-table th{
+    font-size:11px!important;
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-table .nama-cell{
+    font-size:11px!important;
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-empty-row{
+    height:46px!important;
     text-align:center!important;
-    vertical-align:middle!important;
   }
+  #dashPengajuanCuti .cuti-note-pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:6px 8px;
+    border-radius:7px;
+    background:#e8ebee;
+    color:#56606a;
+    font-size:10px;
+    font-weight:900;
+  }
+  #dashPengajuanCuti .cuti-upcoming{color:#c4841a;font-weight:900}
+  #dashPengajuanCuti .cuti-active{color:#168547;font-weight:900}
+  #dashPengajuanCuti .cuti-finished{color:#68717b;font-weight:900}
+  #dashPengajuanCuti .cuti-none{color:#68717b;font-weight:800}
 }
 
 </style>
@@ -2451,9 +2473,11 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>📝 Jenis Cuti</th>
                <th>🛫 Tanggal Cuti Lokal/Indo</th>
                <th>🗓 Jumlah Hari Cuti Lokal/Indo</th>
-               <th class="leader-approve-head">✓ Approved</th>
-               <th class="leader-reject-head">✕ Reject</th>
+               <th class="cuti-kerja-col">💼 Tanggal Cuti Kerja</th>
+               <th class="cuti-kerja-col">🗓 Jumlah Hari Cuti Kerja</th>
                <th>ℹ Status</th>
+               <th class="cuti-approved-col">⌛ Berapa Hari Lagi</th>
+               <th class="cuti-approved-col cuti-rejected-col">💬 Keterangan Cuti</th>
                <th>👁 Keterangan</th>
                <th class="copy-text-head">⧉ Copy Teks</th>
              </tr>
@@ -5092,14 +5116,16 @@ document.addEventListener('keydown',e=>{
   function renderTable(){
     const rows=ps('pengajuanCutiRows');
     if(!rows) return;
-    const isLeader=safeUser().role==='LEADER';
     const entries=getFilteredEntries();
+
     rows.innerHTML=entries.length ? entries.map(x=>{
       const rawLeaveState=cutiReferenceDate(x);
       const isApproved=(x.status||'Pending')==='Approved';
       const leaveState=isApproved ? rawLeaveState : {label:'-',className:'cuti-none'};
+      const noteText=x.notes||x.note||x.keterangan||'-';
       const isKerjaOnly=(x.type||'')==='CUTI KERJA';
       const isBoth=(x.type||'').includes('CUTI LOKAL & CUTI KERJA');
+
       const rangeText=isKerjaOnly
         ? fmtRange(x.kerjaStart,x.kerjaEnd)
         : (isBoth
@@ -5121,72 +5147,55 @@ document.addEventListener('keydown',e=>{
         `Total Cuti : ${totalText}`,
         '',
         'ACC LDR : '
-      ].join('\n');
+      ].join('
+');
+
       return `<tr>
-        <td>${x.role}</td>
-        <td class="nama-cell">${x.name}</td>
+        <td>${x.role||'-'}</td>
+        <td class="nama-cell">${x.name||'-'}</td>
         <td>${x.passport||'-'}</td>
         <td>${fmtSubmitted(x.submittedAt)}</td>
         <td>${x.type||'-'}</td>
         <td>${fmtRange(x.lokalStart,x.lokalEnd)}</td>
         <td>${x.lokalDays||'-'}</td>
-        <td class="leader-approve-cell">${
-          isLeader && (x.status||'Pending')==='Pending'
-            ? `<button type="button" class="leader-approve-btn" data-cuti-action="Approved" data-cuti-id="${x.id}">✓ Approve</button>`
-            : '—'
-        }</td>
-        <td class="leader-reject-cell">${
-          isLeader && (x.status||'Pending')==='Pending'
-            ? `<button type="button" class="leader-reject-btn" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕ Reject</button>`
-            : '—'
-        }</td>
+        <td class="cuti-kerja-col">${fmtRange(x.kerjaStart,x.kerjaEnd)}</td>
+        <td class="cuti-kerja-col">${x.kerjaDays||'-'}</td>
         <td><span class="pengajuan-status ${statusClass(x.status)}">${x.status||'Pending'}</span></td>
+        <td class="cuti-approved-col"><span class="${leaveState.className}">${leaveState.label}</span></td>
+        <td class="cuti-approved-col cuti-rejected-col"><span class="cuti-note-pill">${noteText}</span></td>
         <td><button type="button" class="pengajuan-eye" title="Lihat Keterangan" data-cuti-detail="${x.id}">👁</button></td>
         <td class="copy-text-cell"><button type="button" class="pengajuan-copy-btn" title="Copy Teks" data-cuti-copy="${encodeURIComponent(textToCopy)}">⧉ Copy</button></td>
       </tr>`;
-    }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
+    }).join('') : '<tr><td colspan="14" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
-  function syncPengajuanTableFixedWidth(){
+  function syncEmptyPengajuanTable(){
     const table=ps('pengajuanCutiRows')?.closest('.pengajuan-table');
     const rows=ps('pengajuanCutiRows');
     if(!table||!rows) return;
 
+    const isEmpty=!rows.querySelector('tr:not(.pengajuan-empty-row)');
     const heads=[...table.querySelectorAll('thead th')];
     const visibleHeads=heads.filter(th=>getComputedStyle(th).display!=='none');
-    if(!visibleHeads.length) return;
 
-    // Hapus colgroup lama lalu buat ulang berdasarkan kolom yang sedang tampil.
-    table.querySelectorAll('colgroup[data-pengajuan-fixed]').forEach(el=>el.remove());
+    if(!isEmpty || !visibleHeads.length){
+      table.classList.remove('is-empty-table');
+      heads.forEach(th=>th.style.removeProperty('width'));
+      return;
+    }
 
-    const baseWeights=[3.2,6.2,5.7,8.2,7.2,8.1,7.5,6.5,6.5,5.6,4.7,5.7];
-    const visibleIndexes=heads
-      .map((th,index)=>getComputedStyle(th).display!=='none' ? index : -1)
-      .filter(index=>index>=0);
-    const total=visibleIndexes.reduce((sum,index)=>sum+(baseWeights[index]||6),0);
-
-    const group=document.createElement('colgroup');
-    group.dataset.pengajuanFixed='true';
-
-    heads.forEach((th,index)=>{
-      const col=document.createElement('col');
-      const isVisible=getComputedStyle(th).display!=='none';
-      if(isVisible){
-        const normalized=((baseWeights[index]||6)/total*100).toFixed(4)+'%';
-        col.style.width=normalized;
-        th.style.setProperty('width',normalized,'important');
-      }else{
-        col.style.width='0';
-        col.style.visibility='collapse';
-        th.style.removeProperty('width');
-      }
-      group.appendChild(col);
-    });
-
-    table.prepend(group);
-    table.classList.add('pengajuan-fixed-layout');
+    table.classList.add('is-empty-table');
     table.style.setProperty('width','100%','important');
     table.style.setProperty('min-width','0','important');
     table.style.setProperty('table-layout','fixed','important');
+
+    const width=(100/visibleHeads.length).toFixed(4)+'%';
+    heads.forEach(th=>{
+      if(getComputedStyle(th).display!=='none'){
+        th.style.setProperty('width',width,'important');
+      }else{
+        th.style.removeProperty('width');
+      }
+    });
 
     const emptyCell=rows.querySelector('.pengajuan-empty-row');
     if(emptyCell){
@@ -5214,12 +5223,26 @@ document.addEventListener('keydown',e=>{
     if(addBtn) addBtn.style.display=isLeader?'none':'inline-flex';
     const editCardsBtn=ps('editSummaryCardsBtn');
     if(editCardsBtn) editCardsBtn.classList.toggle('hidden',!isLeader);
-    document.querySelectorAll('.leader-approve-head,.leader-reject-head').forEach(th=>th.style.display=isLeader?'table-cell':'none');
-    document.querySelectorAll('.leader-approve-cell,.leader-reject-cell').forEach(td=>td.style.display=isLeader?'table-cell':'none');
-    const showCopy=cutiState.status!=='Pending';
-    document.querySelectorAll('.copy-text-head').forEach(th=>th.style.display=showCopy?'table-cell':'none');
-    document.querySelectorAll('.copy-text-cell').forEach(td=>td.style.display=showCopy?'table-cell':'none');
-    requestAnimationFrame(()=>requestAnimationFrame(syncPengajuanTableFixedWidth));
+    const status=cutiState.status||'Pending';
+    const isPending=status==='Pending';
+    const isApprovedTab=status==='Approved';
+    const isRejected=status==='Rejected';
+
+    // Approve/Reject tidak lagi ditampilkan sebagai kolom tabel.
+    document.querySelectorAll('.leader-approve-head,.leader-reject-head,.leader-approve-cell,.leader-reject-cell').forEach(el=>el.style.display='none');
+
+    // Pending: tanpa Hari Lagi, Keterangan Cuti, Copy.
+    // Approved: semua kolom tampil.
+    // Rejected: tanpa Hari Lagi dan Copy, tetapi Keterangan Cuti tetap tampil.
+    document.querySelectorAll('.cuti-approved-col').forEach(el=>{
+      el.style.display=isApprovedTab || (isRejected && el.classList.contains('cuti-rejected-col')) ? 'table-cell' : 'none';
+    });
+    document.querySelectorAll('.copy-text-head,.copy-text-cell').forEach(el=>{
+      el.style.display=isApprovedTab ? 'table-cell' : 'none';
+    });
+    document.querySelectorAll('.cuti-kerja-col').forEach(el=>el.style.display='table-cell');
+
+    requestAnimationFrame(syncEmptyPengajuanTable);
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
