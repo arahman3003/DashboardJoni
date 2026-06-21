@@ -2689,6 +2689,86 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .pengajuan-resign-table{min-width:760px}
 }
 
+
+/* Pengajuan Resign: posisi tabel lebih turun dan ada tombol input */
+#dashPengajuanResign{
+  padding:34px 22px 44px!important;
+  min-height:calc(100vh - 72px)!important;
+}
+.pengajuan-resign-wrap{width:100%;max-width:none}
+.pengajuan-resign-title{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:8px 0 28px;color:#39322a;font-size:24px;font-weight:950;
+}
+.pengajuan-resign-title span{color:#9c7045;font-size:28px}
+.pengajuan-resign-actions{
+  display:flex;align-items:center;justify-content:flex-start;
+  margin:8px 0 18px;
+}
+.pengajuan-resign-add-btn{
+  min-height:42px;padding:0 16px;border-radius:9px;
+  background:#1021a9!important;color:#fff!important;
+  font-size:13px;font-weight:950;
+  box-shadow:0 8px 18px rgba(16,33,169,.18);
+}
+.pengajuan-resign-add-btn:hover{filter:brightness(1.07)}
+.pengajuan-resign-table-wrap{
+  width:100%;overflow:hidden;border-radius:14px;background:#fff;
+  box-shadow:0 10px 24px rgba(51,33,10,.06);
+}
+.pengajuan-resign-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;background:#fff}
+.pengajuan-resign-table th{
+  padding:14px 12px;background:#2d2d2d;color:#fff;
+  border-right:1px solid rgba(255,255,255,.13);font-size:12px;
+  line-height:1.28;text-align:center;font-weight:900;
+}
+.pengajuan-resign-table td{
+  padding:13px 12px;color:#262626;border-right:1px solid #d7d7d7;
+  border-bottom:1px solid #d7d7d7;font-size:12px;line-height:1.35;
+  text-align:center;vertical-align:middle;overflow-wrap:anywhere;
+}
+.pengajuan-resign-table th:last-child,.pengajuan-resign-table td:last-child{border-right:none}
+.pengajuan-resign-table th:nth-child(1),.pengajuan-resign-table td:nth-child(1){width:18%}
+.pengajuan-resign-table th:nth-child(2),.pengajuan-resign-table td:nth-child(2){width:16%}
+.pengajuan-resign-table th:nth-child(3),.pengajuan-resign-table td:nth-child(3){width:22%}
+.pengajuan-resign-table th:nth-child(4),.pengajuan-resign-table td:nth-child(4){width:22%}
+.pengajuan-resign-table th:nth-child(5),.pengajuan-resign-table td:nth-child(5){width:22%}
+.pengajuan-resign-empty{height:54px;color:#7b7062!important;font-weight:800}
+
+/* Modal input resign */
+.resign-modal-backdrop{
+  position:fixed;inset:0;z-index:68000;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(17,20,28,.50);backdrop-filter:blur(5px);
+}
+.resign-modal-backdrop.hidden{display:none!important}
+.resign-modal-card{
+  width:min(500px,100%);padding:22px;border-radius:20px;
+  background:linear-gradient(155deg,#fffdf9,#f6efe5);border:1px solid rgba(190,148,97,.40);
+  box-shadow:0 28px 80px rgba(0,0,0,.30);
+}
+.resign-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.resign-modal-head h3{margin:0;color:#30271f;font-size:19px;font-weight:950}
+.resign-modal-head p{margin:5px 0 0;color:#74695d;font-size:12px}
+.resign-modal-x{width:34px;height:34px;border-radius:10px;background:#f1e8dd!important;color:#80603e!important;font-size:24px;line-height:1}
+.resign-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.resign-modal-card label{display:block;margin:11px 0 0;color:#594a3c;font-size:11px;font-weight:900}
+.resign-modal-card input,.resign-modal-card textarea{
+  width:100%;margin-top:6px;padding:11px 12px;border-radius:10px;
+  border:1px solid #dacfc1;background:#fffdf9;color:#30271f;font:inherit;font-size:13px;outline:0;
+}
+.resign-modal-card input[readonly]{background:#f1eee8;color:#6d655d}
+.resign-modal-card textarea{min-height:95px;resize:vertical}
+.resign-form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.resign-btn-cancel,.resign-btn-submit{min-height:41px;padding:0 15px;border-radius:10px;font-size:12px;font-weight:900}
+.resign-btn-cancel{background:#fff!important;color:#6d655d!important;border:1px solid #d9d0c4!important}
+.resign-btn-submit{background:linear-gradient(135deg,#b98a4d,#8c6438)!important;color:#fff!important}
+@media(max-width:767px){
+  #dashPengajuanResign{padding:18px!important}
+  .pengajuan-resign-table-wrap{overflow-x:auto}
+  .pengajuan-resign-table{min-width:760px}
+  .resign-form-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -2983,6 +3063,9 @@ body.pc-app-mode #desktopApp{display:grid!important}
    <section class="dash-content" id="dashPengajuanResign">
      <div class="pengajuan-resign-wrap">
        <h1 class="pengajuan-resign-title"><span>◍</span> Pengajuan Resign</h1>
+       <div class="pengajuan-resign-actions">
+         <button type="button" class="pengajuan-resign-add-btn" id="openPengajuanResignBtn">✚ Tambah Pengajuan Resign</button>
+       </div>
        <div class="pengajuan-resign-table-wrap">
          <table class="pengajuan-resign-table">
            <thead>
@@ -6320,6 +6403,166 @@ document.addEventListener('click',function(event){
   });
   window.addEventListener('load',()=>setTimeout(syncAllTables,200));
 })();
+</script>
+
+
+<!-- Form Pengajuan Resign -->
+<div class="resign-modal-backdrop hidden" id="pengajuanResignModal" role="dialog" aria-modal="true" aria-labelledby="resignModalTitle">
+  <div class="resign-modal-card">
+    <div class="resign-modal-head">
+      <div>
+        <h3 id="resignModalTitle">✚ Tambah Pengajuan Resign</h3>
+        <p>Lengkapi data pengajuan resign staff.</p>
+      </div>
+      <button type="button" class="resign-modal-x" id="closePengajuanResignModal" aria-label="Tutup">×</button>
+    </div>
+    <form id="pengajuanResignForm">
+      <div class="resign-form-grid">
+        <label>Nama Staff
+          <input id="resignNama" type="text" readonly>
+        </label>
+        <label>Role
+          <input id="resignRole" type="text" readonly>
+        </label>
+      </div>
+      <label>Nomor Paspor
+        <input id="resignPassport" type="text" required placeholder="Masukkan nomor paspor">
+      </label>
+      <label>Tanggal Pengajuan Resign
+        <input id="resignDate" type="date" required>
+      </label>
+      <label>Keterangan Resign
+        <textarea id="resignNote" required placeholder="Tuliskan keterangan resign..."></textarea>
+      </label>
+      <div class="resign-form-actions">
+        <button type="button" class="resign-btn-cancel" id="cancelPengajuanResign">Batal</button>
+        <button type="submit" class="resign-btn-submit">Kirim Pengajuan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+
+const resignFirebaseConfig={
+  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
+  authDomain:'absensi-joni.firebaseapp.com',
+  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'absensi-joni',
+  storageBucket:'absensi-joni.firebasestorage.app',
+  messagingSenderId:'784014108802',
+  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
+};
+
+const resignApp=getApps().length?getApp():initializeApp(resignFirebaseConfig);
+const resignDb=getDatabase(resignApp);
+const resignRef=ref(resignDb,'pengajuanResignShared');
+let resignData=[];
+let resignReady=false;
+
+const $r=id=>document.getElementById(id);
+const escapeHtml=value=>String(value??'-').replace(/[&<>"']/g,ch=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+}[ch]));
+const formatDate=value=>{
+  if(!value) return '-';
+  const date=new Date(value+'T00:00:00');
+  if(Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+};
+const formatSubmitted=value=>{
+  if(!value) return '-';
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString('id-ID',{
+    day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'
+  }).replace(',', ' Pukul');
+};
+function currentUser(){
+  try{
+    const user=JSON.parse(sessionStorage.getItem('absensi_test_user')||'null');
+    if(user) return user;
+  }catch(e){}
+  return {name:'-',role:'-',username:'user'};
+}
+function showResignAlert(message,type='info',title='Informasi'){
+  if(typeof window.showAppAlert==='function'){
+    window.showAppAlert(message,type,title);
+  }else{
+    console.log(title+': '+message);
+  }
+}
+function renderResignRows(){
+  const rows=$r('pengajuanResignRows');
+  if(!rows) return;
+  const list=[...resignData].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  rows.innerHTML=list.length ? list.map(item=>`<tr>
+    <td><b>${escapeHtml(item.name)}</b></td>
+    <td>${escapeHtml(item.passport)}</td>
+    <td>${formatDate(item.resignDate)}</td>
+    <td>${formatSubmitted(item.createdAt)}</td>
+    <td>${escapeHtml(item.note)}</td>
+  </tr>`).join('') : '<tr><td colspan="5" class="pengajuan-resign-empty">Belum ada data pengajuan resign.</td></tr>';
+}
+function openResignForm(){
+  const user=currentUser();
+  $r('pengajuanResignForm')?.reset();
+  $r('resignNama').value=user.name||'-';
+  $r('resignRole').value=user.role||'-';
+  $r('pengajuanResignModal')?.classList.remove('hidden');
+}
+function closeResignForm(){
+  $r('pengajuanResignModal')?.classList.add('hidden');
+}
+$r('openPengajuanResignBtn')?.addEventListener('click',openResignForm);
+$r('closePengajuanResignModal')?.addEventListener('click',closeResignForm);
+$r('cancelPengajuanResign')?.addEventListener('click',closeResignForm);
+$r('pengajuanResignModal')?.addEventListener('click',event=>{
+  if(event.target===$r('pengajuanResignModal')) closeResignForm();
+});
+$r('pengajuanResignForm')?.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const user=currentUser();
+  const passport=$r('resignPassport').value.trim();
+  const resignDate=$r('resignDate').value;
+  const note=$r('resignNote').value.trim();
+  if(!passport || !resignDate || !note){
+    showResignAlert('Lengkapi nomor paspor, tanggal pengajuan resign, dan keterangan resign.','warning','Data Belum Lengkap');
+    return;
+  }
+  const record={
+    id:'resign_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    name:user.name||'-',
+    role:user.role||'-',
+    username:user.username||'user',
+    passport,
+    resignDate,
+    note,
+    createdAt:new Date().toISOString()
+  };
+  try{
+    const updated=[...resignData,record];
+    await set(resignRef,updated);
+    closeResignForm();
+    showResignAlert('Pengajuan resign berhasil dikirim.','success','Pengajuan Berhasil Dikirim');
+  }catch(error){
+    console.error(error);
+    showResignAlert('Pengajuan resign belum tersimpan. Periksa koneksi atau Rules Database.','warning','Gagal Menyimpan');
+  }
+});
+onValue(resignRef,snap=>{
+  const remote=snap.exists()?snap.val():[];
+  resignData=Array.isArray(remote)?remote:[];
+  resignReady=true;
+  renderResignRows();
+},error=>{
+  console.error('Sync resign gagal:',error);
+  renderResignRows();
+});
+window.renderPengajuanResign=renderResignRows;
 </script>
 
 </body>
