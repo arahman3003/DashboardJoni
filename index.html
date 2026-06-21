@@ -2074,43 +2074,60 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 
 
-/* Wallpaper khusus tampilan Desktop */
+/* Wallpaper khusus halaman Login Desktop */
 @media(min-width:768px){
-  .desktop.dashboard,
-  .dash-main{
+  #desktopLoginPage{
+    min-height:100vh;
     background:
-      linear-gradient(rgba(16,18,24,.45),rgba(16,18,24,.58)),
-      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover fixed!important;
+      linear-gradient(rgba(14,16,22,.42),rgba(14,16,22,.58)),
+      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover no-repeat fixed!important;
   }
-
-  .dash-content{
-    background:
-      linear-gradient(rgba(250,247,241,.88),rgba(245,240,232,.91)),
-      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover fixed!important;
+  #desktopLoginPage .desktop-login-wrap,
+  #desktopLoginPage .desktop-login-shell{
+    min-height:100vh;
+    background:transparent!important;
   }
-
-  .dash-home{
-    background:
-      linear-gradient(rgba(27,23,19,.66),rgba(27,23,19,.75)),
-      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover fixed!important;
-  }
-
-  .dash-topbar{
-    background:linear-gradient(90deg,rgba(18,20,29,.96),rgba(25,28,37,.92))!important;
+  #desktopLoginPage .desktop-login-card{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(145deg,rgba(30,25,25,.90),rgba(75,48,30,.78))!important;
+    border:1px solid rgba(244,208,142,.56)!important;
+    box-shadow:0 24px 54px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,243,214,.15)!important;
     backdrop-filter:blur(10px);
   }
-
-  .dash-content .dash-panel,
-  .dash-content .shift-topbox,
-  .dash-content .shift-section,
-  .dash-content .dash-stat,
-  .dash-content .izin-monitor-card,
-  .dash-content .izin-input-card,
-  .dash-content .izin-active-card,
-  .dash-content .extra-page-card{
-    background:rgba(255,253,249,.91)!important;
-    backdrop-filter:blur(9px);
+  #desktopLoginPage .desktop-login-card:before{
+    content:'';
+    position:absolute;
+    inset:-30% -65%;
+    pointer-events:none;
+    background:linear-gradient(105deg,transparent 43%,rgba(255,231,169,.40) 50%,transparent 57%);
+    transform:translateX(-60%) rotate(8deg);
+    animation:desktopLoginShine 5.5s ease-in-out infinite;
   }
+  #desktopLoginPage .desktop-login-card > *{position:relative;z-index:1}
+  #desktopLoginPage .desktop-login-title,
+  #desktopLoginPage .desktop-login-card h2{
+    color:#fff2c8!important;
+    text-shadow:0 2px 4px rgba(0,0,0,.55)!important;
+  }
+  #desktopLoginPage .desktop-login-card p,
+  #desktopLoginPage .desktop-login-card label{
+    color:#f2ddbc!important;
+  }
+  #desktopLoginPage .desktop-login-card input{
+    background:rgba(255,251,243,.95)!important;
+    color:#332419!important;
+    border-color:rgba(244,208,142,.68)!important;
+  }
+  #desktopLoginPage .desktop-login-btn{
+    background:linear-gradient(90deg,#855326,#d7a153,#875327)!important;
+    color:#fff8eb!important;
+    box-shadow:0 10px 20px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,241,209,.35)!important;
+  }
+}
+@keyframes desktopLoginShine{
+  0%,20%{transform:translateX(-65%) rotate(8deg)}
+  62%,100%{transform:translateX(70%) rotate(8deg)}
 }
 
 </style>
