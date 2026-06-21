@@ -2130,6 +2130,29 @@ body.pc-app-mode #desktopApp{display:grid!important}
   62%,100%{transform:translateX(70%) rotate(8deg)}
 }
 
+
+/* Pengajuan kosong tetap rapi dan memenuhi posisi tabel seperti saat ada data */
+@media(min-width:768px){
+  #dashPengajuanCuti .pengajuan-table.is-empty-table{
+    width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
+  }
+  #dashPengajuanCuti .pengajuan-table.is-empty-table th,
+  #dashPengajuanCuti .pengajuan-table.is-empty-table td{
+    width:auto!important;
+  }
+  #dashPengajuanCuti .pengajuan-table.is-empty-table .pengajuan-empty-row{
+    height:48px!important;
+    text-align:center!important;
+    font-size:11px!important;
+  }
+  #dashPengajuanCuti .pengajuan-table-wrap{
+    width:100%!important;
+    overflow:hidden!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -5047,6 +5070,8 @@ document.addEventListener('keydown',e=>{
     if(!rows) return;
     const isLeader=safeUser().role==='LEADER';
     const entries=getFilteredEntries();
+    const table=rows.closest('.pengajuan-table');
+    if(table) table.classList.toggle('is-empty-table',!entries.length);
     rows.innerHTML=entries.length ? entries.map(x=>{
       const rawLeaveState=cutiReferenceDate(x);
       const isApproved=(x.status||'Pending')==='Approved';
