@@ -2748,6 +2748,22 @@ function normalizeSchedule(raw, username){
   const def=DEFAULT_TIMES[category]||{start:'',end:''};
   return {category,start:raw?.start??def.start,end:raw?.end??def.end};
 }
+
+/* Shift hasil edit berlaku terus sampai diedit lagi.
+   Untuk tanggal yang belum punya record sendiri, sistem memakai perubahan
+   terakhir dari tanggal sebelumnya. */
+function getInheritedShift(rawShiftHistory, targetDate, username){
+  const history=rawShiftHistory||{};
+  const sameDay=history?.[targetDate]?.[username];
+  if(sameDay) return sameDay;
+
+  const latestDate=Object.keys(history)
+    .filter(date=>date<=targetDate && history?.[date]?.[username])
+    .sort()
+    .pop();
+
+  return latestDate ? history[latestDate][username] : null;
+}
 function scheduleKind(category){
   if(category==='PAGI') return '<span class="schedule-kind">PAGI</span>';
   if(category==='MALAM') return '<span class="schedule-kind malam">MALAM</span>';
@@ -2834,16 +2850,21 @@ async function renderDashboard(){
   $('dashToday').textContent=dateLabel(dateObj);
   holder.innerHTML='<div class="dash-empty">Memuat data shift dan absensi...</div>';
   try{
-    const [attendanceSnap, scheduleSnap, crosscheckSnap]=await Promise.all([
+    const [attendanceSnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
       get(ref(db,`absensi/${date}`)),
       get(ref(db,`shiftStaff/${date}`)),
+      get(ref(db,'shiftStaff')),
       get(ref(db,`crosschecks/${date}`))
     ]);
     const attendance=attendanceSnap.exists()?attendanceSnap.val():{};
     const savedSchedules=scheduleSnap.exists()?scheduleSnap.val():{};
+    const shiftHistory=scheduleHistorySnap.exists()?scheduleHistorySnap.val():{};
     const crosschecks=crosscheckSnap.exists()?crosscheckSnap.val():{};
     const schedules={};
-    userList().forEach(u=>schedules[u.username]=normalizeSchedule(savedSchedules[u.username],u.username));
+    userList().forEach(u=>{
+      const saved=savedSchedules[u.username] || getInheritedShift(shiftHistory,date,u.username);
+      schedules[u.username]=normalizeSchedule(saved,u.username);
+    });
     const search=($('dashSearch').value||'').trim().toLowerCase();
     const role=$('dashRole').value;
     const allUsers=userList();
@@ -2908,8 +2929,14 @@ function openShiftModal(username){
   selectedShiftUser=username;
   $('shiftModalUser').innerHTML=`<b>${user.name}</b><br><span style="color:#8e7b68">${user.username} • ${user.role}</span>`;
   $('shiftModal').classList.remove('hidden');
-  get(ref(db,`shiftStaff/${currentDashboardDate()}/${username}`)).then(snap=>{
-    const schedule=normalizeSchedule(snap.exists()?snap.val():null,username);
+  Promise.all([
+    get(ref(db,`shiftStaff/${currentDashboardDate()}/${username}`)),
+    get(ref(db,'shiftStaff'))
+  ]).then(([todaySnap,historySnap])=>{
+    const todayRaw=todaySnap.exists()?todaySnap.val():null;
+    const history=historySnap.exists()?historySnap.val():{};
+    const raw=todayRaw || getInheritedShift(history,currentDashboardDate(),username);
+    const schedule=normalizeSchedule(raw,username);
     $('shiftModalSelect').value=schedule.category||'';
     $('shiftStart').value=schedule.start||'';
     $('shiftEnd').value=schedule.end||'';
@@ -2933,7 +2960,7 @@ async function saveShift(){
   try{
     if(!category) await remove(path);
     else await set(path,{category,shift:category,start:category==='CUTI'?'':start,end:category==='CUTI'?'':end,updatedAt:new Date().toISOString()});
-    toast(category?`${category} berhasil disimpan.`:'Shift dikosongkan.');
+    toast(category?`${category} berhasil disimpan dan berlaku sampai diubah lagi.`:'Shift dikosongkan dan kembali ke jadwal awal.');
     closeShiftModal(); renderDashboard();
   }catch(e){console.error(e);toast('Shift belum tersimpan. Periksa Rules Database.')}
 }
@@ -2974,8 +3001,13 @@ async function saveCrosscheck(){
 }
 async function getManualCheckinSchedule(username){
   const today=currentDashboardDate();
-  const snap=await get(ref(db,`shiftStaff/${today}/${username}`));
-  return normalizeSchedule(snap.exists()?snap.val():null,username);
+  const [todaySnap,historySnap]=await Promise.all([
+    get(ref(db,`shiftStaff/${today}/${username}`)),
+    get(ref(db,'shiftStaff'))
+  ]);
+  const history=historySnap.exists()?historySnap.val():{};
+  const raw=todaySnap.exists()?todaySnap.val():getInheritedShift(history,today,username);
+  return normalizeSchedule(raw,username);
 }
 async function openManualCheckinModal(username){
   const user=TEST_USERS[username];
