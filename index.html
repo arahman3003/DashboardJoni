@@ -1716,15 +1716,47 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .izin-date-filter button:hover{filter:brightness(1.06)}
 @media(max-width:720px){.izin-monitor-top{flex-direction:column}.izin-date-filter{width:100%;flex-wrap:wrap}.izin-date-filter input{flex:1;min-width:160px}}
 
+
+/* Logo Absensi Joni untuk tampilan HP */
+.logo.logo-image{
+  width:126px!important;
+  height:70px!important;
+  margin:0 auto 12px!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.logo.logo-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.mini-logo.mini-logo-image{
+  width:46px!important;
+  height:34px!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:transparent!important;
+  overflow:visible!important;
+}
+.mini-logo.mini-logo-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
 </style>
 </head>
 <body>
 <section class="mobile" id="loginPage">
-  <div class="wrap login"><div class="brand"><div class="logo">◆</div><h1>ABSENSI KERJA</h1><p>Masuk untuk melakukan absensi hari ini</p></div>
+  <div class="wrap login"><div class="brand"><div class="logo logo-image"><img src="https://i.imgur.com/Dy45M4t.png" alt="Joni Togel"></div><h1>ABSENSI JONI</h1><p>Masuk untuk melakukan absensi hari ini</p></div>
   <div class="card"><label class="label">USERNAME</label><input id="username" autocomplete="username" placeholder="Masukkan username"><label class="label">PASSWORD</label><input id="password" autocomplete="current-password" type="password" placeholder="Masukkan password"><button class="primary" id="loginBtn">Masuk Absensi</button><div class="err" id="loginError"></div><div class="hint">Login memakai username, tanpa email yang ditampilkan.</div></div></div>
 </section>
 <main class="mobile hidden" id="appPage">
- <div class="wrap"><header class="top"><div class="top-left"><div class="mini-logo">◆</div><div><h2>ABSENSI KERJA</h2><p id="welcome">Selamat datang</p></div></div><button class="logout" id="logoutBtn">Keluar</button></header>
+ <div class="wrap"><header class="top"><div class="top-left"><div class="mini-logo mini-logo-image"><img src="https://i.imgur.com/Dy45M4t.png" alt="Joni Togel"></div><div><h2>ABSENSI JONI</h2><p id="welcome">Selamat datang</p></div></div><button class="logout" id="logoutBtn">Keluar</button></header>
  <section class="hero"><div class="small">Waktu sekarang</div><div class="clock" id="clock">00:00:00</div><div class="date" id="dateText">Memuat tanggal...</div><div class="status" id="todayStatus">Belum absensi</div></section>
  <section class="grid"><div class="info"><div class="i-label">JAM MASUK</div><strong id="inTime">--:--</strong><span id="inState">Belum check-in</span></div><div class="info"><div class="i-label">JAM PULANG</div><strong id="outTime">--:--</strong><span id="outState">Belum check-out</span></div></section>
  <section class="card section"><div class="section-head"><div><div class="section-title">Absensi Hari Ini</div><div class="sub">Pastikan lokasi GPS sudah benar</div></div></div><div class="location"><div class="loc-icon">⌖</div><div class="loc-info"><div class="loc-title" id="locTitle">Lokasi belum diambil</div><div class="loc-detail" id="locDetail">Tekan perbarui untuk mengambil GPS perangkat.</div></div><button class="refresh" id="getLocBtn">Perbarui</button></div><div class="actions"><button class="action in" id="checkInBtn"><span class="ico">☀</span><b>Check-in</b><small>Masuk kerja sekarang</small></button><button class="action out" id="checkOutBtn" disabled><span class="ico">☾</span><b>Check-out</b><small>Pulang kerja</small></button></div></section>
