@@ -3137,8 +3137,8 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <div class="pengajuan-toolbar">
          <div class="pengajuan-tabs">
            <button type="button" class="pengajuan-tab active" data-cuti-filter-status="Pending">⏳ Pending</button>
-           <button type="button" class="pengajuan-tab" data-cuti-filter-status="Approved">⬤ Approved</button>
-           <button type="button" class="pengajuan-tab" data-cuti-filter-status="Rejected">✖ Rejected</button>
+           <button type="button" class="pengajuan-tab" data-cuti-filter-status="Approved">✅ Approved</button>
+           <button type="button" class="pengajuan-tab" data-cuti-filter-status="Rejected">❌ Rejected</button>
          </div>
          <div class="pengajuan-filter">
            <select id="pengajuanRoleFilter">
@@ -3186,8 +3186,8 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <div class="pengajuan-resign-toolbar">
          <div class="pengajuan-resign-tabs">
            <button type="button" class="pengajuan-resign-tab active" data-resign-status="Pending">⌛ Pending</button>
-           <button type="button" class="pengajuan-resign-tab" data-resign-status="Approved">● Approved</button>
-           <button type="button" class="pengajuan-resign-tab" data-resign-status="Rejected">✕ Rejected</button>
+           <button type="button" class="pengajuan-resign-tab" data-resign-status="Approved">✅ Approved</button>
+           <button type="button" class="pengajuan-resign-tab" data-resign-status="Rejected">❌ Rejected</button>
          </div>
        </div>
        <div class="pengajuan-resign-table-wrap">
@@ -3389,8 +3389,8 @@ body.pc-app-mode #desktopApp{display:grid!important}
     <button type="button" class="cuti-note-close-btn" id="cutiNoteCloseBtn">Tutup</button>
     <div class="pengajuan-detail-actions hidden">
       <button type="button" class="pengajuan-pending" id="cutiSetPending">Pending</button>
-      <button type="button" class="pengajuan-approve" id="cutiSetApproved">Approved</button>
-      <button type="button" class="pengajuan-reject" id="cutiSetRejected">Rejected</button>
+      <button type="button" class="pengajuan-approve" id="cutiSetApproved">✅ Approved</button>
+      <button type="button" class="pengajuan-reject" id="cutiSetRejected">❌ Rejected</button>
     </div>
   </div>
 </div>
@@ -5868,8 +5868,8 @@ document.addEventListener('keydown',e=>{
           ${
             viewerIsLeader && (x.status||'Pending')==='Pending'
               ? `<span class="role-hover-actions" aria-label="Aksi pengajuan">
-                   <button type="button" class="role-approve-hover" title="Approve" data-cuti-action="Approved" data-cuti-id="${x.id}">✓</button>
-                   <button type="button" class="role-reject-hover" title="Reject" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕</button>
+                   <button type="button" class="role-approve-hover" title="Approve" data-cuti-action="Approved" data-cuti-id="${x.id}">✅</button>
+                   <button type="button" class="role-reject-hover" title="Reject" data-cuti-action="Rejected" data-cuti-id="${x.id}">❌</button>
                  </span>`
               : ''
           }
@@ -6046,13 +6046,13 @@ document.addEventListener('keydown',e=>{
     pendingCutiAction={status,id};
     card.classList.toggle('reject',!isApprove);
 
-    ps('cutiConfirmIcon').textContent=isApprove?'✓':'✕';
+    ps('cutiConfirmIcon').textContent=isApprove?'✅':'❌';
     ps('cutiConfirmTitle').textContent=isApprove?'Setujui Pengajuan Cuti?':'Tolak Pengajuan Cuti?';
     ps('cutiConfirmText').textContent=isApprove
       ? 'Pengajuan akan dipindahkan ke status Approved.'
       : 'Pengajuan akan dipindahkan ke status Rejected.';
     const submit=ps('cutiConfirmSubmit');
-    submit.textContent=isApprove?'✓ Setujui':'✕ Tolak';
+    submit.textContent=isApprove?'✅ Setujui':'❌ Tolak';
     submit.classList.toggle('approve',isApprove);
     submit.classList.toggle('reject',!isApprove);
 
@@ -6445,7 +6445,7 @@ document.addEventListener('click', async (event) => {
 <!-- Konfirmasi Approve / Reject yang lebih elegan -->
 <div class="cuti-confirm-backdrop hidden" id="cutiConfirmModal" role="dialog" aria-modal="true" aria-labelledby="cutiConfirmTitle">
   <div class="cuti-confirm-card">
-    <div class="cuti-confirm-icon" id="cutiConfirmIcon">✓</div>
+    <div class="cuti-confirm-icon" id="cutiConfirmIcon">✅</div>
     <h3 id="cutiConfirmTitle">Setujui Pengajuan?</h3>
     <p id="cutiConfirmText">Pengajuan cuti ini akan diproses.</p>
     <div class="cuti-confirm-actions">
@@ -6649,8 +6649,8 @@ function renderResignRows(){
       ? `<td class="resign-role-action-cell">
            <span class="resign-role-label">${escapeHtml(item.role)}</span>
            <span class="resign-role-hover-actions">
-             <button type="button" class="resign-hover-approve" title="Approve" data-resign-action="Approved" data-resign-id="${escapeHtml(item.id)}">✓</button>
-             <button type="button" class="resign-hover-reject" title="Reject" data-resign-action="Rejected" data-resign-id="${escapeHtml(item.id)}">✕</button>
+             <button type="button" class="resign-hover-approve" title="Approve" data-resign-action="Approved" data-resign-id="${escapeHtml(item.id)}">✅</button>
+             <button type="button" class="resign-hover-reject" title="Reject" data-resign-action="Rejected" data-resign-id="${escapeHtml(item.id)}">❌</button>
            </span>
          </td>`
       : `<td class="resign-role-action-cell"><span class="resign-role-label">${escapeHtml(item.role)}</span></td>`;
@@ -6682,13 +6682,13 @@ function openResignConfirm(status,id){
   const approve=status==='Approved';
   pendingResignAction={status,id};
   card.classList.toggle('reject',!approve);
-  $r('resignConfirmIcon').textContent=approve?'✓':'✕';
+  $r('resignConfirmIcon').textContent=approve?'✅':'❌';
   $r('resignConfirmTitle').textContent=approve?'Setujui Pengajuan Resign?':'Tolak Pengajuan Resign?';
   $r('resignConfirmText').textContent=approve
     ? 'Pengajuan resign akan dipindahkan ke status Approved.'
     : 'Pengajuan resign akan dipindahkan ke status Rejected.';
   const submit=$r('resignConfirmSubmit');
-  submit.textContent=approve?'✓ Setujui':'✕ Tolak';
+  submit.textContent=approve?'✅ Setujui':'❌ Tolak';
   submit.classList.toggle('approve',approve);
   submit.classList.toggle('reject',!approve);
   modal.classList.remove('hidden');
@@ -6800,7 +6800,7 @@ window.renderPengajuanResign=renderResignRows;
 <!-- Popup konfirmasi Approve / Reject Pengajuan Resign -->
 <div class="resign-confirm-backdrop hidden" id="resignConfirmModal" role="dialog" aria-modal="true">
   <div class="resign-confirm-card" id="resignConfirmCard">
-    <div class="resign-confirm-icon" id="resignConfirmIcon">✓</div>
+    <div class="resign-confirm-icon" id="resignConfirmIcon">✅</div>
     <h3 id="resignConfirmTitle">Setujui Pengajuan Resign?</h3>
     <p id="resignConfirmText">Pengajuan resign akan diproses.</p>
     <div class="resign-confirm-actions">
