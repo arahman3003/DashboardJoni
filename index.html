@@ -1768,6 +1768,113 @@ body.pc-app-mode #desktopApp{display:grid!important}
   }
 }
 
+
+/* Login HP: teks lebih jelas, card elegan, dan efek kilau bergerak */
+@media(max-width:767px){
+  #loginPage{
+    position:relative;
+    overflow:hidden;
+  }
+  #loginPage:before{
+    content:'';
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(115deg,
+        transparent 0%,
+        transparent 36%,
+        rgba(255,232,172,.05) 43%,
+        rgba(255,244,212,.38) 50%,
+        rgba(255,232,172,.06) 57%,
+        transparent 64%,
+        transparent 100%);
+    background-size:240% 100%;
+    animation:loginLightSlide 5.8s ease-in-out infinite;
+    z-index:0;
+  }
+  #loginPage .brand h1{
+    color:#fff7dd!important;
+    text-shadow:
+      0 2px 0 rgba(34,17,4,.75),
+      0 0 10px rgba(255,214,121,.72),
+      0 0 22px rgba(255,185,62,.34)!important;
+    letter-spacing:.7px;
+    font-weight:950!important;
+  }
+  #loginPage .brand p{
+    color:#fff3d3!important;
+    text-shadow:0 1px 3px rgba(0,0,0,.7)!important;
+    font-weight:700!important;
+  }
+  #loginPage .card{
+    overflow:hidden;
+    border:1px solid rgba(244,208,142,.58)!important;
+    background:
+      linear-gradient(145deg,rgba(31,25,27,.88),rgba(66,43,27,.78))!important;
+    box-shadow:
+      0 20px 42px rgba(0,0,0,.42),
+      inset 0 1px 0 rgba(255,245,210,.19),
+      0 0 18px rgba(224,163,62,.17)!important;
+    backdrop-filter:blur(10px);
+  }
+  #loginPage .card:before{
+    content:'';
+    position:absolute;
+    inset:-30% -75%;
+    pointer-events:none;
+    background:linear-gradient(105deg,
+      transparent 42%,
+      rgba(255,246,209,.04) 47%,
+      rgba(255,229,158,.46) 50%,
+      rgba(255,246,209,.05) 53%,
+      transparent 58%);
+    transform:translateX(-35%) rotate(8deg);
+    animation:cardGoldShine 5s ease-in-out infinite;
+  }
+  #loginPage .card > *{
+    position:relative;
+    z-index:1;
+  }
+  #loginPage .card label{
+    color:#ffedbf!important;
+    text-shadow:0 1px 2px rgba(0,0,0,.65)!important;
+    font-weight:900!important;
+  }
+  #loginPage .card input{
+    color:#2f2017!important;
+    background:rgba(255,251,242,.94)!important;
+    border:1px solid rgba(245,207,139,.66)!important;
+    box-shadow:inset 0 1px 2px rgba(41,24,10,.13)!important;
+  }
+  #loginPage .card input::placeholder{
+    color:#8f7d70!important;
+  }
+  #loginPage .card button,
+  #loginPage .card .login-btn{
+    color:#fff8e9!important;
+    background:linear-gradient(90deg,#8b5b2a,#d8a354,#875326)!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,242,208,.35)!important;
+    text-shadow:0 1px 2px rgba(49,27,5,.65)!important;
+  }
+  #loginPage .card h2{
+    color:#fff1c7!important;
+    text-shadow:0 2px 3px rgba(0,0,0,.62)!important;
+  }
+  #loginPage .card p{
+    color:#f7dfb8!important;
+  }
+}
+@keyframes loginLightSlide{
+  0%,15%{background-position:150% 0}
+  55%,70%{background-position:-55% 0}
+  100%{background-position:-55% 0}
+}
+@keyframes cardGoldShine{
+  0%,22%{transform:translateX(-70%) rotate(8deg)}
+  60%,100%{transform:translateX(70%) rotate(8deg)}
+}
+
 </style>
 </head>
 <body>
