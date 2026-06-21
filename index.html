@@ -2655,11 +2655,16 @@ async function getOpenAttendance(username=currentUser?.username){
   if(!username) return null;
   const snap=await get(ref(db,'absensi'));
   if(!snap.exists()) return null;
+
   const today=ymd(new Date());
   const open=[];
   Object.entries(snap.val()||{}).forEach(([date,group])=>{
     const item=group?.[username];
-    if(date<today && item?.checkIn && !item?.checkOut) open.push({date,...item});
+    // Semua absensi dari tanggal lain yang sudah Check-in tetapi belum Check-out
+    // harus diselesaikan lebih dulu.
+    if(date!==today && item?.checkIn && !item?.checkOut){
+      open.push({date,...item});
+    }
   });
   open.sort((a,b)=>b.date.localeCompare(a.date));
   return open[0]||null;
@@ -2669,6 +2674,9 @@ function openAttendanceMessage(item){
   const dateText=new Date(item.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
   return `Check-out tanggal ${dateText} harus diselesaikan terlebih dahulu.`;
 }
+window.getOpenAttendance=getOpenAttendance;
+window.renderMobile=renderMobile;
+window.toast=toast;
 function updateClock(){
   const now=new Date();
   $('clock').textContent=now.toLocaleTimeString('id-ID',{hour12:false});
@@ -2745,6 +2753,9 @@ async function submit(type){
    const existing=await getToday();
    const oldOpen=!existing?.checkIn ? await getOpenAttendance() : null;
    if(type==='in'){
+     // Cek ulang langsung dari Firebase agar tidak bisa lolos karena tampilan HP belum refresh.
+     const hardOpen=await getOpenAttendance(currentUser.username);
+     if(hardOpen) return toast(openAttendanceMessage(hardOpen));
      if(oldOpen) return toast(openAttendanceMessage(oldOpen));
      if(existing?.checkIn)return toast('Anda sudah check-in hari ini.');
      await set(ref(db,recordPath()),{
@@ -5021,6 +5032,35 @@ onValue(summaryRef,(snap)=>{
     window.setSummaryCardOverrides(snap.val()||{});
   }
 },err=>{console.error('Gagal memuat card ringkasan:',err);summaryReady=true;});
+</script>
+
+
+<script>
+/* Pengaman Check-in HP: blokir langsung sebelum proses Check-in berjalan
+   jika ada absensi tanggal lain yang belum Check-out. */
+document.addEventListener('click', async (event) => {
+  const checkInButton = event.target.closest('#checkInBtn');
+  if (!checkInButton) return;
+
+  try {
+    const user = window.currentUser || JSON.parse(sessionStorage.getItem('absensi_test_user') || 'null');
+    if (!user?.username || typeof window.getOpenAttendance !== 'function') return;
+
+    const open = await window.getOpenAttendance(user.username);
+    if (open) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const dateText = new Date(open.date + 'T00:00:00').toLocaleDateString('id-ID',{
+        day:'2-digit',month:'long',year:'numeric'
+      });
+      const message = `Anda belum Check-out untuk absensi ${dateText}. Selesaikan Check-out terlebih dahulu.`;
+      if (typeof window.toast === 'function') window.toast(message);
+      if (typeof window.renderMobile === 'function') window.renderMobile();
+    }
+  } catch (error) {
+    console.error('Pemeriksaan Check-out tertunda gagal:', error);
+  }
+}, true);
 </script>
 
 </body>
