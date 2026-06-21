@@ -1641,7 +1641,8 @@ body.pc-app-mode #desktopApp{display:grid!important}
   #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:4.8%!important}
   #dashPengajuanCuti .pengajuan-table th:nth-child(13),
   #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:6%!important}
-  /* Kolom Berapa Hari Lagi dan Keterangan Cuti tetap ditampilkan. */
+  #dashPengajuanCuti .cuti-remaining,
+  #dashPengajuanCuti .cuti-note-status{display:none!important}
 }
 
 
@@ -2188,64 +2189,102 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 
 
-/* Pengajuan Cuti: tampilkan semua kategori kolom seperti tabel referensi */
+/* Pengajuan Cuti lengkap — tetap muat satu layar desktop tanpa scroll samping */
 @media(min-width:768px){
+  #dashPengajuanCuti{
+    overflow-x:hidden!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+  }
   #dashPengajuanCuti .pengajuan-table-wrap{
-    overflow-x:auto!important;
-    overflow-y:visible!important;
-    padding-bottom:8px;
+    width:100%!important;
+    overflow:hidden!important;
   }
   #dashPengajuanCuti .pengajuan-table{
-    min-width:1860px!important;
-    width:max-content!important;
-    table-layout:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    table-layout:fixed!important;
   }
   #dashPengajuanCuti .pengajuan-table th,
   #dashPengajuanCuti .pengajuan-table td{
-    min-width:92px!important;
-    padding:12px 12px!important;
-    font-size:12px!important;
-    line-height:1.35!important;
+    padding:9px 4px!important;
+    font-size:9.5px!important;
+    line-height:1.25!important;
+    word-break:break-word!important;
+    overflow-wrap:anywhere!important;
     white-space:normal!important;
-    word-break:normal!important;
-    overflow-wrap:break-word!important;
   }
   #dashPengajuanCuti .pengajuan-table th{
-    font-size:12px!important;
+    font-size:9.5px!important;
     font-weight:900!important;
-    color:#fff!important;
   }
-  #dashPengajuanCuti .pengajuan-table th:nth-child(2),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(2){min-width:150px!important}
-  #dashPengajuanCuti .pengajuan-table th:nth-child(4),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(4){min-width:180px!important}
-  #dashPengajuanCuti .pengajuan-table th:nth-child(5),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(5){min-width:150px!important}
-  #dashPengajuanCuti .pengajuan-table th:nth-child(6),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(6),
-  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(8){min-width:155px!important}
-  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(13),
-  #dashPengajuanCuti .pengajuan-table th:nth-child(14),
-  #dashPengajuanCuti .pengajuan-table td:nth-child(14){min-width:125px!important}
-  #dashPengajuanCuti .pengajuan-table .nama-cell{font-size:13px!important}
+  #dashPengajuanCuti .pengajuan-table .nama-cell{
+    font-size:10px!important;
+    font-weight:900!important;
+  }
+  #dashPengajuanCuti .pengajuan-status{
+    font-size:10px!important;
+    padding:6px 8px!important;
+  }
+  #dashPengajuanCuti .pengajuan-eye{
+    width:28px!important;
+    height:28px!important;
+    font-size:12px!important;
+  }
+  #dashPengajuanCuti .pengajuan-copy-btn{
+    width:100%!important;
+    padding:7px 4px!important;
+    font-size:9px!important;
+  }
   #dashPengajuanCuti .cuti-note-pill{
     display:inline-flex;
-    align-items:center;
     justify-content:center;
-    min-width:68px;
-    padding:7px 10px;
-    border-radius:7px;
+    align-items:center;
+    min-height:26px;
+    padding:5px 4px;
+    border-radius:6px;
     background:#e8ebee;
-    color:#4d5660;
-    font-size:11px;
+    color:#58606a;
+    font-size:8.5px;
     font-weight:900;
   }
-  #dashPengajuanCuti .cuti-upcoming{color:#c4841a;font-weight:900}
-  #dashPengajuanCuti .cuti-active{color:#188646;font-weight:900}
-  #dashPengajuanCuti .cuti-finished{color:#69727b;font-weight:900}
-  #dashPengajuanCuti .cuti-none{color:#69727b;font-weight:800}
+  #dashPengajuanCuti .cuti-upcoming{color:#c4841a!important;font-weight:900}
+  #dashPengajuanCuti .cuti-active{color:#188646!important;font-weight:900}
+  #dashPengajuanCuti .cuti-finished{color:#68717b!important;font-weight:900}
+  #dashPengajuanCuti .cuti-none{color:#68717b!important;font-weight:800}
+
+  #dashPengajuanCuti .pengajuan-table th:nth-child(1),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(1){width:3%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(2),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(2){width:8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(3),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(3){width:6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(4),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(4){width:10%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(5),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(5){width:8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(6),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(6){width:8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(7),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(7){width:8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(8),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(8){width:8%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(9),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(9){width:7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(10),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(10),
+  #dashPengajuanCuti .pengajuan-table th:nth-child(11),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(11){width:5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(12),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(12){width:6%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(13),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(13){width:7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(14),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(14){width:7%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(15),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(15){width:5%!important}
+  #dashPengajuanCuti .pengajuan-table th:nth-child(16),
+  #dashPengajuanCuti .pengajuan-table td:nth-child(16){width:5%!important}
 }
 
 </style>
@@ -2534,7 +2573,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
              </tr>
            </thead>
            <tbody id="pengajuanCutiRows">
-             <tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
+             <tr><td colspan="16" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>
            </tbody>
          </table>
        </div>
@@ -5174,24 +5213,21 @@ document.addEventListener('keydown',e=>{
       const rawLeaveState=cutiReferenceDate(x);
       const isApproved=(x.status||'Pending')==='Approved';
       const leaveState=isApproved ? rawLeaveState : {label:'-',className:'cuti-none'};
+      const noteText=x.notes||x.note||x.keterangan||'-';
+
       const isKerjaOnly=(x.type||'')==='CUTI KERJA';
       const isBoth=(x.type||'').includes('CUTI LOKAL & CUTI KERJA');
-
       const rangeText=isKerjaOnly
         ? fmtRange(x.kerjaStart,x.kerjaEnd)
         : (isBoth
           ? `${fmtRange(x.lokalStart,x.lokalEnd)} | Cuti Kerja: ${fmtRange(x.kerjaStart,x.kerjaEnd)}`
           : fmtRange(x.lokalStart,x.lokalEnd));
-
       const totalText=isKerjaOnly
         ? `${x.kerjaDays||'-'} Hari`
         : (isBoth
           ? `${x.lokalDays||0} Hari Lokal/Indo + ${x.kerjaDays||0} Hari Kerja`
           : `${x.lokalDays||'-'} Hari`);
-
       const labelRange=isKerjaOnly ? 'Start Cuti Kerja s/d' : 'Start Cuti Lokal/Indo s/d';
-      const noteText=x.notes||x.note||x.keterangan||'-';
-
       const textToCopy=[
         `PENGAJUAN CUTI : ${x.type||'-'}`,
         `No Paspor : ${x.passport||'-'}`,
