@@ -2649,6 +2649,26 @@ const dateLabel=d=>d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',mo
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>e.classList.remove('show'),2500)}
 function recordPath(){return `absensi/${ymd(new Date())}/${currentUser.username}`}
 async function getToday(){const snap=await get(ref(db,recordPath()));return snap.exists()?snap.val():null}
+
+/* Check-in lama yang belum Check-out harus diselesaikan sebelum absensi baru. */
+async function getOpenAttendance(username=currentUser?.username){
+  if(!username) return null;
+  const snap=await get(ref(db,'absensi'));
+  if(!snap.exists()) return null;
+  const today=ymd(new Date());
+  const open=[];
+  Object.entries(snap.val()||{}).forEach(([date,group])=>{
+    const item=group?.[username];
+    if(date<today && item?.checkIn && !item?.checkOut) open.push({date,...item});
+  });
+  open.sort((a,b)=>b.date.localeCompare(a.date));
+  return open[0]||null;
+}
+function openAttendanceMessage(item){
+  if(!item) return '';
+  const dateText=new Date(item.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+  return `Check-out tanggal ${dateText} harus diselesaikan terlebih dahulu.`;
+}
 function updateClock(){
   const now=new Date();
   $('clock').textContent=now.toLocaleTimeString('id-ID',{hour12:false});
@@ -2698,11 +2718,18 @@ function logout(){
 }
 async function renderMobile(){
  $('welcome').textContent=`${currentUser.name} • ${currentUser.role}`;
- const r=await getToday();
+ const todayRecord=await getToday();
+ const oldOpen=!todayRecord?.checkIn ? await getOpenAttendance() : null;
+ const r=todayRecord||oldOpen;
+ const isOldOpen=!!oldOpen;
  $('inTime').textContent=r?.checkIn?.time||'--:--';$('outTime').textContent=r?.checkOut?.time||'--:--';
- $('inState').textContent=r?.checkIn?'Sudah check-in':'Belum check-in';$('outState').textContent=r?.checkOut?'Sudah check-out':'Belum check-out';
- $('todayStatus').textContent=r?.checkOut?'Absensi lengkap':r?.checkIn?'Sedang bekerja':'Belum absensi';
- $('checkInBtn').disabled=!!r?.checkIn;$('checkOutBtn').disabled=!r?.checkIn||!!r?.checkOut;
+ $('inState').textContent=r?.checkIn?(isOldOpen?'Check-in belum selesai':'Sudah check-in'):'Belum check-in';
+ $('outState').textContent=r?.checkOut?'Sudah check-out':'Belum check-out';
+ $('todayStatus').textContent=isOldOpen
+   ? `Wajib check-out dulu (${oldOpen.date})`
+   : (r?.checkOut?'Absensi lengkap':r?.checkIn?'Sedang bekerja':'Belum absensi');
+ $('checkInBtn').disabled=!!todayRecord?.checkIn||isOldOpen;
+ $('checkOutBtn').disabled=!r?.checkIn||!!r?.checkOut;
  const list=$('historyList'); list.innerHTML='<div class="empty">Memuat riwayat...</div>';
  try{const root=await get(ref(db,'absensi')),all=[];if(root.exists())Object.entries(root.val()).forEach(([date,group])=>{const x=group?.[currentUser.username];if(x)all.push({date,...x})});all.sort((a,b)=>b.date.localeCompare(a.date));list.innerHTML=all.length?all.slice(0,8).map(x=>{const d=new Date(x.date+'T00:00:00');return `<div class="row"><div class="day">${d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}).replace('.','')}</div><div class="row-main"><b>${d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long'})}</b><small>Masuk ${x.checkIn?.time||'--:--'} • Pulang ${x.checkOut?.time||'--:--'}</small></div><span class="tag ${x.checkOut?'out':''}">${x.checkOut?'Selesai':'Masuk'}</span></div>`}).join(''):'<div class="empty">Belum ada riwayat absensi.</div>'}catch(e){list.innerHTML='<div class="empty">Riwayat belum dapat dimuat.</div>'}
 }
@@ -2714,7 +2741,28 @@ function getLoc(){
 async function submit(type){
  if(!loc){toast('Ambil lokasi GPS terlebih dahulu.');return}
  const now=new Date(), item={time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),timestamp:now.toISOString(),location:loc};
- try{const existing=await getToday();if(type==='in'){if(existing?.checkIn)return toast('Anda sudah check-in hari ini.');await set(ref(db,recordPath()),{username:currentUser.username,name:currentUser.name,role:currentUser.role,date:ymd(now),checkIn:item,checkOut:null})}else{if(!existing?.checkIn)return toast('Silakan check-in terlebih dahulu.');await update(ref(db,recordPath()),{checkOut:item})}toast(type==='in'?'Check-in berhasil disimpan.':'Check-out berhasil disimpan.');await renderMobile()}catch(e){console.error(e);toast('Data belum tersimpan. Periksa Rules Database / internet.')}
+ try{
+   const existing=await getToday();
+   const oldOpen=!existing?.checkIn ? await getOpenAttendance() : null;
+   if(type==='in'){
+     if(oldOpen) return toast(openAttendanceMessage(oldOpen));
+     if(existing?.checkIn)return toast('Anda sudah check-in hari ini.');
+     await set(ref(db,recordPath()),{
+       username:currentUser.username,name:currentUser.name,role:currentUser.role,
+       date:ymd(now),checkIn:item,checkOut:null
+     });
+   }else{
+     const target=existing?.checkIn ? {date:ymd(now),...existing} : oldOpen;
+     if(!target?.checkIn)return toast('Silakan check-in terlebih dahulu.');
+     await update(ref(db,`absensi/${target.date}/${currentUser.username}`),{
+       checkOut:item,
+       checkoutLateFromPreviousDay:target.date!==ymd(now),
+       checkoutCompletedAt:new Date().toISOString()
+     });
+   }
+   toast(type==='in'?'Check-in berhasil disimpan.':'Check-out berhasil disimpan.');
+   await renderMobile();
+ }catch(e){console.error(e);toast('Data belum tersimpan. Periksa Rules Database / internet.')}
 }
 function startApp(){
   updateClock();
@@ -2806,13 +2854,13 @@ function rowForStaff(u, r, schedule, crosscheck, no){
   const checkInStatus=category==='CUTI'
     ? '<span class="check-state wait">Cuti</span>'
     : r?.checkIn
-      ? `<span class="check-state in">Sudah Check In > ${r.checkIn.time} WIB</span>`
+      ? `<span class="check-state in">${r.date&&r.date!==currentDashboardDate()?'Check In Sebelumnya':'Sudah Check In'} > ${r.checkIn.time} WIB</span>`
       : '<span class="check-state wait">Belum Check In</span>';
   const checkOutStatus=category==='CUTI'
     ? '<span class="check-state wait">Cuti</span>'
     : r?.checkOut
       ? `<span class="check-state out">Sudah Check Out > ${r.checkOut.time} WIB</span>`
-      : '<span class="check-state wait">Belum Check Out</span>';
+      : `<span class="check-state wait">${r?.date&&r.date!==currentDashboardDate()?'Belum Check Out (Hari Sebelumnya)':'Belum Check Out'}</span>`;
   const crosscheckDisplay=crosscheck?.time
     ? `<span class="crosscheck-time">◌ ${crosscheck.time} WIB</span>`
     : (category==='CUTI' ? '—' : `<button class="crosscheck-btn" data-crosscheck="${u.username}">Crosscheck</button>`);
@@ -2850,13 +2898,30 @@ async function renderDashboard(){
   $('dashToday').textContent=dateLabel(dateObj);
   holder.innerHTML='<div class="dash-empty">Memuat data shift dan absensi...</div>';
   try{
-    const [attendanceSnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
+    const [attendanceSnap, attendanceHistorySnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
       get(ref(db,`absensi/${date}`)),
+      get(ref(db,'absensi')),
       get(ref(db,`shiftStaff/${date}`)),
       get(ref(db,'shiftStaff')),
       get(ref(db,`crosschecks/${date}`))
     ]);
     const attendance=attendanceSnap.exists()?attendanceSnap.val():{};
+    const attendanceHistory=attendanceHistorySnap.exists()?attendanceHistorySnap.val():{};
+    const openPreviousByUser={};
+    Object.entries(attendanceHistory||{}).forEach(([recordDate,group])=>{
+      if(recordDate>=date || !group) return;
+      Object.entries(group).forEach(([username,item])=>{
+        if(item?.checkIn && !item?.checkOut){
+          const prev=openPreviousByUser[username];
+          if(!prev || recordDate>prev.date) openPreviousByUser[username]={date:recordDate,...item};
+        }
+      });
+    });
+    userList().forEach(u=>{
+      if(!attendance[u.username] && openPreviousByUser[u.username]){
+        attendance[u.username]=openPreviousByUser[u.username];
+      }
+    });
     const savedSchedules=scheduleSnap.exists()?scheduleSnap.val():{};
     const shiftHistory=scheduleHistorySnap.exists()?scheduleHistorySnap.val():{};
     const crosschecks=crosscheckSnap.exists()?crosscheckSnap.val():{};
