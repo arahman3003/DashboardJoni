@@ -3107,10 +3107,10 @@ body.pc-app-mode #desktopApp{display:grid!important}
 <div class="modal-backdrop hidden" id="crosscheckModal">
   <div class="modal-card">
     <h3>Crosscheck Kehadiran</h3>
-    <p id="crosscheckModalUser">Masukkan jam staff masuk ke office.</p>
-    <label for="crosscheckTime">JAM MASUK OFFICE</label>
-    <input id="crosscheckTime" type="time">
-    <div class="modal-times">Waktu ini adalah hasil crosscheck manual admin, terpisah dari waktu GPS Check-in.</div>
+    <p id="crosscheckModalUser">Konfirmasi staff sudah masuk ke office.</p>
+    <div class="modal-times">
+      Waktu crosscheck akan tercatat otomatis sesuai jam saat tombol <b>Simpan Crosscheck</b> ditekan.
+    </div>
     <div class="modal-actions"><button class="modal-cancel" id="crosscheckCancel">Batal</button><button class="modal-save" id="crosscheckSave">Simpan Crosscheck</button></div>
   </div>
 </div>
@@ -3931,11 +3931,8 @@ function openCrosscheckModal(username){
   const user=TEST_USERS[username];
   if(!user) return;
   selectedCrosscheckUser=username;
-  $('crosscheckModalUser').innerHTML=`<b>${user.name}</b><br><span style="color:#8e7b68">${user.username} • ${user.role}</span><br><span style="color:#a18e79">Masukkan jam staff masuk ke office.</span>`;
+  $('crosscheckModalUser').innerHTML=`<b>${user.name}</b><br><span style="color:#8e7b68">${user.username} • ${user.role}</span><br><span style="color:#a18e79">Jam akan otomatis mengikuti waktu saat Crosscheck disimpan.</span>`;
   $('crosscheckModal').classList.remove('hidden');
-  get(ref(db,`crosschecks/${currentDashboardDate()}/${username}`)).then(snap=>{
-    $('crosscheckTime').value=snap.exists()?(snap.val().time||currentTimeInput()):currentTimeInput();
-  }).catch(()=>{$('crosscheckTime').value=currentTimeInput()});
 }
 function closeCrosscheckModal(){
   selectedCrosscheckUser=null;
@@ -3943,14 +3940,14 @@ function closeCrosscheckModal(){
 }
 async function saveCrosscheck(){
   if(!selectedCrosscheckUser) return;
-  const time=$('crosscheckTime').value;
-  if(!time){toast('Pilih jam masuk office terlebih dahulu.');return}
+  const savedAt=new Date();
+  const time=`${String(savedAt.getHours()).padStart(2,'0')}:${String(savedAt.getMinutes()).padStart(2,'0')}`;
   try{
     await set(ref(db,`crosschecks/${currentDashboardDate()}/${selectedCrosscheckUser}`),{
       time,
-      checkedAt:new Date().toISOString()
+      checkedAt:savedAt.toISOString()
     });
-    toast('Waktu crosscheck berhasil disimpan.');
+    toast(`Crosscheck berhasil disimpan pukul ${time} WIB.`);
     closeCrosscheckModal();
     renderDashboard();
   }catch(e){
