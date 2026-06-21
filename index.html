@@ -2073,6 +2073,46 @@ body.pc-app-mode #desktopApp{display:grid!important}
   58%,100%{background-position:-60% 0}
 }
 
+
+/* Wallpaper khusus tampilan Desktop */
+@media(min-width:768px){
+  .desktop.dashboard,
+  .dash-main{
+    background:
+      linear-gradient(rgba(16,18,24,.45),rgba(16,18,24,.58)),
+      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover fixed!important;
+  }
+
+  .dash-content{
+    background:
+      linear-gradient(rgba(250,247,241,.88),rgba(245,240,232,.91)),
+      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover fixed!important;
+  }
+
+  .dash-home{
+    background:
+      linear-gradient(rgba(27,23,19,.66),rgba(27,23,19,.75)),
+      url('https://i.imgur.com/HDzEKDI.jpeg') center/cover fixed!important;
+  }
+
+  .dash-topbar{
+    background:linear-gradient(90deg,rgba(18,20,29,.96),rgba(25,28,37,.92))!important;
+    backdrop-filter:blur(10px);
+  }
+
+  .dash-content .dash-panel,
+  .dash-content .shift-topbox,
+  .dash-content .shift-section,
+  .dash-content .dash-stat,
+  .dash-content .izin-monitor-card,
+  .dash-content .izin-input-card,
+  .dash-content .izin-active-card,
+  .dash-content .extra-page-card{
+    background:rgba(255,253,249,.91)!important;
+    backdrop-filter:blur(9px);
+  }
+}
+
 </style>
 </head>
 <body>
