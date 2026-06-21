@@ -2769,6 +2769,123 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .resign-form-grid{grid-template-columns:1fr}
 }
 
+
+/* Pengajuan Resign: Pending / Approved / Rejected + akses action khusus Leader */
+.pengajuan-resign-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:0 0 16px;
+}
+.pengajuan-resign-tabs{display:flex;gap:10px;flex-wrap:wrap}
+.pengajuan-resign-tab{
+  min-height:38px;
+  padding:0 15px;
+  border-radius:8px;
+  background:#d9d9d9!important;
+  color:#1b1b1b!important;
+  font-size:13px;
+  font-weight:900;
+}
+.pengajuan-resign-tab.active{
+  background:#1424b1!important;
+  color:#fff!important;
+}
+.pengajuan-resign-table th:nth-child(1),
+.pengajuan-resign-table td:nth-child(1){width:9%!important}
+.pengajuan-resign-table th:nth-child(2),
+.pengajuan-resign-table td:nth-child(2){width:16%!important}
+.pengajuan-resign-table th:nth-child(3),
+.pengajuan-resign-table td:nth-child(3){width:14%!important}
+.pengajuan-resign-table th:nth-child(4),
+.pengajuan-resign-table td:nth-child(4){width:18%!important}
+.pengajuan-resign-table th:nth-child(5),
+.pengajuan-resign-table td:nth-child(5){width:18%!important}
+.pengajuan-resign-table th:nth-child(6),
+.pengajuan-resign-table td:nth-child(6){width:17%!important}
+.pengajuan-resign-table th:nth-child(7),
+.pengajuan-resign-table td:nth-child(7){width:8%!important}
+.resign-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+}
+.resign-status.pending{color:#cf8212;background:#fff1d5}
+.resign-status.approved{color:#168545;background:#e7faed}
+.resign-status.rejected{color:#ce403b;background:#ffe7e7}
+.resign-role-action-cell{
+  position:relative!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+}
+.resign-role-label{
+  display:inline-flex;
+  min-width:28px;
+  justify-content:center;
+  transition:opacity .16s ease,transform .16s ease;
+}
+.resign-role-hover-actions{
+  position:absolute;
+  top:50%;
+  left:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,-50%) scale(.86);
+  transition:opacity .16s ease,transform .16s ease;
+  z-index:30;
+}
+.resign-role-action-cell:hover .resign-role-hover-actions,
+.resign-role-action-cell:focus-within .resign-role-hover-actions{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+}
+.resign-role-action-cell:hover .resign-role-label,
+.resign-role-action-cell:focus-within .resign-role-label{
+  opacity:0;
+  transform:scale(.86);
+}
+.resign-hover-approve,.resign-hover-reject{
+  width:26px;height:26px;border-radius:7px;
+  display:grid;place-items:center;
+  border:1px solid transparent;
+  font-size:14px;font-weight:950;line-height:1;
+  box-shadow:0 5px 12px rgba(0,0,0,.12);
+}
+.resign-hover-approve{background:#e5faec!important;color:#118544!important;border-color:#c4ecd2!important}
+.resign-hover-reject{background:#ffe9e9!important;color:#cf4039!important;border-color:#f2c8c7!important}
+.resign-confirm-backdrop{
+  position:fixed;inset:0;z-index:69000;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(17,20,28,.50);backdrop-filter:blur(5px);
+}
+.resign-confirm-backdrop.hidden{display:none!important}
+.resign-confirm-card{
+  width:min(390px,100%);border-radius:22px;padding:25px 24px 20px;text-align:center;
+  background:linear-gradient(155deg,#fffdf9,#f4ede4);border:1px solid rgba(190,148,97,.40);
+  box-shadow:0 28px 80px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.resign-confirm-icon{
+  width:58px;height:58px;margin:0 auto 13px;border-radius:19px;display:grid;place-items:center;
+  font-size:27px;font-weight:950;background:#e6faed;color:#168645;border:1px solid #c5ebd2;
+}
+.resign-confirm-card.reject .resign-confirm-icon{background:#ffe9e9;color:#cf3f3a;border-color:#f2c8c7}
+.resign-confirm-card h3{margin:0;color:#2d261f;font-size:20px;font-weight:950}
+.resign-confirm-card p{margin:9px auto 20px;max-width:310px;color:#74695d;font-size:13px;line-height:1.55}
+.resign-confirm-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:10px}
+.resign-confirm-actions button{min-height:43px;border-radius:12px;font-size:13px;font-weight:900}
+.resign-confirm-cancel{background:#fff!important;color:#6d655d!important;border:1px solid #d9d0c4!important}
+.resign-confirm-submit{color:#fff!important;border:0!important}
+.resign-confirm-submit.approve{background:linear-gradient(135deg,#2aa963,#178545)!important}
+.resign-confirm-submit.reject{background:linear-gradient(135deg,#df5e58,#bd3935)!important}
+
 </style>
 </head>
 <body>
@@ -3066,20 +3183,29 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <div class="pengajuan-resign-actions">
          <button type="button" class="pengajuan-resign-add-btn" id="openPengajuanResignBtn">✚ Tambah Pengajuan Resign</button>
        </div>
+       <div class="pengajuan-resign-toolbar">
+         <div class="pengajuan-resign-tabs">
+           <button type="button" class="pengajuan-resign-tab active" data-resign-status="Pending">⌛ Pending</button>
+           <button type="button" class="pengajuan-resign-tab" data-resign-status="Approved">● Approved</button>
+           <button type="button" class="pengajuan-resign-tab" data-resign-status="Rejected">✕ Rejected</button>
+         </div>
+       </div>
        <div class="pengajuan-resign-table-wrap">
          <table class="pengajuan-resign-table">
            <thead>
              <tr>
+               <th>👥 Role</th>
                <th>👤 Nama</th>
                <th>🪪 Nomor Paspor</th>
                <th>📅 Tanggal Pengajuan Resign</th>
                <th>🗓 Tanggal Pengajuan Dibuat</th>
                <th>💬 Keterangan Resign</th>
+               <th>ℹ Status</th>
              </tr>
            </thead>
            <tbody id="pengajuanResignRows">
              <tr>
-               <td colspan="5" class="pengajuan-resign-empty">Belum ada data pengajuan resign.</td>
+               <td colspan="7" class="pengajuan-resign-empty">Belum ada data pengajuan resign.</td>
              </tr>
            </tbody>
          </table>
@@ -6460,8 +6586,10 @@ const resignFirebaseConfig={
 const resignApp=getApps().length?getApp():initializeApp(resignFirebaseConfig);
 const resignDb=getDatabase(resignApp);
 const resignRef=ref(resignDb,'pengajuanResignShared');
+
 let resignData=[];
-let resignReady=false;
+let resignStatus='Pending';
+let pendingResignAction=null;
 
 const $r=id=>document.getElementById(id);
 const escapeHtml=value=>String(value??'-').replace(/[&<>"']/g,ch=>({
@@ -6488,6 +6616,9 @@ function currentUser(){
   }catch(e){}
   return {name:'-',role:'-',username:'user'};
 }
+function isLeader(){
+  return String(currentUser().role||'').toUpperCase()==='LEADER';
+}
 function showResignAlert(message,type='info',title='Informasi'){
   if(typeof window.showAppAlert==='function'){
     window.showAppAlert(message,type,title);
@@ -6495,17 +6626,44 @@ function showResignAlert(message,type='info',title='Informasi'){
     console.log(title+': '+message);
   }
 }
+function statusClass(status){
+  const value=String(status||'Pending').toLowerCase();
+  return value==='approved'?'approved':(value==='rejected'?'rejected':'pending');
+}
+function renderResignTabs(){
+  document.querySelectorAll('[data-resign-status]').forEach(button=>{
+    button.classList.toggle('active',button.dataset.resignStatus===resignStatus);
+  });
+}
 function renderResignRows(){
   const rows=$r('pengajuanResignRows');
   if(!rows) return;
-  const list=[...resignData].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  rows.innerHTML=list.length ? list.map(item=>`<tr>
-    <td><b>${escapeHtml(item.name)}</b></td>
-    <td>${escapeHtml(item.passport)}</td>
-    <td>${formatDate(item.resignDate)}</td>
-    <td>${formatSubmitted(item.createdAt)}</td>
-    <td>${escapeHtml(item.note)}</td>
-  </tr>`).join('') : '<tr><td colspan="5" class="pengajuan-resign-empty">Belum ada data pengajuan resign.</td></tr>';
+  const list=[...resignData]
+    .filter(item=>(item.status||'Pending')===resignStatus)
+    .sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const leader=isLeader();
+
+  rows.innerHTML=list.length ? list.map(item=>{
+    const canAct=leader && (item.status||'Pending')==='Pending';
+    const roleHtml=canAct
+      ? `<td class="resign-role-action-cell">
+           <span class="resign-role-label">${escapeHtml(item.role)}</span>
+           <span class="resign-role-hover-actions">
+             <button type="button" class="resign-hover-approve" title="Approve" data-resign-action="Approved" data-resign-id="${escapeHtml(item.id)}">✓</button>
+             <button type="button" class="resign-hover-reject" title="Reject" data-resign-action="Rejected" data-resign-id="${escapeHtml(item.id)}">✕</button>
+           </span>
+         </td>`
+      : `<td class="resign-role-action-cell"><span class="resign-role-label">${escapeHtml(item.role)}</span></td>`;
+    return `<tr>
+      ${roleHtml}
+      <td><b>${escapeHtml(item.name)}</b></td>
+      <td>${escapeHtml(item.passport)}</td>
+      <td>${formatDate(item.resignDate)}</td>
+      <td>${formatSubmitted(item.createdAt)}</td>
+      <td>${escapeHtml(item.note)}</td>
+      <td><span class="resign-status ${statusClass(item.status)}">${escapeHtml(item.status||'Pending')}</span></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="7" class="pengajuan-resign-empty">Belum ada data pengajuan resign.</td></tr>';
 }
 function openResignForm(){
   const user=currentUser();
@@ -6517,6 +6675,52 @@ function openResignForm(){
 function closeResignForm(){
   $r('pengajuanResignModal')?.classList.add('hidden');
 }
+function openResignConfirm(status,id){
+  const modal=$r('resignConfirmModal');
+  const card=$r('resignConfirmCard');
+  if(!modal||!card||!id) return;
+  const approve=status==='Approved';
+  pendingResignAction={status,id};
+  card.classList.toggle('reject',!approve);
+  $r('resignConfirmIcon').textContent=approve?'✓':'✕';
+  $r('resignConfirmTitle').textContent=approve?'Setujui Pengajuan Resign?':'Tolak Pengajuan Resign?';
+  $r('resignConfirmText').textContent=approve
+    ? 'Pengajuan resign akan dipindahkan ke status Approved.'
+    : 'Pengajuan resign akan dipindahkan ke status Rejected.';
+  const submit=$r('resignConfirmSubmit');
+  submit.textContent=approve?'✓ Setujui':'✕ Tolak';
+  submit.classList.toggle('approve',approve);
+  submit.classList.toggle('reject',!approve);
+  modal.classList.remove('hidden');
+}
+function closeResignConfirm(){
+  pendingResignAction=null;
+  $r('resignConfirmModal')?.classList.add('hidden');
+}
+async function setResignStatus(status,id){
+  if(!isLeader()){
+    showResignAlert('Hanya role LEADER yang dapat menyetujui atau menolak pengajuan resign.','warning','Akses Ditolak');
+    return;
+  }
+  const updated=resignData.map(item=>item.id===id ? {
+    ...item,
+    status,
+    processedAt:new Date().toISOString(),
+    processedBy:currentUser().username||'-'
+  } : item);
+  try{
+    await set(resignRef,updated);
+    showResignAlert(
+      status==='Approved'?'Pengajuan resign telah disetujui.':'Pengajuan resign telah ditolak.',
+      status==='Approved'?'success':'warning',
+      status==='Approved'?'Pengajuan Disetujui':'Pengajuan Ditolak'
+    );
+  }catch(error){
+    console.error(error);
+    showResignAlert('Status pengajuan resign belum tersimpan. Periksa koneksi atau Rules Database.','warning','Gagal Menyimpan');
+  }
+}
+
 $r('openPengajuanResignBtn')?.addEventListener('click',openResignForm);
 $r('closePengajuanResignModal')?.addEventListener('click',closeResignForm);
 $r('cancelPengajuanResign')?.addEventListener('click',closeResignForm);
@@ -6541,11 +6745,11 @@ $r('pengajuanResignForm')?.addEventListener('submit',async event=>{
     passport,
     resignDate,
     note,
+    status:'Pending',
     createdAt:new Date().toISOString()
   };
   try{
-    const updated=[...resignData,record];
-    await set(resignRef,updated);
+    await set(resignRef,[...resignData,record]);
     closeResignForm();
     showResignAlert('Pengajuan resign berhasil dikirim.','success','Pengajuan Berhasil Dikirim');
   }catch(error){
@@ -6553,10 +6757,37 @@ $r('pengajuanResignForm')?.addEventListener('submit',async event=>{
     showResignAlert('Pengajuan resign belum tersimpan. Periksa koneksi atau Rules Database.','warning','Gagal Menyimpan');
   }
 });
+
+document.addEventListener('click',event=>{
+  const tab=event.target.closest('[data-resign-status]');
+  if(tab){
+    resignStatus=tab.dataset.resignStatus;
+    renderResignTabs();
+    renderResignRows();
+    return;
+  }
+  const action=event.target.closest('[data-resign-action]');
+  if(action){
+    event.preventDefault();
+    openResignConfirm(action.dataset.resignAction,action.dataset.resignId);
+    return;
+  }
+  if(event.target.closest('#resignConfirmCancel') || event.target===$r('resignConfirmModal')){
+    closeResignConfirm();
+    return;
+  }
+  if(event.target.closest('#resignConfirmSubmit')){
+    if(!pendingResignAction) return;
+    const actionData=pendingResignAction;
+    closeResignConfirm();
+    setResignStatus(actionData.status,actionData.id);
+  }
+});
+
 onValue(resignRef,snap=>{
   const remote=snap.exists()?snap.val():[];
   resignData=Array.isArray(remote)?remote:[];
-  resignReady=true;
+  renderResignTabs();
   renderResignRows();
 },error=>{
   console.error('Sync resign gagal:',error);
@@ -6564,6 +6795,20 @@ onValue(resignRef,snap=>{
 });
 window.renderPengajuanResign=renderResignRows;
 </script>
+
+
+<!-- Popup konfirmasi Approve / Reject Pengajuan Resign -->
+<div class="resign-confirm-backdrop hidden" id="resignConfirmModal" role="dialog" aria-modal="true">
+  <div class="resign-confirm-card" id="resignConfirmCard">
+    <div class="resign-confirm-icon" id="resignConfirmIcon">✓</div>
+    <h3 id="resignConfirmTitle">Setujui Pengajuan Resign?</h3>
+    <p id="resignConfirmText">Pengajuan resign akan diproses.</p>
+    <div class="resign-confirm-actions">
+      <button type="button" class="resign-confirm-cancel" id="resignConfirmCancel">Batal</button>
+      <button type="button" class="resign-confirm-submit approve" id="resignConfirmSubmit">✓ Setujui</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
