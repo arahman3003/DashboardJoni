@@ -1748,6 +1748,26 @@ body.pc-app-mode #desktopApp{display:grid!important}
   display:block;
 }
 
+
+/* Wallpaper khusus halaman Login HP */
+@media(max-width:767px){
+  #loginPage{
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(10,12,20,.38),rgba(10,12,20,.48)),
+      url('https://i.imgur.com/KuexN3Z.jpeg') center/cover no-repeat fixed !important;
+  }
+  #loginPage .wrap.login{
+    min-height:100vh;
+    background:transparent!important;
+  }
+  #loginPage .brand,
+  #loginPage .card{
+    position:relative;
+    z-index:1;
+  }
+}
+
 </style>
 </head>
 <body>
