@@ -2223,6 +2223,73 @@ body.pc-app-mode #desktopApp{display:grid!important}
   }
 }
 
+
+/* Aksi Approve / Reject tersembunyi di kolom Role, khusus LEADER */
+@media(min-width:768px){
+  #dashPengajuanCuti .role-action-cell{
+    position:relative!important;
+    overflow:visible!important;
+    cursor:default;
+    white-space:nowrap!important;
+  }
+  #dashPengajuanCuti .role-label{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:26px;
+    transition:opacity .16s ease, transform .16s ease;
+  }
+  #dashPengajuanCuti .role-hover-actions{
+    position:absolute;
+    inset:50% auto auto 50%;
+    transform:translate(-50%,-50%) scale(.88);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .16s ease,transform .16s ease;
+    z-index:20;
+  }
+  #dashPengajuanCuti .role-action-cell:hover .role-hover-actions,
+  #dashPengajuanCuti .role-action-cell:focus-within .role-hover-actions{
+    opacity:1;
+    pointer-events:auto;
+    transform:translate(-50%,-50%) scale(1);
+  }
+  #dashPengajuanCuti .role-action-cell:hover .role-label,
+  #dashPengajuanCuti .role-action-cell:focus-within .role-label{
+    opacity:0;
+    transform:scale(.88);
+  }
+  #dashPengajuanCuti .role-approve-hover,
+  #dashPengajuanCuti .role-reject-hover{
+    width:26px;
+    height:26px;
+    border-radius:7px;
+    display:grid;
+    place-items:center;
+    border:1px solid transparent;
+    font-size:14px;
+    font-weight:950;
+    line-height:1;
+    box-shadow:0 5px 12px rgba(0,0,0,.12);
+  }
+  #dashPengajuanCuti .role-approve-hover{
+    background:#e5faec!important;
+    color:#118544!important;
+    border-color:#c4ecd2!important;
+  }
+  #dashPengajuanCuti .role-reject-hover{
+    background:#ffe9e9!important;
+    color:#cf4039!important;
+    border-color:#f2c8c7!important;
+  }
+  #dashPengajuanCuti .role-approve-hover:hover{background:#c9f2d7!important}
+  #dashPengajuanCuti .role-reject-hover:hover{background:#ffd6d6!important}
+}
+
 </style>
 </head>
 <body>
@@ -5141,6 +5208,7 @@ document.addEventListener('keydown',e=>{
     const rows=ps('pengajuanCutiRows');
     if(!rows) return;
     const entries=getFilteredEntries();
+    const viewerIsLeader=safeUser().role==='LEADER';
 
     rows.innerHTML=entries.length ? entries.map(x=>{
       const rawLeaveState=cutiReferenceDate(x);
@@ -5174,7 +5242,17 @@ document.addEventListener('keydown',e=>{
       ].join('\n');
 
       return `<tr>
-        <td>${x.role||'-'}</td>
+        <td class="role-action-cell">
+          <span class="role-label">${x.role||'-'}</span>
+          ${
+            viewerIsLeader && (x.status||'Pending')==='Pending'
+              ? `<span class="role-hover-actions" aria-label="Aksi pengajuan">
+                   <button type="button" class="role-approve-hover" title="Approve" data-cuti-action="Approved" data-cuti-id="${x.id}">✓</button>
+                   <button type="button" class="role-reject-hover" title="Reject" data-cuti-action="Rejected" data-cuti-id="${x.id}">✕</button>
+                 </span>`
+              : ''
+          }
+        </td>
         <td class="nama-cell">${x.name||'-'}</td>
         <td>${x.passport||'-'}</td>
         <td>${fmtSubmitted(x.submittedAt)}</td>
