@@ -3083,6 +3083,68 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 .staff-role-save:disabled{opacity:.58;cursor:not-allowed}
 
+
+/* Kolom tindakan User Staff */
+.user-role-table th:nth-child(4),
+.user-role-table td:nth-child(4){width:21%!important}
+.user-role-table th:nth-child(5),
+.user-role-table td:nth-child(5){width:16%!important;text-align:center}
+.user-staff-action-cell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.user-staff-edit-role,
+.user-staff-delete-role{
+  min-height:29px;
+  padding:0 9px;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:950;
+}
+.user-staff-edit-role{
+  background:#f1e5d6!important;
+  color:#805c37!important;
+  border:1px solid rgba(181,138,86,.30)!important;
+}
+.user-staff-edit-role:hover{background:#e8d6c1!important}
+.user-staff-delete-role{
+  background:#fff0ef!important;
+  color:#bf4540!important;
+  border:1px solid #efc4c1!important;
+}
+.user-staff-delete-role:hover{background:#ffe0dd!important}
+
+/* Popup hapus staff */
+.staff-delete-modal-backdrop{
+  position:fixed;inset:0;z-index:72000;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(17,20,28,.50);backdrop-filter:blur(5px);
+}
+.staff-delete-modal-backdrop.hidden{display:none!important}
+.staff-delete-modal-card{
+  width:min(410px,100%);padding:25px 24px 21px;border-radius:22px;text-align:center;
+  background:linear-gradient(155deg,#fffdf9,#f7eee6);
+  border:1px solid rgba(202,93,85,.30);
+  box-shadow:0 28px 80px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.staff-delete-icon{
+  width:58px;height:58px;margin:0 auto 13px;border-radius:19px;display:grid;place-items:center;
+  background:#ffe9e8;color:#c6443e;border:1px solid #f0c7c4;font-size:25px;
+}
+.staff-delete-modal-card h3{margin:0;color:#352823;font-size:20px;font-weight:950}
+.staff-delete-modal-card p{margin:9px auto 11px;color:#74695d;font-size:13px;line-height:1.55}
+.staff-delete-note{
+  padding:10px 11px;border-radius:11px;background:#fff3e8;border:1px solid #f0d3b4;
+  color:#87623e;font-size:11px;line-height:1.5;text-align:left;
+}
+.staff-delete-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:10px;margin-top:18px}
+.staff-delete-actions button{min-height:43px;border-radius:12px;font-size:13px;font-weight:900}
+.staff-delete-cancel{background:#fff!important;color:#6d655d!important;border:1px solid #d9d0c4!important}
+.staff-delete-confirm{background:linear-gradient(135deg,#de625c,#b83d38)!important;color:#fff!important}
+
 </style>
 </head>
 <body>
@@ -4980,6 +5042,20 @@ function userRoleClass(role){
   return normalized==='kapten' ? 'kapten' : normalized;
 }
 let selectedStaffRoleUser='';
+let selectedDeleteStaffUser='';
+let deletedStaffUsers=new Set();
+
+async function loadDeletedStaffUsers(){
+  try{
+    const snap=await get(ref(db,'staffDirectoryDeleted'));
+    const value=snap.exists()?snap.val():{};
+    deletedStaffUsers=new Set(Object.entries(value||{})
+      .filter(([,item])=>item && item.deleted)
+      .map(([username])=>username));
+  }catch(error){
+    console.warn('Daftar staff terhapus belum dimuat:',error);
+  }
+}
 
 function isCurrentUserLeader(){
   try{
@@ -4995,12 +5071,14 @@ function renderUserStaff(){
 
   const search=String($('userStaffSearch')?.value||'').trim().toLowerCase();
   const canEditRole=isCurrentUserLeader();
-  const users=Object.entries(TEST_USERS||{}).map(([username,data])=>({
-    username,
-    name:data?.name||username,
-    role:data?.role||'LAINNYA',
-    normalizedRole:normalizeUserRole(data?.role)
-  }));
+  const users=Object.entries(TEST_USERS||{})
+    .filter(([username])=>!deletedStaffUsers.has(username))
+    .map(([username,data])=>({
+      username,
+      name:data?.name||username,
+      role:data?.role||'LAINNYA',
+      normalizedRole:normalizeUserRole(data?.role)
+    }));
 
   const categories=[
     {key:'LEADER',label:'LEADER',className:'leader'},
@@ -5020,14 +5098,17 @@ function renderUserStaff(){
         <td><span class="user-staff-num">${index+1}</span></td>
         <td class="user-staff-name-cell"><b>${user.name}</b><small>@${user.username}</small></td>
         <td>${user.username}</td>
+        <td><span class="user-staff-role-badge">${displayUserRole(user.role)}</span></td>
         <td>
-          <div class="user-staff-role-cell">
-            <span class="user-staff-role-badge">${displayUserRole(user.role)}</span>
-            ${canEditRole ? `<button type="button" class="user-staff-edit-role" data-edit-staff-role="${user.username}">✎ Edit</button>` : ''}
+          <div class="user-staff-action-cell">
+            ${canEditRole ? `
+              <button type="button" class="user-staff-edit-role" data-edit-staff-role="${user.username}">✎ Edit</button>
+              <button type="button" class="user-staff-delete-role" data-delete-staff="${user.username}">🗑 Hapus</button>
+            ` : '—'}
           </div>
         </td>
       </tr>
-    `).join('') : `<tr><td colspan="4" class="user-staff-empty-row">Tidak ada staff ${category.label}${search?' yang cocok dengan pencarian.':'.'}</td></tr>`;
+    `).join('') : `<tr><td colspan="5" class="user-staff-empty-row">Tidak ada staff ${category.label}${search?' yang cocok dengan pencarian.':'.'}</td></tr>`;
 
     return `<section class="user-role-table-section role-${category.className}">
       <div class="user-role-table-head">
@@ -5036,7 +5117,7 @@ function renderUserStaff(){
       </div>
       <div class="user-role-table-wrap">
         <table class="user-role-table">
-          <thead><tr><th>No</th><th>Nama Staff</th><th>Username</th><th>Role</th></tr></thead>
+          <thead><tr><th>No</th><th>Nama Staff</th><th>Username</th><th>Role</th><th>Tindakan</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -5104,6 +5185,52 @@ async function saveStaffRole(){
 }
 
 
+
+function openDeleteStaffModal(username){
+  if(!isCurrentUserLeader()) return;
+  const user=TEST_USERS?.[username];
+  if(!user) return;
+
+  const current=JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}');
+  if(current.username===username){
+    if(typeof window.toast==='function') window.toast('Akun yang sedang digunakan tidak dapat dihapus.');
+    return;
+  }
+
+  selectedDeleteStaffUser=username;
+  $('staffDeleteModalInfo').innerHTML=`<b>${user.name||username}</b><br><span>@${username} • ${displayUserRole(user.role)}</span>`;
+  $('staffDeleteModal').classList.remove('hidden');
+}
+function closeDeleteStaffModal(){
+  selectedDeleteStaffUser='';
+  $('staffDeleteModal')?.classList.add('hidden');
+}
+async function deleteStaffUser(){
+  if(!isCurrentUserLeader() || !selectedDeleteStaffUser) return;
+  const username=selectedDeleteStaffUser;
+  const deleteButton=$('staffDeleteConfirm');
+  if(deleteButton) deleteButton.disabled=true;
+
+  try{
+    await set(ref(db,`staffDirectoryDeleted/${username}`),{
+      deleted:true,
+      deletedAt:new Date().toISOString(),
+      deletedBy:JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').username||'-'
+    });
+
+    deletedStaffUsers.add(username);
+    closeDeleteStaffModal();
+    renderUserStaff();
+    if(typeof window.toast==='function') window.toast('Staff berhasil dihapus dari daftar.');
+  }catch(error){
+    console.error('Gagal menghapus staff:',error);
+    if(typeof window.toast==='function') window.toast('Staff belum terhapus. Periksa koneksi atau Rules Database.');
+  }finally{
+    if(deleteButton) deleteButton.disabled=false;
+  }
+}
+
+
 function switchDash(view){
   document.querySelectorAll('.dash-nav button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
   $('dashHome').classList.toggle('hidden',view!=='home');
@@ -5136,7 +5263,9 @@ function switchDash(view){
     $('dashRole').value='';
   }
   if(isShift) renderDashboard();
-  if(isUserStaff) renderUserStaff();
+  if(isUserStaff){
+    loadDeletedStaffUsers().finally(renderUserStaff);
+  }
   if(isIzinInput) renderDeskIzinInput();
   if(isIzinDashboard) renderIzin();
   if(isPengajuanCuti && typeof renderPengajuanCuti==='function') renderPengajuanCuti();
@@ -5149,11 +5278,22 @@ document.addEventListener('click',event=>{
     openStaffRoleModal(editButton.dataset.editStaffRole);
     return;
   }
+  const deleteButton=event.target.closest('[data-delete-staff]');
+  if(deleteButton){
+    event.preventDefault();
+    openDeleteStaffModal(deleteButton.dataset.deleteStaff);
+    return;
+  }
   if(event.target.closest('#staffRoleModalClose') || event.target.closest('#staffRoleCancel') || event.target===$('staffRoleModal')){
     closeStaffRoleModal();
+    return;
+  }
+  if(event.target.closest('#staffDeleteCancel') || event.target===$('staffDeleteModal')){
+    closeDeleteStaffModal();
   }
 });
 $('staffRoleSave')?.addEventListener('click',saveStaffRole);
+$('staffDeleteConfirm')?.addEventListener('click',deleteStaffUser);
 
 $('loginBtn').addEventListener('click',login);
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
@@ -7201,6 +7341,21 @@ window.renderPengajuanResign=renderResignRows;
     <div class="staff-role-modal-actions">
       <button type="button" class="staff-role-cancel" id="staffRoleCancel">Batal</button>
       <button type="button" class="staff-role-save" id="staffRoleSave">Simpan Role</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Konfirmasi hapus staff -->
+<div class="staff-delete-modal-backdrop hidden" id="staffDeleteModal" role="dialog" aria-modal="true">
+  <div class="staff-delete-modal-card">
+    <div class="staff-delete-icon">🗑</div>
+    <h3>Hapus Staff dari Daftar?</h3>
+    <p id="staffDeleteModalInfo">Staff akan dihapus dari daftar User Staff.</p>
+    <div class="staff-delete-note">Data staff yang dihapus tidak lagi tampil di daftar User Staff untuk semua akun.</div>
+    <div class="staff-delete-actions">
+      <button type="button" class="staff-delete-cancel" id="staffDeleteCancel">Batal</button>
+      <button type="button" class="staff-delete-confirm" id="staffDeleteConfirm">🗑 Hapus Staff</button>
     </div>
   </div>
 </div>
