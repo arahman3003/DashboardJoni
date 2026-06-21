@@ -2149,6 +2149,34 @@ body.pc-app-mode #desktopApp{display:grid!important}
   }
 }
 
+
+/* Tabel Pending / Approved / Rejected selalu memakai lebar dan posisi yang sama */
+@media(min-width:768px){
+  #dashPengajuanCuti .pengajuan-table-wrap{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:100%!important;
+    overflow:hidden!important;
+  }
+  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:fixed!important;
+  }
+  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout thead,
+  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout tbody,
+  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout tr{
+    width:100%!important;
+  }
+  #dashPengajuanCuti .pengajuan-table.pengajuan-fixed-layout .pengajuan-empty-row{
+    height:48px!important;
+    text-align:center!important;
+    vertical-align:middle!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -5118,34 +5146,47 @@ document.addEventListener('keydown',e=>{
       </tr>`;
     }).join('') : '<tr><td colspan="12" class="pengajuan-empty-row">Belum ada data pengajuan cuti.</td></tr>';
   }
-  function syncEmptyPengajuanTable(){
+  function syncPengajuanTableFixedWidth(){
     const table=ps('pengajuanCutiRows')?.closest('.pengajuan-table');
     const rows=ps('pengajuanCutiRows');
     if(!table||!rows) return;
 
-    const isEmpty=!rows.querySelector('tr:not(.pengajuan-empty-row)');
     const heads=[...table.querySelectorAll('thead th')];
     const visibleHeads=heads.filter(th=>getComputedStyle(th).display!=='none');
+    if(!visibleHeads.length) return;
 
-    if(!isEmpty || !visibleHeads.length){
-      table.classList.remove('is-empty-table');
-      heads.forEach(th=>th.style.removeProperty('width'));
-      return;
-    }
+    // Hapus colgroup lama lalu buat ulang berdasarkan kolom yang sedang tampil.
+    table.querySelectorAll('colgroup[data-pengajuan-fixed]').forEach(el=>el.remove());
 
-    table.classList.add('is-empty-table');
+    const baseWeights=[3.2,6.2,5.7,8.2,7.2,8.1,7.5,6.5,6.5,5.6,4.7,5.7];
+    const visibleIndexes=heads
+      .map((th,index)=>getComputedStyle(th).display!=='none' ? index : -1)
+      .filter(index=>index>=0);
+    const total=visibleIndexes.reduce((sum,index)=>sum+(baseWeights[index]||6),0);
+
+    const group=document.createElement('colgroup');
+    group.dataset.pengajuanFixed='true';
+
+    heads.forEach((th,index)=>{
+      const col=document.createElement('col');
+      const isVisible=getComputedStyle(th).display!=='none';
+      if(isVisible){
+        const normalized=((baseWeights[index]||6)/total*100).toFixed(4)+'%';
+        col.style.width=normalized;
+        th.style.setProperty('width',normalized,'important');
+      }else{
+        col.style.width='0';
+        col.style.visibility='collapse';
+        th.style.removeProperty('width');
+      }
+      group.appendChild(col);
+    });
+
+    table.prepend(group);
+    table.classList.add('pengajuan-fixed-layout');
     table.style.setProperty('width','100%','important');
     table.style.setProperty('min-width','0','important');
     table.style.setProperty('table-layout','fixed','important');
-
-    const width=(100/visibleHeads.length).toFixed(4)+'%';
-    heads.forEach(th=>{
-      if(getComputedStyle(th).display!=='none'){
-        th.style.setProperty('width',width,'important');
-      }else{
-        th.style.removeProperty('width');
-      }
-    });
 
     const emptyCell=rows.querySelector('.pengajuan-empty-row');
     if(emptyCell){
@@ -5178,7 +5219,7 @@ document.addEventListener('keydown',e=>{
     const showCopy=cutiState.status!=='Pending';
     document.querySelectorAll('.copy-text-head').forEach(th=>th.style.display=showCopy?'table-cell':'none');
     document.querySelectorAll('.copy-text-cell').forEach(td=>td.style.display=showCopy?'table-cell':'none');
-    requestAnimationFrame(syncEmptyPengajuanTable);
+    requestAnimationFrame(()=>requestAnimationFrame(syncPengajuanTableFixedWidth));
   }
   function getCutiMode(type){
     if(type==='CUTI KERJA') return 'kerja';
