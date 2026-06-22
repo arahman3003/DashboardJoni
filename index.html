@@ -3459,6 +3459,90 @@ body.pc-app-mode #desktopApp{display:grid!important}
   letter-spacing:.08em;
 }
 
+
+/* Tahap status & tabel grouped Ganti Rekening */
+.rekening-status-tabs{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 13px;
+  padding:5px;
+  width:max-content;
+  max-width:100%;
+  border:1px solid #e1cfb8;
+  background:#fbf5ed;
+  border-radius:13px;
+}
+.rekening-status-tab{
+  min-height:34px;
+  padding:0 15px;
+  border-radius:9px;
+  background:transparent;
+  color:#806a52;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+.rekening-status-tab.active{
+  color:#fffdf9;
+  background:linear-gradient(135deg,#b9864f,#8f6338);
+  box-shadow:0 5px 13px rgba(135,95,52,.16);
+}
+.rekening-table{min-width:2200px!important}
+.rekening-table thead tr:first-child th{
+  background:#2d2b29!important;
+  color:#fffdf8!important;
+  border-bottom:1px solid rgba(255,255,255,.25);
+  text-align:center;
+  font-size:10px;
+}
+.rekening-table thead tr:nth-child(2) th{
+  background:#4d4a47!important;
+  color:#fffdf8!important;
+  text-align:center;
+  font-size:10px;
+}
+.rekening-table th[rowspan="2"]{
+  vertical-align:middle;
+  text-align:center!important;
+}
+.rekening-table .rekening-action-head{min-width:100px}
+.rekening-table td{white-space:nowrap}
+.rekening-table td:nth-child(1),
+.rekening-table td:nth-child(10),
+.rekening-table td:nth-child(11){white-space:normal}
+.rekening-status-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:950;
+  white-space:nowrap;
+}
+.rekening-status-pill.pending{background:#fff0cf;color:#9a6e22}
+.rekening-status-pill.approved{background:#dff4e7;color:#27744e}
+.rekening-status-pill.rejected{background:#fbe3e1;color:#a04440}
+.rekening-actions{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+}
+.rekening-action-btn{
+  width:30px;height:30px;padding:0;border-radius:9px;
+  display:grid;place-items:center;font-size:14px;
+}
+.rekening-action-btn.approve{background:#e1f4e7;color:#24774e;border:1px solid #b7e4c7}
+.rekening-action-btn.reject{background:#f9e3e0;color:#a4443e;border:1px solid #efc4be}
+.rekening-action-btn:hover{filter:brightness(.98);transform:translateY(-1px)}
+.rekening-action-empty{color:#a89580;text-align:center}
+@media(max-width:640px){
+  .rekening-status-tabs{width:100%}
+  .rekening-status-tab{flex:1;padding:0 8px}
+}
+
 </style>
 
 <script>
@@ -3840,26 +3924,37 @@ body.pc-app-mode #desktopApp{display:grid!important}
          </div>
          <button type="button" class="rekening-add-btn" id="openGantiRekeningBtn">＋ Tambah Data</button>
        </header>
+       <div class="rekening-status-tabs" id="rekeningStatusTabs">
+         <button type="button" class="rekening-status-tab active" data-rekening-status="Pending">PENDING</button>
+         <button type="button" class="rekening-status-tab" data-rekening-status="Approved">APPROVED</button>
+         <button type="button" class="rekening-status-tab" data-rekening-status="Rejected">REJECTED</button>
+       </div>
        <div class="dash-table-wrap rekening-table-wrap">
          <table class="rekening-table">
            <thead>
+             <tr class="rekening-group-row">
+               <th rowspan="2">NAMA</th>
+               <th rowspan="2">ROLE</th>
+               <th rowspan="2">NOMOR PASSPOR</th>
+               <th colspan="3">REKENING SEBELUMNYA</th>
+               <th colspan="3">PERGANTIAN KE REKENING</th>
+               <th rowspan="2">KETERANGAN</th>
+               <th rowspan="2">TANGGAL PEMBUATAN</th>
+               <th rowspan="2">STATUS</th>
+               <th rowspan="2" class="rekening-action-head">AKSI</th>
+             </tr>
              <tr>
-               <th>NAMA</th>
-               <th>ROLE</th>
-               <th>NOMOR PASSPOR</th>
-               <th>NAMA REKENING LAMA</th>
-               <th>NOMOR REKENING LAMA</th>
-               <th>JENIS BANK LAMA</th>
-               <th>NAMA REKENING BARU</th>
-               <th>NOMOR REKENING BARU</th>
-               <th>JENIS BANK BARU</th>
-               <th>KETERANGAN</th>
-               <th>TANGGAL PEMBUATAN</th>
+               <th>NAMA REKENING</th>
+               <th>NOMOR REKENING</th>
+               <th>JENIS BANK</th>
+               <th>NAMA REKENING</th>
+               <th>NOMOR REKENING</th>
+               <th>JENIS BANK</th>
              </tr>
            </thead>
            <tbody id="gantiRekeningRows">
              <tr>
-               <td colspan="11" class="rekening-empty">Belum ada data pengajuan ganti rekening.</td>
+               <td colspan="13" class="rekening-empty">Belum ada data pengajuan ganti rekening.</td>
              </tr>
            </tbody>
          </table>
@@ -8275,79 +8370,189 @@ window.setTimeout(()=>{
 </div>
 
 
-<script>
-(function(){
-  const $=id=>document.getElementById(id);
-  const esc=value=>String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 
-  function openModal(){
-    const user=(()=>{
-      try{return JSON.parse(sessionStorage.getItem('absensi_test_user')||'null')}catch(e){return null}
-    })();
-    if($('rekeningNama') && !$('rekeningNama').value) $('rekeningNama').value=user?.name||'';
-    if($('rekeningRole') && !$('rekeningRole').value) $('rekeningRole').value=user?.role||'';
-    $('gantiRekeningModal')?.classList.remove('hidden');
-  }
-  function closeModal(){
-    $('gantiRekeningModal')?.classList.add('hidden');
-  }
-  function clearForm(){
-    [
-      'rekeningPaspor',
-      'rekeningLamaNama','rekeningLamaNomor','rekeningLamaBank',
-      'rekeningBaruNama','rekeningBaruNomor','rekeningBaruBank',
-      'rekeningKeterangan'
-    ].forEach(id=>{if($(id)) $(id).value=''});
-  }
-  function addRow(data){
-    const rows=$('gantiRekeningRows');
-    if(!rows) return;
-    if(rows.querySelector('.rekening-empty')) rows.innerHTML='';
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${esc(data.nama)}</td>
-      <td><span class="izin-pill">${esc(data.role)}</span></td>
-      <td>${esc(data.paspor)}</td>
-      <td>${esc(data.lamaNama)}</td>
-      <td>${esc(data.lamaNomor)}</td>
-      <td>${esc(data.lamaBank)}</td>
-      <td>${esc(data.baruNama)}</td>
-      <td>${esc(data.baruNomor)}</td>
-      <td>${esc(data.baruBank)}</td>
-      <td>${esc(data.keterangan)}</td>
-      <td>${esc(data.tanggal)}</td>`;
-    rows.prepend(tr);
-  }
+const rekeningFirebaseConfig={
+  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
+  authDomain:'absensi-joni.firebaseapp.com',
+  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'absensi-joni',
+  storageBucket:'absensi-joni.firebasestorage.app',
+  messagingSenderId:'784014108802',
+  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
+};
+const rekeningApp=getApps().length?getApp():initializeApp(rekeningFirebaseConfig);
+const rekeningDb=getDatabase(rekeningApp);
+const rekeningRef=ref(rekeningDb,'pengajuanGantiRekeningShared');
 
-  $('openGantiRekeningBtn')?.addEventListener('click',openModal);
-  $('closeGantiRekeningModal')?.addEventListener('click',closeModal);
-  $('cancelGantiRekeningBtn')?.addEventListener('click',closeModal);
-  $('gantiRekeningModal')?.addEventListener('click',event=>{if(event.target===$('gantiRekeningModal')) closeModal();});
-  $('saveGantiRekeningBtn')?.addEventListener('click',()=>{
-    const now=new Date();
-    const data={
-      nama:$('rekeningNama')?.value.trim()||'',
-      role:$('rekeningRole')?.value.trim()||'',
-      paspor:$('rekeningPaspor')?.value.trim()||'',
-      lamaNama:$('rekeningLamaNama')?.value.trim()||'',
-      lamaNomor:$('rekeningLamaNomor')?.value.trim()||'',
-      lamaBank:$('rekeningLamaBank')?.value.trim()||'',
-      baruNama:$('rekeningBaruNama')?.value.trim()||'',
-      baruNomor:$('rekeningBaruNomor')?.value.trim()||'',
-      baruBank:$('rekeningBaruBank')?.value.trim()||'',
-      keterangan:$('rekeningKeterangan')?.value.trim()||'',
-      tanggal:now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})+' • '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false})
-    };
-    if(!data.nama || !data.role || !data.paspor || !data.lamaNama || !data.lamaNomor || !data.lamaBank || !data.baruNama || !data.baruNomor || !data.baruBank || !data.keterangan){
-      if(typeof window.toast==='function') window.toast('Lengkapi semua data ganti rekening terlebih dahulu.');
-      return;
-    }
-    addRow(data);
-    clearForm();
-    closeModal();
-    if(typeof window.toast==='function') window.toast('Data ganti rekening berhasil ditambahkan.');
+let rekeningData=[];
+let rekeningStatus='Pending';
+
+const rq=id=>document.getElementById(id);
+const rekeningEscape=value=>String(value??'-').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+const rekeningUser=()=>{
+  try{return JSON.parse(sessionStorage.getItem('absensi_test_user')||'null')||{name:'-',role:'-',username:'-'}}catch(e){return {name:'-',role:'-',username:'-'}}
+};
+const rekeningIsLeader=()=>String(rekeningUser().role||'').trim().toUpperCase()==='LEADER';
+const rekeningFormatDate=value=>{
+  if(!value) return '-';
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return value;
+  return d.toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace(',', ' •');
+};
+const rekeningStatusClass=status=>{
+  const v=String(status||'Pending').toLowerCase();
+  return v==='approved'?'approved':(v==='rejected'?'rejected':'pending');
+};
+const rekeningId=()=>`rekening_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+
+function openRekeningModal(){
+  const user=rekeningUser();
+  rq('rekeningNama').value=user.name||'';
+  rq('rekeningRole').value=user.role||'';
+  rq('gantiRekeningModal')?.classList.remove('hidden');
+}
+function closeRekeningModal(){
+  rq('gantiRekeningModal')?.classList.add('hidden');
+}
+function clearRekeningForm(){
+  [
+    'rekeningPaspor',
+    'rekeningLamaNama','rekeningLamaNomor','rekeningLamaBank',
+    'rekeningBaruNama','rekeningBaruNomor','rekeningBaruBank',
+    'rekeningKeterangan'
+  ].forEach(id=>{if(rq(id)) rq(id).value=''});
+}
+function renderRekeningTabs(){
+  document.querySelectorAll('[data-rekening-status]').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.rekeningStatus===rekeningStatus);
   });
-})();
+}
+function renderRekeningRows(){
+  const rows=rq('gantiRekeningRows');
+  if(!rows) return;
+  const leader=rekeningIsLeader();
+  const list=[...rekeningData]
+    .filter(item=>(item.status||'Pending')===rekeningStatus)
+    .sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+
+  rows.innerHTML=list.length?list.map(item=>{
+    const isPending=(item.status||'Pending')==='Pending';
+    const actions=leader && isPending
+      ? `<div class="rekening-actions">
+           <button type="button" class="rekening-action-btn approve" title="Approve" data-rekening-action="Approved" data-rekening-id="${rekeningEscape(item.id)}">✅</button>
+           <button type="button" class="rekening-action-btn reject" title="Reject" data-rekening-action="Rejected" data-rekening-id="${rekeningEscape(item.id)}">❌</button>
+         </div>`
+      : '<span class="rekening-action-empty">—</span>';
+
+    return `<tr>
+      <td><b>${rekeningEscape(item.nama)}</b></td>
+      <td><span class="izin-pill">${rekeningEscape(item.role)}</span></td>
+      <td>${rekeningEscape(item.paspor)}</td>
+      <td>${rekeningEscape(item.lamaNama)}</td>
+      <td>${rekeningEscape(item.lamaNomor)}</td>
+      <td>${rekeningEscape(item.lamaBank)}</td>
+      <td>${rekeningEscape(item.baruNama)}</td>
+      <td>${rekeningEscape(item.baruNomor)}</td>
+      <td>${rekeningEscape(item.baruBank)}</td>
+      <td>${rekeningEscape(item.keterangan)}</td>
+      <td>${rekeningFormatDate(item.createdAt)}</td>
+      <td><span class="rekening-status-pill ${rekeningStatusClass(item.status)}">${rekeningEscape(item.status||'Pending')}</span></td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="13" class="rekening-empty">Belum ada data pada tahap '+rekeningEscape(rekeningStatus)+'.</td></tr>';
+}
+
+async function saveRekeningData(){
+  try{
+    await set(rekeningRef,rekeningData);
+  }catch(error){
+    console.error('Gagal sinkron ganti rekening:',error);
+    if(typeof window.toast==='function') window.toast('Data belum tersimpan. Periksa koneksi.');
+  }
+}
+function updateRekeningStatus(id,status){
+  if(!rekeningIsLeader()) return;
+  const idx=rekeningData.findIndex(item=>item.id===id);
+  if(idx<0) return;
+  rekeningData[idx]={
+    ...rekeningData[idx],
+    status,
+    processedAt:new Date().toISOString(),
+    processedBy:rekeningUser().username||'-'
+  };
+  saveRekeningData();
+  rekeningStatus=status;
+  renderRekeningTabs();
+  renderRekeningRows();
+  if(typeof window.toast==='function') window.toast(status==='Approved'?'Pengajuan ganti rekening disetujui.':'Pengajuan ganti rekening ditolak.');
+}
+function submitRekening(){
+  const data={
+    id:rekeningId(),
+    nama:rq('rekeningNama')?.value.trim()||'',
+    role:rq('rekeningRole')?.value.trim()||'',
+    paspor:rq('rekeningPaspor')?.value.trim()||'',
+    lamaNama:rq('rekeningLamaNama')?.value.trim()||'',
+    lamaNomor:rq('rekeningLamaNomor')?.value.trim()||'',
+    lamaBank:rq('rekeningLamaBank')?.value.trim()||'',
+    baruNama:rq('rekeningBaruNama')?.value.trim()||'',
+    baruNomor:rq('rekeningBaruNomor')?.value.trim()||'',
+    baruBank:rq('rekeningBaruBank')?.value.trim()||'',
+    keterangan:rq('rekeningKeterangan')?.value.trim()||'',
+    status:'Pending',
+    createdAt:new Date().toISOString(),
+    submittedBy:rekeningUser().username||'-'
+  };
+  const required=['nama','role','paspor','lamaNama','lamaNomor','lamaBank','baruNama','baruNomor','baruBank','keterangan'];
+  if(required.some(key=>!data[key])){
+    if(typeof window.toast==='function') window.toast('Lengkapi semua data ganti rekening terlebih dahulu.');
+    return;
+  }
+  rekeningData.unshift(data);
+  saveRekeningData();
+  clearRekeningForm();
+  closeRekeningModal();
+  rekeningStatus='Pending';
+  renderRekeningTabs();
+  renderRekeningRows();
+  if(typeof window.toast==='function') window.toast('Pengajuan ganti rekening berhasil dikirim.');
+}
+
+rq('openGantiRekeningBtn')?.addEventListener('click',openRekeningModal);
+rq('closeGantiRekeningModal')?.addEventListener('click',closeRekeningModal);
+rq('cancelGantiRekeningBtn')?.addEventListener('click',closeRekeningModal);
+rq('gantiRekeningModal')?.addEventListener('click',event=>{if(event.target===rq('gantiRekeningModal')) closeRekeningModal();});
+rq('saveGantiRekeningBtn')?.addEventListener('click',submitRekening);
+
+document.addEventListener('click',event=>{
+  const tab=event.target.closest('[data-rekening-status]');
+  if(tab){
+    rekeningStatus=tab.dataset.rekeningStatus;
+    renderRekeningTabs();
+    renderRekeningRows();
+    return;
+  }
+  const action=event.target.closest('[data-rekening-action]');
+  if(action){
+    event.preventDefault();
+    updateRekeningStatus(action.dataset.rekeningId,action.dataset.rekeningAction);
+  }
+});
+
+onValue(rekeningRef,snapshot=>{
+  const remote=snapshot.exists()?snapshot.val():[];
+  rekeningData=Array.isArray(remote)?remote:Object.values(remote||{});
+  renderRekeningTabs();
+  renderRekeningRows();
+},error=>{
+  console.error('Sinkron Ganti Rekening gagal:',error);
+  renderRekeningRows();
+});
+
+window.renderGantiRekening=renderRekeningRows;
 </script>
 
 </body>
