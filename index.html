@@ -3841,6 +3841,70 @@ body.pc-app-mode #desktopApp{display:grid!important}
   opacity:.4;
 }
 
+
+/* ROLE sejajar; tombol approve/tolak menimpa badge ROLE saat hover */
+#dashGantiRekening .rekening-table th:first-child,
+#dashGantiRekening .rekening-table td:first-child{
+  text-align:center!important;
+  vertical-align:middle!important;
+}
+#dashGantiRekening .rekening-role-cell{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:30px!important;
+  min-height:30px!important;
+  gap:0!important;
+  white-space:nowrap!important;
+}
+#dashGantiRekening .rekening-role-cell .izin-pill{
+  position:absolute!important;
+  inset:0!important;
+  margin:auto!important;
+  width:max-content!important;
+  max-width:calc(100% - 8px)!important;
+  min-width:54px!important;
+  height:22px!important;
+  padding:0 7px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  transition:opacity .16s ease, transform .16s ease!important;
+}
+#dashGantiRekening .rekening-role-hover-actions{
+  position:absolute!important;
+  inset:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  transform:none!important;
+  pointer-events:none!important;
+  transition:opacity .16s ease, visibility .16s ease!important;
+}
+#dashGantiRekening .rekening-role-cell.has-hover-actions:hover .rekening-role-hover-actions,
+#dashGantiRekening .rekening-role-cell.has-hover-actions:focus-within .rekening-role-hover-actions{
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+#dashGantiRekening .rekening-role-cell.has-hover-actions:hover .izin-pill,
+#dashGantiRekening .rekening-role-cell.has-hover-actions:focus-within .izin-pill{
+  opacity:0!important;
+  transform:scale(.94)!important;
+}
+#dashGantiRekening .rekening-role-hover-actions .rekening-action-btn{
+  position:relative!important;
+  z-index:2!important;
+  width:27px!important;
+  height:27px!important;
+  margin:0!important;
+}
+
 </style>
 
 <script>
