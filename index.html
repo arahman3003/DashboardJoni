@@ -3313,6 +3313,139 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .rekening-page-head h1{font-size:18px}
 }
 
+
+/* Posisi dan tombol Ganti Rekening */
+#dashGantiRekening{
+  padding-top:6px!important;
+}
+.rekening-page-wrap{
+  margin-top:0!important;
+}
+.rekening-page-head{
+  margin-bottom:12px!important;
+}
+.rekening-add-btn{
+  min-height:40px;
+  padding:0 15px;
+  border-radius:11px;
+  border:1px solid rgba(115,80,43,.18);
+  background:linear-gradient(135deg,#b9864f,#8f6338);
+  color:#fffdf9;
+  font-size:11px;
+  font-weight:950;
+  white-space:nowrap;
+  box-shadow:0 8px 18px rgba(131,93,52,.17);
+}
+.rekening-add-btn:active{transform:translateY(1px)}
+.rekening-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  background:rgba(24,21,18,.55);
+  backdrop-filter:blur(6px);
+}
+.rekening-modal-backdrop.hidden{display:none!important}
+.rekening-modal-card{
+  width:min(670px,100%);
+  max-height:calc(100vh - 44px);
+  overflow:auto;
+  border-radius:22px;
+  padding:22px;
+  background:linear-gradient(180deg,#fffdf9,#f3e9dc);
+  border:1px solid #dfc9ad;
+  box-shadow:0 25px 75px rgba(0,0,0,.30);
+}
+.rekening-modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:18px;
+}
+.rekening-modal-kicker{
+  color:#9b7141;
+  font-size:9px;
+  letter-spacing:.12em;
+  font-weight:950;
+}
+.rekening-modal-head h3{
+  margin:6px 0 0;
+  color:#36291f;
+  font-size:20px;
+}
+.rekening-modal-close{
+  width:34px;
+  height:34px;
+  padding:0;
+  border-radius:10px;
+  background:#f6ebdc;
+  color:#765534;
+  font-size:23px;
+  line-height:1;
+}
+.rekening-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+}
+.rekening-form-grid label{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.rekening-form-grid label span{
+  color:#6f5438;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+.rekening-form-grid input,
+.rekening-form-grid textarea{
+  width:100%;
+  border:1px solid #ddc6aa;
+  background:#fffdfa;
+  border-radius:11px;
+  padding:11px 12px;
+  color:#433426;
+  outline:none;
+  font-size:12px;
+}
+.rekening-form-grid textarea{
+  min-height:84px;
+  resize:vertical;
+}
+.rekening-form-grid input:focus,
+.rekening-form-grid textarea:focus{
+  border-color:#b6844c;
+  box-shadow:0 0 0 3px rgba(182,132,76,.12);
+}
+.rekening-full{grid-column:1/-1}
+.rekening-modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:19px;
+}
+.rekening-cancel-btn,
+.rekening-save-btn{
+  min-height:40px;
+  padding:0 16px;
+  border-radius:11px;
+  font-size:11px;
+  font-weight:950;
+}
+.rekening-cancel-btn{background:#ede2d5;color:#705842}
+.rekening-save-btn{background:linear-gradient(135deg,#b9864f,#8f6338);color:#fffdf9}
+@media(max-width:640px){
+  .rekening-page-head{align-items:flex-start;flex-direction:column}
+  .rekening-add-btn{width:100%}
+  .rekening-form-grid{grid-template-columns:1fr}
+}
+
 </style>
 
 <script>
@@ -3692,6 +3825,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
            <h1>GANTI REKENING</h1>
            <p>Data pengajuan perubahan rekening staff.</p>
          </div>
+         <button type="button" class="rekening-add-btn" id="openGantiRekeningBtn">＋ Tambah Data</button>
        </header>
        <div class="dash-table-wrap rekening-table-wrap">
          <table class="rekening-table">
@@ -8054,6 +8188,112 @@ window.renderPengajuanResign=renderResignRows;
 window.setTimeout(()=>{
   document.documentElement.classList.remove('pc-restore-menu-pending','pc-session-pending');
 },2200);
+</script>
+
+
+<!-- Popup Input Ganti Rekening -->
+<div class="rekening-modal-backdrop hidden" id="gantiRekeningModal">
+  <div class="rekening-modal-card">
+    <div class="rekening-modal-head">
+      <div>
+        <div class="rekening-modal-kicker">FORM PENGAJUAN</div>
+        <h3>Tambah Ganti Rekening</h3>
+      </div>
+      <button type="button" class="rekening-modal-close" id="closeGantiRekeningModal">×</button>
+    </div>
+
+    <div class="rekening-form-grid">
+      <label>
+        <span>NAMA</span>
+        <input id="rekeningNama" type="text" placeholder="Nama staff">
+      </label>
+      <label>
+        <span>ROLE</span>
+        <input id="rekeningRole" type="text" placeholder="Role staff">
+      </label>
+      <label>
+        <span>NOMOR PASSPOR</span>
+        <input id="rekeningPaspor" type="text" placeholder="Nomor paspor">
+      </label>
+      <label>
+        <span>NOMOR REKENING LAMA</span>
+        <input id="rekeningLama" type="text" inputmode="numeric" placeholder="Nomor rekening lama">
+      </label>
+      <label>
+        <span>NOMOR REKENING BARU</span>
+        <input id="rekeningBaru" type="text" inputmode="numeric" placeholder="Nomor rekening baru">
+      </label>
+      <label class="rekening-full">
+        <span>KETERANGAN</span>
+        <textarea id="rekeningKeterangan" placeholder="Tulis keterangan pengajuan"></textarea>
+      </label>
+    </div>
+
+    <div class="rekening-modal-actions">
+      <button type="button" class="rekening-cancel-btn" id="cancelGantiRekeningBtn">Batal</button>
+      <button type="button" class="rekening-save-btn" id="saveGantiRekeningBtn">Simpan Data</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const esc=value=>String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+  function openModal(){
+    const user=(()=>{
+      try{return JSON.parse(sessionStorage.getItem('absensi_test_user')||'null')}catch(e){return null}
+    })();
+    if($('rekeningNama') && !$('rekeningNama').value) $('rekeningNama').value=user?.name||'';
+    if($('rekeningRole') && !$('rekeningRole').value) $('rekeningRole').value=user?.role||'';
+    $('gantiRekeningModal')?.classList.remove('hidden');
+  }
+  function closeModal(){
+    $('gantiRekeningModal')?.classList.add('hidden');
+  }
+  function clearForm(){
+    ['rekeningPaspor','rekeningLama','rekeningBaru','rekeningKeterangan'].forEach(id=>{if($(id)) $(id).value=''});
+  }
+  function addRow(data){
+    const rows=$('gantiRekeningRows');
+    if(!rows) return;
+    if(rows.querySelector('.rekening-empty')) rows.innerHTML='';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${esc(data.nama)}</td>
+      <td><span class="izin-pill">${esc(data.role)}</span></td>
+      <td>${esc(data.paspor)}</td>
+      <td>${esc(data.lama)}</td>
+      <td>${esc(data.baru)}</td>
+      <td>${esc(data.keterangan)}</td>`;
+    rows.prepend(tr);
+  }
+
+  $('openGantiRekeningBtn')?.addEventListener('click',openModal);
+  $('closeGantiRekeningModal')?.addEventListener('click',closeModal);
+  $('cancelGantiRekeningBtn')?.addEventListener('click',closeModal);
+  $('gantiRekeningModal')?.addEventListener('click',event=>{if(event.target===$('gantiRekeningModal')) closeModal();});
+  $('saveGantiRekeningBtn')?.addEventListener('click',()=>{
+    const data={
+      nama:$('rekeningNama')?.value.trim()||'',
+      role:$('rekeningRole')?.value.trim()||'',
+      paspor:$('rekeningPaspor')?.value.trim()||'',
+      lama:$('rekeningLama')?.value.trim()||'',
+      baru:$('rekeningBaru')?.value.trim()||'',
+      keterangan:$('rekeningKeterangan')?.value.trim()||''
+    };
+    if(!data.nama || !data.role || !data.paspor || !data.lama || !data.baru || !data.keterangan){
+      if(typeof window.toast==='function') window.toast('Lengkapi semua data ganti rekening terlebih dahulu.');
+      return;
+    }
+    addRow(data);
+    clearForm();
+    closeModal();
+    if(typeof window.toast==='function') window.toast('Data ganti rekening berhasil ditambahkan.');
+  });
+})();
 </script>
 
 </body>
