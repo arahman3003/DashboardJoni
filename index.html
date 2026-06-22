@@ -3819,6 +3819,28 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .rekening-detail-simple-card p{margin:18px 0 0;color:#5f5f5f;font-size:17px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
 .rekening-detail-simple-card .rekening-detail-ok{width:auto;min-width:110px;margin:24px auto 0;background:#6e63d9;color:#fff;border-radius:4px;padding:0 22px}
 
+
+/* Perbaikan kolom ROLE agar tulisan normal, tidak terpecah */
+#dashGantiRekening .rekening-table col.rekening-col-role{width:8%!important}
+#dashGantiRekening .rekening-table col.rekening-col-name{width:8%!important}
+#dashGantiRekening .rekening-role-cell{
+  min-width:0!important;
+  white-space:nowrap!important;
+}
+#dashGantiRekening .rekening-role-cell .izin-pill{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:54px!important;
+  white-space:nowrap!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+}
+#dashGantiRekening .rekening-role-cell.has-hover-actions:hover .izin-pill,
+#dashGantiRekening .rekening-role-cell.has-hover-actions:focus-within .izin-pill{
+  opacity:.4;
+}
+
 </style>
 
 <script>
@@ -4208,8 +4230,8 @@ body.pc-app-mode #desktopApp{display:grid!important}
        <div class="dash-table-wrap rekening-table-wrap">
          <table class="rekening-table">
            <colgroup>
-             <col class="rekening-col-name">
              <col class="rekening-col-role">
+             <col class="rekening-col-name">
              <col class="rekening-col-passport">
              <col class="rekening-col-old-name">
              <col class="rekening-col-old-number">
