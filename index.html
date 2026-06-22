@@ -3905,6 +3905,65 @@ body.pc-app-mode #desktopApp{display:grid!important}
   margin:0!important;
 }
 
+
+/* Card judul panjang Ganti Rekening */
+.rekening-quote-card{
+  position:relative;
+  overflow:hidden;
+  margin:0 0 18px;
+  min-height:128px;
+  padding:26px 30px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-radius:18px;
+  background:linear-gradient(135deg,#342d27 0%,#191b26 56%,#5b3d25 100%);
+  border:1px solid rgba(207,160,102,.48);
+  box-shadow:0 15px 32px rgba(40,30,20,.16);
+}
+.rekening-quote-card::before{
+  content:"";
+  position:absolute;
+  width:230px;
+  height:230px;
+  border-radius:50%;
+  right:-62px;
+  top:-120px;
+  background:rgba(228,181,113,.18);
+}
+.rekening-quote-card::after{
+  content:"✦";
+  position:absolute;
+  right:42px;
+  bottom:17px;
+  color:rgba(255,241,207,.55);
+  font-size:42px;
+}
+.rekening-quote-kicker{
+  position:relative;
+  z-index:1;
+  margin-bottom:9px;
+  color:#f4d59f;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.14em;
+}
+.rekening-quote-text{
+  position:relative;
+  z-index:1;
+  max-width:940px;
+  color:#fffaf1;
+  font-size:25px;
+  line-height:1.27;
+  font-weight:950;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+}
+@media(max-width:900px){
+  .rekening-quote-card{min-height:110px;padding:21px}
+  .rekening-quote-text{font-size:19px}
+}
+
 </style>
 
 <script>
@@ -4279,6 +4338,10 @@ body.pc-app-mode #desktopApp{display:grid!important}
    </section>
    <section class="dash-content extra-page" id="dashGantiRekening">
      <div class="rekening-page-wrap">
+       <div class="rekening-quote-card">
+         <div class="rekening-quote-kicker">PESAN UNTUK STAFF</div>
+         <div class="rekening-quote-text">GANTI REKENING BOLEH, GANTI PASANGAN JANGAN YA DEK</div>
+       </div>
        <header class="rekening-page-head">
          <div>
            <h1>GANTI REKENING</h1>
