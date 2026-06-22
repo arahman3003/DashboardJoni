@@ -3200,6 +3200,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .topbar-user-name{max-width:min(215px,calc(100vw - 190px))!important}
 }
 
+
+/* Nama profile dikunci: hanya dapat diubah dari User Staff oleh admin berwenang */
+.profile-settings-locked-name{
+  margin:0 0 14px;
+  padding:10px 12px;
+  border-radius:11px;
+  background:#f8f1e7;
+  border:1px solid #e6d2b9;
+  color:#7b6142;
+  font-size:11px;
+  line-height:1.5;
+}
+
 </style>
 </head>
 <body>
@@ -3799,11 +3812,12 @@ body.pc-app-mode #desktopApp{display:grid!important}
         </div>
       </div>
 
-      <div class="profile-settings-tabs profile-settings-tabs-3">
+      <div class="profile-settings-tabs profile-settings-tabs-2">
         <button type="button" class="profile-settings-tab active" data-profile-tab="photo">Foto Profile</button>
-        <button type="button" class="profile-settings-tab" data-profile-tab="name">Nama Profile</button>
         <button type="button" class="profile-settings-tab" data-profile-tab="password">Password</button>
       </div>
+
+      <div class="profile-settings-locked-name">Nama profile dikunci dan hanya dapat dikelola dari menu <b>User Staff</b> oleh LEADER atau CS LINE.</div>
 
       <div class="profile-settings-panel" id="profileSettingsPhotoPanel">
         <div class="profile-upload-zone" id="profileUploadZone">
@@ -3813,12 +3827,6 @@ body.pc-app-mode #desktopApp{display:grid!important}
           <span>Format JPG, PNG, WEBP • Foto akan diperkecil otomatis</span>
         </div>
         <img id="profilePhotoPreview" class="profile-settings-preview hidden" alt="Preview foto profile">
-      </div>
-
-      <div class="profile-settings-panel hidden" id="profileSettingsNamePanel">
-        <label for="profileNameInput">NAMA TAMPILAN</label>
-        <input id="profileNameInput" maxlength="60" placeholder="Masukkan nama">
-        <p>Nama ini akan tampil pada header dashboard dan halaman Jam Izin.</p>
       </div>
 
       <div class="profile-settings-panel hidden" id="profileSettingsPasswordPanel">
@@ -6102,13 +6110,12 @@ async function loadProfile(){
   }
 }
 function switchProfileTab(mode){
-  profileMode=mode;
-  document.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===mode));
-  p$('profileSettingsPhotoPanel').classList.toggle('hidden',mode!=='photo');
-  p$('profileSettingsNamePanel').classList.toggle('hidden',mode!=='name');
-  p$('profileSettingsPasswordPanel').classList.toggle('hidden',mode!=='password');
+  profileMode=mode==='password'?'password':'photo';
+  document.querySelectorAll('[data-profile-tab]').forEach(btn=>btn.classList.toggle('active',btn.dataset.profileTab===profileMode));
+  p$('profileSettingsPhotoPanel').classList.toggle('hidden',profileMode!=='photo');
+  p$('profileSettingsPasswordPanel').classList.toggle('hidden',profileMode!=='password');
   const saveBtn=p$('profileSettingsSave');
-  if(saveBtn) saveBtn.textContent=mode==='password'?'Simpan Password Baru':'Simpan Perubahan';
+  if(saveBtn) saveBtn.textContent=profileMode==='password'?'Simpan Password Baru':'Simpan Perubahan';
 }
 function openProfileSettings(mode){
   const user=profileSession();
@@ -6119,14 +6126,13 @@ function openProfileSettings(mode){
   if(avatar) avatar.innerHTML=user.photo?`<img src="${user.photo}" alt="Foto profile">`:initials;
   p$('profileSettingsName').textContent=user.name||user.username;
   p$('profileSettingsRole').textContent=user.role||'-';
-  p$('profileNameInput').value=user.name||'';
   p$('profilePhotoInput').value='';
   p$('profileOldPassword').value='';
   p$('profileNewPassword').value='';
   p$('profileConfirmPassword').value='';
   const preview=p$('profilePhotoPreview');
   if(user.photo){preview.src=user.photo;preview.classList.remove('hidden')}else{preview.classList.add('hidden')}
-  switchProfileTab(mode==='name'?'name':(mode==='password'?'password':'photo'));
+  switchProfileTab(mode==='password'?'password':'photo');
   p$('profileSettingsPage').classList.add('open');
   p$('profileSettingsPage').setAttribute('aria-hidden','false');
 }
@@ -6163,12 +6169,7 @@ async function saveProfile(){
   btn.disabled=true;
   try{
     const changes={updatedAt:new Date().toISOString()};
-    if(profileMode==='name'){
-      const name=p$('profileNameInput').value.trim().replace(/\s+/g,' ');
-      if(name.length<2) throw new Error('Nama minimal 2 karakter.');
-      changes.name=name.toUpperCase();
-      await update(ref(profileDb,`profiles/${user.username}`),changes);
-    }else if(profileMode==='photo'){
+    if(profileMode==='photo'){
       if(!selectedPhotoData) throw new Error('Pilih foto terlebih dahulu.');
       changes.photo=selectedPhotoData;
       await update(ref(profileDb,`profiles/${user.username}`),changes);
