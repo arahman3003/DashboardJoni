@@ -3145,6 +3145,14 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .staff-delete-cancel{background:#fff!important;color:#6d655d!important;border:1px solid #d9d0c4!important}
 .staff-delete-confirm{background:linear-gradient(135deg,#de625c,#b83d38)!important;color:#fff!important}
 
+
+/* Role CS LINE */
+.user-role-table-section.role-cs-line .role-dot{background:#9b5b9d}
+.user-role-table-section.role-cs-line .user-role-table-count,
+.user-role-table-section.role-cs-line .user-staff-role-badge{
+  background:#f7e9f8;color:#8a458d;border-color:#e8cbed;
+}
+
 </style>
 </head>
 <body>
@@ -3328,7 +3336,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
   </div>
 </section>
 <section class="dash-summary"><div class="dash-stat"><div class="lab">TOTAL KARYAWAN</div><div class="num" id="statTotal">55</div><div class="cap">Akun absensi terdaftar</div></div><div class="dash-stat"><div class="lab">SUDAH MASUK</div><div class="num" id="statIn">0</div><div class="cap">Check-in hari ini</div></div><div class="dash-stat"><div class="lab">SUDAH PULANG</div><div class="num" id="statOut">0</div><div class="cap">Check-out hari ini</div></div><div class="dash-stat"><div class="lab">BELUM ABSEN</div><div class="num" id="statAbsent">55</div><div class="cap">Belum check-in hari ini</div></div></section>
-    <section class="dash-panel"><div class="dash-tools"><h2>Pengaturan Shift & Absensi</h2><div class="tools-right"><select id="dashRole"><option value="">Semua role</option><option value="CS">CS</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select><input id="dashSearch" placeholder="Cari nama atau username"><button class="dash-refresh" id="dashRefresh">↻ Perbarui</button></div></div><div id="shiftSections" class="shift-sections"><div class="dash-empty">Memuat data shift...</div></div></section>
+    <section class="dash-panel"><div class="dash-tools"><h2>Pengaturan Shift & Absensi</h2><div class="tools-right"><select id="dashRole"><option value="">Semua role</option><option value="CS">CS</option><option value="CS LINE">CS LINE</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select><input id="dashSearch" placeholder="Cari nama atau username"><button class="dash-refresh" id="dashRefresh">↻ Perbarui</button></div></div><div id="shiftSections" class="shift-sections"><div class="dash-empty">Memuat data shift...</div></div></section>
    </section>
    <section class="izin-input-page" id="dashIzinInput">
      <div class="izin-workspace">
@@ -4335,7 +4343,20 @@ function presenceLabel(schedule, crosscheck){
   if(diff<=0) return `<span class="attendance-ok">Tepat Waktu (${crosscheck.time})</span>`;
   return `<span class="attendance-late">Terlambat ${formatLateDuration(diff)} (${crosscheck.time})</span>`;
 }
+function currentDashboardRole(){
+  try{
+    return String(JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').role||'').trim().toUpperCase();
+  }catch(error){
+    return '';
+  }
+}
+function canManageAllShiftStaff(){
+  const role=currentDashboardRole();
+  return role==='LEADER' || role==='CS LINE';
+}
+
 function rowForStaff(u, r, schedule, crosscheck, no){
+  const canManageShift=canManageAllShiftStaff();
   const locUrl=mapUrl(r?.checkIn?.location||r?.checkOut?.location);
   const category=schedule.category||'';
   const dateText=new Date(currentDashboardDate()+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
@@ -4351,7 +4372,7 @@ function rowForStaff(u, r, schedule, crosscheck, no){
       : '<span class="check-state wait">Belum Check Out</span>';
   const crosscheckDisplay=crosscheck?.time
     ? `<span class="crosscheck-time">◌ ${crosscheck.time} WIB</span>`
-    : (category==='CUTI' ? '—' : `<button class="crosscheck-btn" data-crosscheck="${u.username}">Crosscheck</button>`);
+    : (category==='CUTI' ? '—' : (canManageShift ? `<button class="crosscheck-btn" data-crosscheck="${u.username}">Crosscheck</button>` : '—'));
   return `<tr>
     <td>${no}</td>
     <td><div class="dash-user">${u.name}<small>${u.username}</small></div></td>
@@ -4364,7 +4385,11 @@ function rowForStaff(u, r, schedule, crosscheck, no){
     <td>${checkOutStatus}</td>
     <td>${crosscheckDisplay}</td>
     <td>${presenceLabel(schedule,crosscheck)}</td>
-    <td><div class="status-action">${(!r?.checkIn&&category!=='CUTI')?`<button class="manual-checkin" data-manual-checkin="${u.username}">✓ Check-in Manual</button>`:''}<button class="shift-edit" data-edit-shift="${u.username}">✦ Edit Shift</button><button class="shift-reset" data-reset-shift="${u.username}">↻ Reset</button></div></td>
+    <td><div class="status-action">${
+      canManageShift
+        ? `${(!r?.checkIn&&category!=='CUTI')?`<button class="manual-checkin" data-manual-checkin="${u.username}">✓ Check-in Manual</button>`:''}<button class="shift-edit" data-edit-shift="${u.username}">✦ Edit Shift</button><button class="shift-reset" data-reset-shift="${u.username}">↻ Reset</button>`
+        : '—'
+    }</div></td>
   </tr>`;
 }
 function sectionHtml(title, subtitle, staff, attendance, schedules, crosschecks, category){
@@ -4408,7 +4433,7 @@ async function renderDashboard(){
     const allUsers=userList();
     const mode=$('shiftTitle').textContent;
     const users=allUsers.filter(u=>{
-      const groupOK=mode.includes('KKS / KS')?['KAPTEN','KASIR'].includes(u.role):u.role==='CS';
+      const groupOK=mode.includes('KKS / KS')?['KAPTEN','KASIR'].includes(u.role):['CS','CS LINE'].includes(u.role);
       const roleOK=!role || u.role===role;
       const searchOK=!search||u.name.toLowerCase().includes(search)||u.username.includes(search);
       return groupOK&&roleOK&&searchOK;
@@ -4462,6 +4487,7 @@ function setTimeUi(category){
   }
 }
 function openShiftModal(username){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const user=TEST_USERS[username];
   if(!user) return;
   selectedShiftUser=username;
@@ -4489,6 +4515,7 @@ function openShiftModal(username){
 }
 function closeShiftModal(){selectedShiftUser=null;$('shiftModal').classList.add('hidden')}
 async function saveShift(){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   if(!selectedShiftUser) return;
   const category=$('shiftModalSelect').value;
   const start=$('shiftStart').value;
@@ -4507,6 +4534,7 @@ function currentTimeInput(){
   return `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 }
 function openCrosscheckModal(username){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const user=TEST_USERS[username];
   if(!user) return;
   selectedCrosscheckUser=username;
@@ -4518,6 +4546,7 @@ function closeCrosscheckModal(){
   $('crosscheckModal').classList.add('hidden');
 }
 async function saveCrosscheck(){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   if(!selectedCrosscheckUser) return;
   const savedAt=new Date();
   const time=`${String(savedAt.getHours()).padStart(2,'0')}:${String(savedAt.getMinutes()).padStart(2,'0')}`;
@@ -4545,6 +4574,7 @@ async function getManualCheckinSchedule(username){
   return normalizeSchedule(raw,username);
 }
 async function openManualCheckinModal(username){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const user=TEST_USERS[username];
   if(!user) return;
   selectedManualCheckinUser=username;
@@ -4572,6 +4602,7 @@ function closeManualCheckinModal(){
   $('manualCheckinModal').classList.add('hidden');
 }
 async function saveManualCheckin(){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const username=selectedManualCheckinUser;
   const user=TEST_USERS[username];
   if(!user) return;
@@ -4621,6 +4652,7 @@ async function saveManualCheckin(){
   }
 }
 function openResetModal(username){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const user=TEST_USERS[username];
   if(!user) return;
   selectedResetUser=username;
@@ -4634,6 +4666,7 @@ function closeResetModal(){
   $('resetModal').classList.add('hidden');
 }
 async function confirmResetShift(){
+  if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const username=selectedResetUser;
   const user=TEST_USERS[username];
   if(!user) return;
@@ -5029,6 +5062,7 @@ function normalizeUserRole(role){
   const value=String(role||'').trim().toUpperCase();
   if(value==='LEADER') return 'LEADER';
   if(value==='CS') return 'CS';
+  if(value==='CS LINE') return 'CS LINE';
   if(value==='KAPTEN' || value==='KKS') return 'KAPTEN';
   if(value==='KASIR' || value==='KS') return 'KASIR';
   return value || 'LAINNYA';
@@ -5039,7 +5073,9 @@ function displayUserRole(role){
 }
 function userRoleClass(role){
   const normalized=normalizeUserRole(role).toLowerCase();
-  return normalized==='kapten' ? 'kapten' : normalized;
+  if(normalized==='kapten') return 'kapten';
+  if(normalized==='cs line') return 'cs-line';
+  return normalized;
 }
 let selectedStaffRoleUser='';
 let selectedDeleteStaffUser='';
@@ -5058,11 +5094,11 @@ async function loadDeletedStaffUsers(){
 }
 
 function isCurrentUserLeader(){
-  try{
-    return String(JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').role||'').toUpperCase()==='LEADER';
-  }catch(error){
-    return false;
-  }
+  return currentDashboardRole()==='LEADER';
+}
+function canManageUserStaff(){
+  const role=currentDashboardRole();
+  return role==='LEADER' || role==='CS LINE';
 }
 
 function renderUserStaff(){
@@ -5070,7 +5106,7 @@ function renderUserStaff(){
   if(!target) return;
 
   const search=String($('userStaffSearch')?.value||'').trim().toLowerCase();
-  const canEditRole=isCurrentUserLeader();
+  const canEditRole=canManageUserStaff();
   const users=Object.entries(TEST_USERS||{})
     .filter(([username])=>!deletedStaffUsers.has(username))
     .map(([username,data])=>({
@@ -5083,6 +5119,7 @@ function renderUserStaff(){
   const categories=[
     {key:'LEADER',label:'LEADER',className:'leader'},
     {key:'CS',label:'CS',className:'cs'},
+    {key:'CS LINE',label:'CS LINE',className:'cs-line'},
     {key:'KAPTEN',label:'KAPTEN / KKS',className:'kapten'},
     {key:'KASIR',label:'KASIR',className:'kasir'}
   ];
@@ -5128,7 +5165,7 @@ function renderUserStaff(){
 
 
 function openStaffRoleModal(username){
-  if(!isCurrentUserLeader()) return;
+  if(!canManageUserStaff()) return;
   const user=TEST_USERS?.[username];
   if(!user) return;
   selectedStaffRoleUser=username;
@@ -5141,9 +5178,9 @@ function closeStaffRoleModal(){
   $('staffRoleModal')?.classList.add('hidden');
 }
 async function saveStaffRole(){
-  if(!isCurrentUserLeader() || !selectedStaffRoleUser) return;
+  if(!canManageUserStaff() || !selectedStaffRoleUser) return;
   const newRole=$('staffRoleSelect')?.value||'';
-  const validRoles=['LEADER','CS','KAPTEN','KASIR'];
+  const validRoles=['LEADER','CS','CS LINE','KAPTEN','KASIR'];
   if(!validRoles.includes(newRole)) return;
 
   const user=TEST_USERS?.[selectedStaffRoleUser];
@@ -5187,7 +5224,7 @@ async function saveStaffRole(){
 
 
 function openDeleteStaffModal(username){
-  if(!isCurrentUserLeader()) return;
+  if(!canManageUserStaff()) return;
   const user=TEST_USERS?.[username];
   if(!user) return;
 
@@ -5206,7 +5243,7 @@ function closeDeleteStaffModal(){
   $('staffDeleteModal')?.classList.add('hidden');
 }
 async function deleteStaffUser(){
-  if(!isCurrentUserLeader() || !selectedDeleteStaffUser) return;
+  if(!canManageUserStaff() || !selectedDeleteStaffUser) return;
   const username=selectedDeleteStaffUser;
   const deleteButton=$('staffDeleteConfirm');
   if(deleteButton) deleteButton.disabled=true;
@@ -7334,6 +7371,7 @@ window.renderPengajuanResign=renderResignRows;
     <select id="staffRoleSelect">
       <option value="LEADER">LEADER</option>
       <option value="CS">CS</option>
+      <option value="CS LINE">CS LINE</option>
       <option value="KAPTEN">KAPTEN / KKS</option>
       <option value="KASIR">KASIR</option>
     </select>
