@@ -3245,6 +3245,74 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .izin-quota-popup.hidden{pointer-events:none!important}
 .izin-quota-popup-card,.izin-quota-popup-btn{pointer-events:auto!important}
 
+
+/* Ganti Rekening */
+.rekening-page-wrap{
+  width:100%;
+  background:linear-gradient(180deg,#fffdf9,#f7f0e7);
+  border:1px solid #e3d4c0;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 12px 28px rgba(88,66,43,.07);
+}
+.rekening-page-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:18px;
+}
+.rekening-page-head h1{
+  margin:0;
+  color:#352a20;
+  font-size:21px;
+  font-weight:950;
+  letter-spacing:.02em;
+}
+.rekening-page-head p{
+  margin:6px 0 0;
+  color:#7b6957;
+  font-size:12px;
+}
+.rekening-table-wrap{
+  border-radius:14px;
+  border:1px solid #e0d0bc;
+  background:#fffdf9;
+}
+.rekening-table{
+  width:100%;
+  min-width:1080px;
+  border-collapse:collapse;
+  color:#4d4033;
+}
+.rekening-table th{
+  padding:13px 14px;
+  background:#4d4033;
+  color:#fffaf4;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.035em;
+  text-align:left;
+  white-space:nowrap;
+}
+.rekening-table td{
+  padding:14px;
+  border-top:1px solid #eadfce;
+  font-size:12px;
+  vertical-align:middle;
+}
+.rekening-empty{
+  height:135px;
+  text-align:center;
+  color:#90795f;
+  font-style:italic;
+  background:#fffdf9;
+}
+@media(max-width:900px){
+  .rekening-page-wrap{padding:16px}
+  .rekening-page-head h1{font-size:18px}
+}
+
 </style>
 
 <script>
@@ -3618,10 +3686,32 @@ body.pc-app-mode #desktopApp{display:grid!important}
      </div>
    </section>
    <section class="dash-content extra-page" id="dashGantiRekening">
-     <div class="extra-page-card">
-       <div class="extra-page-icon">◈</div>
-       <h1>Ganti Rekening</h1>
-       <p>Halaman perubahan data rekening staff.</p>
+     <div class="rekening-page-wrap">
+       <header class="rekening-page-head">
+         <div>
+           <h1>GANTI REKENING</h1>
+           <p>Data pengajuan perubahan rekening staff.</p>
+         </div>
+       </header>
+       <div class="dash-table-wrap rekening-table-wrap">
+         <table class="rekening-table">
+           <thead>
+             <tr>
+               <th>NAMA</th>
+               <th>ROLE</th>
+               <th>NOMOR PASSPOR</th>
+               <th>NOMOR REKENING LAMA</th>
+               <th>NOMOR REKENING BARU</th>
+               <th>KETERANGAN</th>
+             </tr>
+           </thead>
+           <tbody id="gantiRekeningRows">
+             <tr>
+               <td colspan="6" class="rekening-empty">Belum ada data pengajuan ganti rekening.</td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
      </div>
    </section>
    <section class="dash-content extra-page" id="dashSerahKasir">
