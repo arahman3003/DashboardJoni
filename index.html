@@ -3748,6 +3748,53 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .rekening-detail-summary{grid-template-columns:1fr}
 }
 
+
+/* Perapihan kolom Ganti Rekening: semua header dan isi lurus satu garis */
+#dashGantiRekening .rekening-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+}
+#dashGantiRekening .rekening-table col.rekening-col-name{width:10%!important}
+#dashGantiRekening .rekening-table col.rekening-col-role{width:6%!important}
+#dashGantiRekening .rekening-table col.rekening-col-passport{width:8%!important}
+#dashGantiRekening .rekening-table col.rekening-col-old-name{width:11%!important}
+#dashGantiRekening .rekening-table col.rekening-col-old-number{width:10%!important}
+#dashGantiRekening .rekening-table col.rekening-col-old-bank{width:6%!important}
+#dashGantiRekening .rekening-table col.rekening-col-new-name{width:11%!important}
+#dashGantiRekening .rekening-table col.rekening-col-new-number{width:10%!important}
+#dashGantiRekening .rekening-table col.rekening-col-new-bank{width:6%!important}
+#dashGantiRekening .rekening-table col.rekening-col-note{width:12%!important}
+#dashGantiRekening .rekening-table col.rekening-col-date{width:10%!important}
+
+#dashGantiRekening .rekening-table th,
+#dashGantiRekening .rekening-table td{
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+  text-align:center!important;
+}
+#dashGantiRekening .rekening-table td{
+  height:46px!important;
+  padding:10px 5px!important;
+}
+#dashGantiRekening .rekening-table th{
+  padding:9px 4px!important;
+}
+#dashGantiRekening .rekening-table td:first-child,
+#dashGantiRekening .rekening-table td:nth-child(10),
+#dashGantiRekening .rekening-table td:nth-child(11){
+  text-align:center!important;
+}
+#dashGantiRekening .rekening-table td:nth-child(1) b{
+  display:block;
+  text-align:center!important;
+}
+#dashGantiRekening .rekening-detail-btn{
+  margin:0 auto!important;
+}
+
 </style>
 
 <script>
@@ -4142,10 +4189,10 @@ body.pc-app-mode #desktopApp{display:grid!important}
              <col class="rekening-col-passport">
              <col class="rekening-col-old-name">
              <col class="rekening-col-old-number">
-             <col class="rekening-col-bank">
+             <col class="rekening-col-old-bank">
              <col class="rekening-col-new-name">
              <col class="rekening-col-new-number">
-             <col class="rekening-col-bank">
+             <col class="rekening-col-new-bank">
              <col class="rekening-col-note">
              <col class="rekening-col-date">
            </colgroup>
