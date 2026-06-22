@@ -3965,13 +3965,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 
 
-/* Naikkan posisi halaman Ganti Rekening lebih ke atas lagi */
+/* Posisi halaman Ganti Rekening: tempel ke bagian atas, tanpa ruang kosong */
 #dashGantiRekening{
-  padding-top:0!important;
-  margin-top:-60px!important;
+  padding:8px 22px 28px!important;
+  margin-top:-40px!important;
+  align-content:start!important;
+  justify-items:stretch!important;
+}
+#dashGantiRekening.show{
+  display:block!important;
 }
 #dashGantiRekening .rekening-page-wrap{
-  margin-top:-18px!important;
+  width:100%;
+  margin-top:-6px!important;
 }
 #dashGantiRekening .rekening-quote-card{
   margin-top:0!important;
