@@ -3281,7 +3281,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 .rekening-table{
   width:100%;
-  min-width:1080px;
+  min-width:1850px;
   border-collapse:collapse;
   color:#4d4033;
 }
@@ -3444,6 +3444,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .rekening-page-head{align-items:flex-start;flex-direction:column}
   .rekening-add-btn{width:100%}
   .rekening-form-grid{grid-template-columns:1fr}
+}
+
+
+.rekening-form-section{
+  margin-top:3px;
+  padding:9px 11px;
+  border-radius:10px;
+  background:#efe0ce;
+  border:1px solid #dfc3a5;
+  color:#785634;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.08em;
 }
 
 </style>
@@ -3834,14 +3847,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
                <th>NAMA</th>
                <th>ROLE</th>
                <th>NOMOR PASSPOR</th>
+               <th>NAMA REKENING LAMA</th>
                <th>NOMOR REKENING LAMA</th>
+               <th>JENIS BANK LAMA</th>
+               <th>NAMA REKENING BARU</th>
                <th>NOMOR REKENING BARU</th>
+               <th>JENIS BANK BARU</th>
                <th>KETERANGAN</th>
+               <th>TANGGAL PEMBUATAN</th>
              </tr>
            </thead>
            <tbody id="gantiRekeningRows">
              <tr>
-               <td colspan="6" class="rekening-empty">Belum ada data pengajuan ganti rekening.</td>
+               <td colspan="11" class="rekening-empty">Belum ada data pengajuan ganti rekening.</td>
              </tr>
            </tbody>
          </table>
@@ -8211,25 +8229,45 @@ window.setTimeout(()=>{
         <span>ROLE</span>
         <input id="rekeningRole" type="text" placeholder="Role staff">
       </label>
-      <label>
+      <label class="rekening-full">
         <span>NOMOR PASSPOR</span>
         <input id="rekeningPaspor" type="text" placeholder="Nomor paspor">
       </label>
+
+      <div class="rekening-form-section rekening-full">DATA REKENING LAMA</div>
       <label>
-        <span>NOMOR REKENING LAMA</span>
-        <input id="rekeningLama" type="text" inputmode="numeric" placeholder="Nomor rekening lama">
+        <span>NAMA REKENING</span>
+        <input id="rekeningLamaNama" type="text" placeholder="Nama pemilik rekening lama">
       </label>
       <label>
-        <span>NOMOR REKENING BARU</span>
-        <input id="rekeningBaru" type="text" inputmode="numeric" placeholder="Nomor rekening baru">
+        <span>NOMOR REKENING</span>
+        <input id="rekeningLamaNomor" type="text" inputmode="numeric" placeholder="Nomor rekening lama">
       </label>
+      <label class="rekening-full">
+        <span>JENIS BANK</span>
+        <input id="rekeningLamaBank" type="text" placeholder="Contoh: BCA, BRI, Mandiri">
+      </label>
+
+      <div class="rekening-form-section rekening-full">DATA REKENING BARU</div>
+      <label>
+        <span>NAMA REKENING</span>
+        <input id="rekeningBaruNama" type="text" placeholder="Nama pemilik rekening baru">
+      </label>
+      <label>
+        <span>NOMOR REKENING</span>
+        <input id="rekeningBaruNomor" type="text" inputmode="numeric" placeholder="Nomor rekening baru">
+      </label>
+      <label class="rekening-full">
+        <span>JENIS BANK</span>
+        <input id="rekeningBaruBank" type="text" placeholder="Contoh: BCA, BRI, Mandiri">
+      </label>
+
       <label class="rekening-full">
         <span>KETERANGAN</span>
         <textarea id="rekeningKeterangan" placeholder="Tulis keterangan pengajuan"></textarea>
       </label>
     </div>
-
-    <div class="rekening-modal-actions">
+        <div class="rekening-modal-actions">
       <button type="button" class="rekening-cancel-btn" id="cancelGantiRekeningBtn">Batal</button>
       <button type="button" class="rekening-save-btn" id="saveGantiRekeningBtn">Simpan Data</button>
     </div>
@@ -8254,7 +8292,12 @@ window.setTimeout(()=>{
     $('gantiRekeningModal')?.classList.add('hidden');
   }
   function clearForm(){
-    ['rekeningPaspor','rekeningLama','rekeningBaru','rekeningKeterangan'].forEach(id=>{if($(id)) $(id).value=''});
+    [
+      'rekeningPaspor',
+      'rekeningLamaNama','rekeningLamaNomor','rekeningLamaBank',
+      'rekeningBaruNama','rekeningBaruNomor','rekeningBaruBank',
+      'rekeningKeterangan'
+    ].forEach(id=>{if($(id)) $(id).value=''});
   }
   function addRow(data){
     const rows=$('gantiRekeningRows');
@@ -8265,9 +8308,14 @@ window.setTimeout(()=>{
       <td>${esc(data.nama)}</td>
       <td><span class="izin-pill">${esc(data.role)}</span></td>
       <td>${esc(data.paspor)}</td>
-      <td>${esc(data.lama)}</td>
-      <td>${esc(data.baru)}</td>
-      <td>${esc(data.keterangan)}</td>`;
+      <td>${esc(data.lamaNama)}</td>
+      <td>${esc(data.lamaNomor)}</td>
+      <td>${esc(data.lamaBank)}</td>
+      <td>${esc(data.baruNama)}</td>
+      <td>${esc(data.baruNomor)}</td>
+      <td>${esc(data.baruBank)}</td>
+      <td>${esc(data.keterangan)}</td>
+      <td>${esc(data.tanggal)}</td>`;
     rows.prepend(tr);
   }
 
@@ -8276,15 +8324,21 @@ window.setTimeout(()=>{
   $('cancelGantiRekeningBtn')?.addEventListener('click',closeModal);
   $('gantiRekeningModal')?.addEventListener('click',event=>{if(event.target===$('gantiRekeningModal')) closeModal();});
   $('saveGantiRekeningBtn')?.addEventListener('click',()=>{
+    const now=new Date();
     const data={
       nama:$('rekeningNama')?.value.trim()||'',
       role:$('rekeningRole')?.value.trim()||'',
       paspor:$('rekeningPaspor')?.value.trim()||'',
-      lama:$('rekeningLama')?.value.trim()||'',
-      baru:$('rekeningBaru')?.value.trim()||'',
-      keterangan:$('rekeningKeterangan')?.value.trim()||''
+      lamaNama:$('rekeningLamaNama')?.value.trim()||'',
+      lamaNomor:$('rekeningLamaNomor')?.value.trim()||'',
+      lamaBank:$('rekeningLamaBank')?.value.trim()||'',
+      baruNama:$('rekeningBaruNama')?.value.trim()||'',
+      baruNomor:$('rekeningBaruNomor')?.value.trim()||'',
+      baruBank:$('rekeningBaruBank')?.value.trim()||'',
+      keterangan:$('rekeningKeterangan')?.value.trim()||'',
+      tanggal:now.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})+' • '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false})
     };
-    if(!data.nama || !data.role || !data.paspor || !data.lama || !data.baru || !data.keterangan){
+    if(!data.nama || !data.role || !data.paspor || !data.lamaNama || !data.lamaNomor || !data.lamaBank || !data.baruNama || !data.baruNomor || !data.baruBank || !data.keterangan){
       if(typeof window.toast==='function') window.toast('Lengkapi semua data ganti rekening terlebih dahulu.');
       return;
     }
