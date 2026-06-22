@@ -3251,8 +3251,13 @@ body.pc-app-mode #desktopApp{display:grid!important}
 (function(){
   try{
     var saved=JSON.parse(sessionStorage.getItem('absensi_test_user')||'null');
+    var savedMenu=sessionStorage.getItem('absensi_active_sidebar_menu');
+    var forceHome=sessionStorage.getItem('absensi_force_dashboard_home')==='1';
     if(saved && saved.username){
       document.documentElement.classList.add('pc-session-pending');
+      if(!forceHome && savedMenu && savedMenu!=='home'){
+        document.documentElement.classList.add('pc-restore-menu-pending');
+      }
     }
   }catch(e){}
 })();
@@ -3262,6 +3267,13 @@ body.pc-app-mode #desktopApp{display:grid!important}
   html.pc-session-pending #desktopLoginPage{display:none!important}
   html.pc-session-pending #desktopApp{display:grid!important;visibility:hidden!important}
   html.pc-session-pending body{background:#e9e7e2!important}
+
+  /* Saat refresh dari menu selain Dashboard, tahan render sesaat agar Welcome card tidak sempat terlihat. */
+  html.pc-restore-menu-pending #desktopLoginPage{display:none!important}
+  html.pc-restore-menu-pending #desktopApp{
+    display:grid!important;
+    visibility:hidden!important;
+  }
 }
 </style>
 
@@ -6217,7 +6229,7 @@ setInterval(async()=>{
   const isDesktop=()=>window.matchMedia('(min-width:768px)').matches;
 
   function showLogin(){
-    document.documentElement.classList.remove('pc-session-pending');
+    document.documentElement.classList.remove('pc-session-pending','pc-restore-menu-pending');
     document.body.classList.remove('pc-app-mode');
     document.body.classList.add('pc-login-mode');
     const app=document.getElementById('desktopApp');
@@ -6239,6 +6251,7 @@ setInterval(async()=>{
     if(login){ login.classList.add('hidden'); login.style.display='none'; }
     if(app){ app.classList.remove('hidden'); app.style.display='grid'; }
     document.documentElement.classList.remove('pc-session-pending');
+    // pc-restore-menu-pending baru dilepas setelah menu tujuan benar-benar dipulihkan.
   }
 
   window.doPCLogout=function(e){
@@ -7366,18 +7379,24 @@ document.addEventListener('keydown',e=>{
 
 <script>
 window.addEventListener('load',()=>{
+  const revealDashboard=()=>{
+    document.documentElement.classList.remove('pc-restore-menu-pending','pc-session-pending');
+  };
+
   try{
     const forceHome=sessionStorage.getItem('absensi_force_dashboard_home')==='1';
     if(forceHome){
       sessionStorage.removeItem('absensi_force_dashboard_home');
       sessionStorage.removeItem('absensi_active_sidebar_menu');
       if(typeof window.switchDash==='function') window.switchDash('home');
+      requestAnimationFrame(revealDashboard);
       return;
     }
 
     const savedMenu=sessionStorage.getItem('absensi_active_sidebar_menu');
     if(savedMenu && savedMenu!=='home' && typeof window.switchDash==='function'){
       window.switchDash(savedMenu);
+
       const parentMap={
         'shift-cs':'shiftGroup',
         'shift-kks':'shiftGroup',
@@ -7385,13 +7404,23 @@ window.addEventListener('load',()=>{
         'izin-dashboard':'izinGroup',
         'pengajuan-cuti':'pengajuanGroup',
         'pengajuan-resign':'pengajuanGroup',
+        'ganti-rekening':'pengajuanGroup',
         'serah-kasir':'serahGroup',
         'serah-kapten':'serahGroup'
       };
       const parentId=parentMap[savedMenu];
       if(parentId) document.getElementById(parentId)?.classList.add('open');
+
+      // Beri satu frame agar halaman tujuan sudah aktif sebelum dashboard ditampilkan.
+      requestAnimationFrame(()=>requestAnimationFrame(revealDashboard));
+      return;
     }
-  }catch(e){ console.error('Menu restore error',e); }
+
+    requestAnimationFrame(revealDashboard);
+  }catch(e){
+    console.error('Menu restore error',e);
+    revealDashboard();
+  }
 });
 </script>
 
@@ -7929,6 +7958,13 @@ window.renderPengajuanResign=renderResignRows;
     <button type="button" class="izin-quota-popup-btn" id="izinQuotaPopupClose" onclick="document.getElementById('izinQuotaPopup').classList.add('hidden')">Mengerti</button>
   </div>
 </div>
+
+
+<script>
+window.setTimeout(()=>{
+  document.documentElement.classList.remove('pc-restore-menu-pending','pc-session-pending');
+},2200);
+</script>
 
 </body>
 </html>
