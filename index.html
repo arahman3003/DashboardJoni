@@ -5081,6 +5081,36 @@ function userRoleClass(role){
 let selectedStaffRoleUser='';
 let selectedDeleteStaffUser='';
 let deletedStaffUsers=new Set();
+let staffProfileOverrides={};
+
+async function loadStaffProfileOverrides(){
+  try{
+    const snap=await get(ref(db,'profiles'));
+    const profiles=snap.exists()?(snap.val()||{}):{};
+    staffProfileOverrides={};
+    Object.entries(profiles).forEach(([username,profile])=>{
+      if(profile && typeof profile==='object'){
+        staffProfileOverrides[username]={
+          ...(profile.name?{name:profile.name}:{}),
+          ...(profile.role?{role:profile.role}:{})
+        };
+      }
+    });
+  }catch(error){
+    console.warn('Role staff dari Firebase belum dimuat:',error);
+  }
+}
+
+function getStaffDirectoryUser(username,data){
+  const override=staffProfileOverrides?.[username]||{};
+  return {
+    username,
+    ...data,
+    ...override,
+    name:override.name||data?.name||username,
+    role:override.role||data?.role||'LAINNYA'
+  };
+}
 
 async function loadDeletedStaffUsers(){
   try{
@@ -5110,12 +5140,13 @@ function renderUserStaff(){
   const canEditRole=canManageUserStaff();
   const users=Object.entries(TEST_USERS||{})
     .filter(([username])=>!deletedStaffUsers.has(username))
-    .map(([username,data])=>({
-      username,
-      name:data?.name||username,
-      role:data?.role||'LAINNYA',
-      normalizedRole:normalizeUserRole(data?.role)
-    }));
+    .map(([username,data])=>{
+      const staff=getStaffDirectoryUser(username,data);
+      return {
+        ...staff,
+        normalizedRole:normalizeUserRole(staff.role)
+      };
+    });
 
   const categories=[
     {key:'LEADER',label:'LEADER',className:'leader'},
@@ -5167,8 +5198,9 @@ function renderUserStaff(){
 
 function openStaffRoleModal(username){
   if(!canManageUserStaff()) return;
-  const user=TEST_USERS?.[username];
-  if(!user) return;
+  const baseUser=TEST_USERS?.[username];
+  if(!baseUser) return;
+  const user=getStaffDirectoryUser(username,baseUser);
   selectedStaffRoleUser=username;
   $('staffRoleModalInfo').innerHTML=`<b>${user.name||username}</b><br><span>@${username} • Role saat ini: ${displayUserRole(user.role)}</span>`;
   $('staffRoleSelect').value=normalizeUserRole(user.role)==='KAPTEN'?'KAPTEN':normalizeUserRole(user.role);
@@ -5197,6 +5229,10 @@ async function saveStaffRole(){
     });
 
     // Update daftar yang sedang aktif supaya berpindah tabel tanpa reload.
+    staffProfileOverrides[selectedStaffRoleUser]={
+      ...(staffProfileOverrides[selectedStaffRoleUser]||{}),
+      role:newRole
+    };
     TEST_USERS[selectedStaffRoleUser].role=newRole;
     if(typeof AUTH_USERS!=='undefined' && AUTH_USERS[selectedStaffRoleUser]){
       AUTH_USERS[selectedStaffRoleUser].role=newRole;
@@ -5232,8 +5268,9 @@ async function saveStaffRole(){
 
 function openDeleteStaffModal(username){
   if(!canManageUserStaff()) return;
-  const user=TEST_USERS?.[username];
-  if(!user) return;
+  const baseUser=TEST_USERS?.[username];
+  if(!baseUser) return;
+  const user=getStaffDirectoryUser(username,baseUser);
 
   const current=JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}');
   if(current.username===username){
@@ -5308,7 +5345,7 @@ function switchDash(view){
   }
   if(isShift) renderDashboard();
   if(isUserStaff){
-    loadDeletedStaffUsers().finally(renderUserStaff);
+    Promise.all([loadStaffProfileOverrides(),loadDeletedStaffUsers()]).finally(renderUserStaff);
   }
   if(isIzinInput) renderDeskIzinInput();
   if(isIzinDashboard) renderIzin();
