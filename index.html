@@ -3431,7 +3431,7 @@ body.pc-app-mode #desktopApp{display:grid!important}
            <div class="izin-user-avatar" id="deskIzinAvatar">U</div>
            <div><div class="izin-user-name" id="deskIzinName">Memuat akun...</div><div class="izin-user-role" id="deskIzinRole">-</div></div>
          </div>
-         <div class="izin-role-quota-note"><b>Kuota Izin Keluar 15 menit:</b> CS LINE 2 staff, CS 2 staff, KASIR 2 staff, KAPTEN / KKS 1 staff. Kuota dicek bersama secara langsung untuk semua perangkat. <b>Izin Ambil Makan 7 menit</b> tetap terpisah dan tidak memakai kuota ini.</div>
+         <div class="izin-role-quota-note"><b>Kuota Izin Keluar 15 menit:</b> CS LINE 2 staff, CS 2 staff, KASIR 2 staff, KAPTEN / KKS 1 staff. Kuota dikunci bersama untuk semua perangkat dan data lama yang melebihi kuota akan dikoreksi otomatis. <b>Izin Ambil Makan 7 menit</b> tetap terpisah dan tidak memakai kuota ini.</div>
         <div class="izin-input-choice-grid" id="deskIzinChoices">
            <button type="button" class="izin-input-choice active" data-desk-izin-type="Izin Keluar" id="deskChoiceKeluar" onclick="window.izinPCChoose('Izin Keluar')">↗ Izin Keluar<span>Durasi 15 menit • Telat mulai 16:00</span></button>
            <button type="button" class="izin-input-choice" data-desk-izin-type="Izin Ambil Makan" id="deskChoiceMakan" onclick="window.izinPCChoose('Izin Ambil Makan')">☕ Ambil Makan<span>Durasi 7 menit • Telat mulai 8:00</span></button>
@@ -4812,6 +4812,41 @@ async function getIzinKeluarRoleQuota(role,dateKey=ymd(new Date())){
   };
 }
 
+async function enforceIzinKeluarRoleLimits(dateKey=ymd(new Date())){
+  const closed=[];
+  const result=await runTransaction(ref(db,`jamIzinV2/${dateKey}`),current=>{
+    const records=current && typeof current==='object' ? current : {};
+    const byRole={};
+
+    Object.entries(records).forEach(([key,item])=>{
+      if(!item || item.type!=='Izin Keluar' || item.endedAt) return;
+      const role=normalizeIzinRole(item.role);
+      const limit=IZIN_KELUAR_ROLE_LIMITS[role]||0;
+      if(!limit) return;
+      (byRole[role]||(byRole[role]=[])).push({key,item,limit});
+    });
+
+    Object.values(byRole).forEach(list=>{
+      list.sort((a,b)=>String(a.item.startedAt||'').localeCompare(String(b.item.startedAt||'')));
+      list.slice(list[0]?.limit||0).forEach(({key,item,limit})=>{
+        if(item.endedAt) return;
+        const nowIso=new Date().toISOString();
+        records[key]={
+          ...item,
+          endedAt:nowIso,
+          endTime:new Date(nowIso).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}),
+          quotaAutoClosed:true,
+          quotaClosedReason:`Kuota ${izinRoleLabel(normalizeIzinRole(item.role))} maksimal ${limit} staff`
+        };
+        closed.push(key);
+      });
+    });
+
+    return records;
+  });
+  return {committed:result.committed,closed};
+}
+
 async function startSharedIzinRecord(user,type,rule,now=new Date()){
   const dateKey=ymd(now);
   const key=`izin_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
@@ -4833,18 +4868,40 @@ async function startSharedIzinRecord(user,type,rule,now=new Date()){
   const normalizedRole=normalizeIzinRole(user?.role);
   const limit=type==='Izin Keluar' ? (IZIN_KELUAR_ROLE_LIMITS[normalizedRole]||0) : 0;
   let quotaFull=false;
+  let ownActive=false;
   let quotaCount=0;
 
   const result=await runTransaction(ref(db,`jamIzinV2/${dateKey}`),current=>{
     const records=current && typeof current==='object' ? current : {};
 
-    // Jangan biarkan akun yang sama membuat izin aktif kedua lewat tab/perangkat lain.
-    const ownActive=Object.values(records).some(item=>
+    // Bersihkan data lama yang pernah melebihi kuota, tetap simpan hanya staff yang lebih dulu izin.
+    const activeByRole={};
+    Object.entries(records).forEach(([recordKey,item])=>{
+      if(!item || item.type!=='Izin Keluar' || item.endedAt) return;
+      const role=normalizeIzinRole(item.role);
+      const roleLimit=IZIN_KELUAR_ROLE_LIMITS[role]||0;
+      if(!roleLimit) return;
+      (activeByRole[role]||(activeByRole[role]=[])).push({recordKey,item,roleLimit});
+    });
+    Object.values(activeByRole).forEach(list=>{
+      list.sort((a,b)=>String(a.item.startedAt||'').localeCompare(String(b.item.startedAt||'')));
+      list.slice(list[0]?.roleLimit||0).forEach(({recordKey,item,roleLimit})=>{
+        const nowIso=new Date().toISOString();
+        records[recordKey]={
+          ...item,
+          endedAt:nowIso,
+          endTime:new Date(nowIso).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}),
+          quotaAutoClosed:true,
+          quotaClosedReason:`Kuota ${izinRoleLabel(normalizeIzinRole(item.role))} maksimal ${roleLimit} staff`
+        };
+      });
+    });
+
+    ownActive=Object.values(records).some(item=>
       item && item.username===user.username && !item.endedAt
     );
     if(ownActive) return;
 
-    // Hanya Izin Keluar 15 menit yang memiliki batas per role.
     if(type==='Izin Keluar' && limit>0){
       quotaCount=Object.values(records).filter(item=>
         item &&
@@ -5052,9 +5109,14 @@ function readIzinStore(date=ymd(new Date())){
 function writeIzinStore(items,date=ymd(new Date())){
   localStorage.setItem(izinStorageKey(date),JSON.stringify(items));
 }
-function getDeskIzinByUser(username){
+async function getDeskIzinByUser(username,dateKey=ymd(new Date())){
   if(!username) return [];
-  return readIzinStore().filter(x=>x.username===username).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
+  const snap=await get(ref(db,`jamIzinV2/${dateKey}`));
+  if(!snap.exists()) return [];
+  return Object.entries(snap.val()||{})
+    .map(([key,item])=>({key,...item}))
+    .filter(item=>item.username===username)
+    .sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
 }
 function syncDeskIzinUi(item){
   if(!$('deskIzinTitle')) return;
@@ -5102,14 +5164,20 @@ function syncDeskIzinUi(item){
   $('deskIzinCountdown').classList.toggle('overdue',status.className==='izin-expired');
 }
 
-function renderDeskIzinInput(){
+async function renderDeskIzinInput(){
   if($('izinInputToday')) $('izinInputToday').textContent=dateLabel(new Date());
   const user=ensureDesktopUser();
   syncDeskIzinUi(null);
   if(!user) return;
-  const list=getDeskIzinByUser(user.username);
-  const active=list.find(x=>!x.endedAt);
-  syncDeskIzinUi(active||list[0]||null);
+  try{
+    await enforceIzinKeluarRoleLimits();
+    const list=await getDeskIzinByUser(user.username);
+    const active=list.find(x=>!x.endedAt);
+    syncDeskIzinUi(active||list[0]||null);
+  }catch(error){
+    console.warn('Muat Jam Izin Firebase gagal:',error);
+    syncDeskIzinUi(null);
+  }
 }
 
 function setDeskIzinChoice(type){
@@ -5123,29 +5191,23 @@ async function startDeskIzin(){
   if(!user){toast('Akun dashboard tidak terbaca.');return}
   if(!rule){toast('Pilih jenis izin terlebih dahulu.');return}
 
-  const existing=getDeskIzinByUser(user.username);
-  const active=existing.find(x=>!x.endedAt);
-  if(active){
-    toast('Izin masih aktif. Tekan End Time saat sudah kembali.');
-    return;
-  }
-
   try{
+    const existing=await getDeskIzinByUser(user.username);
+    const active=existing.find(x=>!x.endedAt);
+    if(active){
+      toast('Izin masih aktif. Tekan End Time saat sudah kembali.');
+      return;
+    }
+
     const now=new Date();
     const started=await startSharedIzinRecord(user,selectedMobileIzinType,rule,now);
     if(!started.ok){
       toast(started.message);
       return;
     }
-    const record=started.record;
-
-    // Tetap simpan lokal agar tampilan desktop lama tetap berjalan tanpa berubah.
-    const all=readIzinStore();
-    all.unshift(record);
-    writeIzinStore(all);
 
     toast(`Start Time ${selectedMobileIzinType} berhasil dicatat.`);
-    renderDeskIzinInput();
+    await renderDeskIzinInput();
     renderIzin();
   }catch(error){
     console.error('Start Jam Izin gagal:',error);
@@ -5153,7 +5215,7 @@ async function startDeskIzin(){
   }
 }
 
-function endDeskIzin(){
+async function endDeskIzin(){
   const user=ensureDesktopUser();
   if(!user){toast('Akun dashboard tidak terbaca.');return}
   if(!currentDeskIzin || currentDeskIzin.endedAt){
@@ -5161,25 +5223,21 @@ function endDeskIzin(){
     return;
   }
 
-  const now=new Date();
-  const all=readIzinStore();
-  const idx=all.findIndex(x=>x.key===currentDeskIzin.key);
-  if(idx===-1){
-    toast('Data izin aktif tidak ditemukan.');
-    return;
+  try{
+    const now=new Date();
+    const endedAt=now.toISOString();
+    const endTime=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    const dateKey=ymd(new Date(currentDeskIzin.startedAt||now));
+
+    await update(ref(db,`jamIzinV2/${dateKey}/${currentDeskIzin.key}`),{endedAt,endTime});
+
+    toast('End Time izin berhasil dicatat.');
+    await renderDeskIzinInput();
+    renderIzin();
+  }catch(error){
+    console.error('End Jam Izin gagal:',error);
+    toast('End Time belum dapat disimpan.');
   }
-  const endedAt=now.toISOString();
-  const endTime=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-  all[idx]={...all[idx],endedAt,endTime};
-  writeIzinStore(all);
-
-  // Sinkronkan status selesai agar slot kuota role langsung terbuka di semua perangkat.
-  update(ref(db,`jamIzinV2/${ymd(new Date(currentDeskIzin.startedAt||now))}/${currentDeskIzin.key}`),{endedAt,endTime})
-    .catch(error=>console.warn('Sinkron End Time Firebase gagal:',error));
-
-  toast('End Time izin berhasil dicatat.');
-  renderDeskIzinInput();
-  renderIzin();
 }
 
 let selectedIzinDashboardDate=ymd(new Date());
@@ -5190,7 +5248,7 @@ function formatIzinDashboardDate(dateKey){
   return dateLabel(d);
 }
 
-function renderIzin(){
+async function renderIzin(){
   const date=selectedIzinDashboardDate||ymd(new Date());
   const isToday=date===ymd(new Date());
   if($('izinToday')) $('izinToday').textContent=formatIzinDashboardDate(date);
@@ -5198,27 +5256,39 @@ function renderIzin(){
   if($('izinListDesc')) $('izinListDesc').textContent=isToday
     ? 'Data izin hari ini tersimpan di Firebase.'
     : `Menampilkan riwayat data izin pada ${formatIzinDashboardDate(date)}.`;
-  const rows=$('izinRows');
-  const list=readIzinStore(date).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
 
-  rows.innerHTML=list.length?list.map((x,i)=>{
-    const status=izinStatus(x);
-    const duration=x.endedAt
-      ? formatDuration(x.startedAt,x.endedAt)
-      : (secondsLeft(x.expiresAt)>0?formatCountdown(secondsLeft(x.expiresAt)):'00:00');
-    return `<tr>
-      <td>${i+1}</td>
-      <td><div class="dash-user">${x.name||'-'}<small>${x.username||'-'}</small></div></td>
-      <td><span class="izin-pill">${x.role||'-'}</span></td>
-      <td><span class="izin-pill">${x.type||'Izin'}</span></td>
-      <td>${formatIzinTime(x.startedAt)} WIB</td>
-      <td>${formatIzinTime(x.expiresAt)} WIB</td>
-      <td>${x.endedAt?formatIzinTime(x.endedAt)+' WIB':'—'}</td>
-      <td><span class="izin-timer ${!x.endedAt && secondsLeft(x.expiresAt)===0?'done':''}" data-izin-expires="${x.endedAt?'':x.expiresAt}">${duration}</span></td>
-      <td><span class="izin-pill ${status.className}">${status.label}</span></td>
-    </tr>`;
-  }).join(''):'<tr><td colspan="9" class="izin-empty">Belum ada data jam izin baru.</td></tr>';
-  startIzinTicker();
+  const rows=$('izinRows');
+  if(!rows) return;
+
+  try{
+    if(isToday) await enforceIzinKeluarRoleLimits(date);
+    const snap=await get(ref(db,`jamIzinV2/${date}`));
+    const list=snap.exists()
+      ? Object.entries(snap.val()||{}).map(([key,item])=>({key,...item})).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''))
+      : [];
+
+    rows.innerHTML=list.length?list.map((x,i)=>{
+      const status=izinStatus(x);
+      const duration=x.endedAt
+        ? formatDuration(x.startedAt,x.endedAt)
+        : (secondsLeft(x.expiresAt)>0?formatCountdown(secondsLeft(x.expiresAt)):'00:00');
+      return `<tr>
+        <td>${i+1}</td>
+        <td><div class="dash-user">${x.name||'-'}<small>${x.username||'-'}</small></div></td>
+        <td><span class="izin-pill">${x.role||'-'}</span></td>
+        <td><span class="izin-pill">${x.type||'Izin'}</span></td>
+        <td>${formatIzinTime(x.startedAt)} WIB</td>
+        <td>${formatIzinTime(x.expiresAt)} WIB</td>
+        <td>${x.endedAt?formatIzinTime(x.endedAt)+' WIB':'—'}</td>
+        <td><span class="izin-timer ${!x.endedAt && secondsLeft(x.expiresAt)===0?'done':''}" data-izin-expires="${x.endedAt?'':x.expiresAt}">${duration}</span></td>
+        <td><span class="izin-pill ${status.className}">${status.label}</span></td>
+      </tr>`;
+    }).join(''):'<tr><td colspan="9" class="izin-empty">Belum ada data jam izin baru.</td></tr>';
+    startIzinTicker();
+  }catch(error){
+    console.error('Render Jam Izin gagal:',error);
+    rows.innerHTML='<tr><td colspan="9" class="izin-empty">Data Jam Izin belum dapat dimuat dari Firebase.</td></tr>';
+  }
 }
 
 function startIzinTicker(){
