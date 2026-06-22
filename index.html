@@ -3611,6 +3611,143 @@ body.pc-app-mode #desktopApp{display:grid!important}
   #dashGantiRekening .rekening-table td{font-size:9px!important}
 }
 
+
+/* Keterangan Ganti Rekening: tampil lewat ikon mata */
+.rekening-detail-btn{
+  width:30px;
+  height:30px;
+  padding:0;
+  border-radius:50%;
+  display:inline-grid;
+  place-items:center;
+  border:1px solid #e6ded3;
+  background:#f4f2ee;
+  color:#4e5660;
+  font-size:13px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+.rekening-detail-btn:hover{background:#ebe7e1;transform:translateY(-1px)}
+.rekening-form-grid input,
+.rekening-form-grid textarea{
+  text-transform:uppercase!important;
+}
+.rekening-detail-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  background:rgba(24,21,18,.55);
+  backdrop-filter:blur(6px);
+}
+.rekening-detail-modal-backdrop.hidden{display:none!important}
+.rekening-detail-modal-card{
+  width:min(540px,100%);
+  max-height:calc(100vh - 44px);
+  overflow:auto;
+  border-radius:22px;
+  padding:22px;
+  background:linear-gradient(180deg,#fffdf9,#f3e9dc);
+  border:1px solid #dfc9ad;
+  box-shadow:0 25px 75px rgba(0,0,0,.30);
+}
+.rekening-detail-modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+  margin-bottom:18px;
+}
+.rekening-detail-kicker{
+  color:#9b7141;
+  font-size:9px;
+  letter-spacing:.12em;
+  font-weight:950;
+}
+.rekening-detail-modal-head h3{
+  margin:6px 0 0;
+  color:#36291f;
+  font-size:20px;
+}
+.rekening-detail-close{
+  width:34px;height:34px;padding:0;
+  border-radius:10px;
+  background:#f6ebdc;
+  color:#765534;
+  font-size:23px;
+  line-height:1;
+}
+.rekening-detail-summary{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:13px;
+}
+.rekening-detail-summary>div{
+  padding:11px;
+  border:1px solid #e3ceb5;
+  border-radius:11px;
+  background:#fffdfa;
+}
+.rekening-detail-summary span,
+.rekening-detail-note-box span{
+  display:block;
+  color:#8a6947;
+  font-size:9px;
+  font-weight:950;
+  letter-spacing:.06em;
+}
+.rekening-detail-summary b{
+  display:block;
+  margin-top:5px;
+  color:#3f3023;
+  font-size:11px;
+  line-height:1.4;
+  word-break:break-word;
+}
+.rekening-detail-note-box{
+  padding:13px;
+  border:1px solid #e3ceb5;
+  border-radius:12px;
+  background:#fffdfa;
+}
+.rekening-detail-note-box p{
+  margin:7px 0 0;
+  color:#513e2d;
+  font-size:12px;
+  line-height:1.65;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.rekening-detail-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.rekening-detail-actions.hidden{display:none!important}
+.rekening-detail-approve,
+.rekening-detail-reject,
+.rekening-detail-ok{
+  min-height:41px;
+  border-radius:11px;
+  padding:0 15px;
+  font-size:11px;
+  font-weight:950;
+}
+.rekening-detail-approve{flex:1;background:#e0f3e6;color:#28764f;border:1px solid #b7e3c7}
+.rekening-detail-reject{flex:1;background:#f9e2df;color:#a3443f;border:1px solid #efc4be}
+.rekening-detail-ok{
+  width:100%;
+  margin-top:16px;
+  background:linear-gradient(135deg,#b9864f,#8f6338);
+  color:#fffdf9;
+}
+@media(max-width:560px){
+  .rekening-detail-summary{grid-template-columns:1fr}
+}
+
 </style>
 
 <script>
@@ -6187,6 +6324,35 @@ try{
 
 </script>
 
+
+<!-- Popup Detail Keterangan Ganti Rekening -->
+<div class="rekening-detail-modal-backdrop hidden" id="rekeningDetailModal">
+  <div class="rekening-detail-modal-card" role="dialog" aria-modal="true" aria-labelledby="rekeningDetailTitle">
+    <div class="rekening-detail-modal-head">
+      <div>
+        <div class="rekening-detail-kicker">DETAIL PENGAJUAN</div>
+        <h3 id="rekeningDetailTitle">Keterangan Ganti Rekening</h3>
+      </div>
+      <button type="button" class="rekening-detail-close" id="closeRekeningDetailModal">×</button>
+    </div>
+    <div class="rekening-detail-summary">
+      <div><span>NAMA</span><b id="rekeningDetailName">-</b></div>
+      <div><span>ROLE</span><b id="rekeningDetailRole">-</b></div>
+      <div><span>STATUS</span><b id="rekeningDetailStatus">-</b></div>
+      <div><span>TANGGAL PEMBUATAN</span><b id="rekeningDetailDate">-</b></div>
+    </div>
+    <div class="rekening-detail-note-box">
+      <span>KETERANGAN</span>
+      <p id="rekeningDetailText">-</p>
+    </div>
+    <div class="rekening-detail-actions hidden" id="rekeningDetailActions">
+      <button type="button" class="rekening-detail-approve" id="rekeningDetailApprove">✅ Setujui</button>
+      <button type="button" class="rekening-detail-reject" id="rekeningDetailReject">❌ Tolak</button>
+    </div>
+    <button type="button" class="rekening-detail-ok" id="rekeningDetailOk">Tutup</button>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getDatabase, ref, set, get, update, runTransaction } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
@@ -8468,6 +8634,7 @@ const rekeningRef=ref(rekeningDb,'pengajuanGantiRekeningShared');
 
 let rekeningData=[];
 let rekeningStatus='Pending';
+let rekeningDetailId='';
 
 const rq=id=>document.getElementById(id);
 const rekeningEscape=value=>String(value??'-').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
@@ -8504,6 +8671,27 @@ function clearRekeningForm(){
     'rekeningKeterangan'
   ].forEach(id=>{if(rq(id)) rq(id).value=''});
 }
+const rekeningUpper=value=>String(value||'').toLocaleUpperCase('id-ID');
+
+function openRekeningDetail(id){
+  const item=rekeningData.find(entry=>entry.id===id);
+  if(!item) return;
+  rekeningDetailId=id;
+  rq('rekeningDetailName').textContent=item.nama||'-';
+  rq('rekeningDetailRole').textContent=item.role||'-';
+  rq('rekeningDetailStatus').textContent=item.status||'Pending';
+  rq('rekeningDetailDate').textContent=rekeningFormatDate(item.createdAt);
+  rq('rekeningDetailText').textContent=item.keterangan||'-';
+
+  const canAct=rekeningIsLeader() && (item.status||'Pending')==='Pending';
+  rq('rekeningDetailActions')?.classList.toggle('hidden',!canAct);
+  rq('rekeningDetailModal')?.classList.remove('hidden');
+}
+function closeRekeningDetail(){
+  rekeningDetailId='';
+  rq('rekeningDetailModal')?.classList.add('hidden');
+}
+
 function renderRekeningTabs(){
   document.querySelectorAll('[data-rekening-status]').forEach(btn=>{
     btn.classList.toggle('active',btn.dataset.rekeningStatus===rekeningStatus);
@@ -8536,7 +8724,9 @@ function renderRekeningRows(){
       <td>${rekeningEscape(item.baruNama)}</td>
       <td>${rekeningEscape(item.baruNomor)}</td>
       <td>${rekeningEscape(item.baruBank)}</td>
-      <td><div class="rekening-note-cell">${rekeningEscape(item.keterangan)}${actions}</div></td>
+      <td>
+        <button type="button" class="rekening-detail-btn" title="Lihat Keterangan" aria-label="Lihat Keterangan" data-rekening-detail="${rekeningEscape(item.id)}">◉</button>
+      </td>
       <td>${rekeningFormatDate(item.createdAt)}</td>
     </tr>`;
   }).join(''):'<tr><td colspan="11" class="rekening-empty">Belum ada data pada tahap '+rekeningEscape(rekeningStatus)+'.</td></tr>';
@@ -8569,16 +8759,16 @@ function updateRekeningStatus(id,status){
 function submitRekening(){
   const data={
     id:rekeningId(),
-    nama:rq('rekeningNama')?.value.trim()||'',
-    role:rq('rekeningRole')?.value.trim()||'',
-    paspor:rq('rekeningPaspor')?.value.trim()||'',
-    lamaNama:rq('rekeningLamaNama')?.value.trim()||'',
-    lamaNomor:rq('rekeningLamaNomor')?.value.trim()||'',
-    lamaBank:rq('rekeningLamaBank')?.value.trim()||'',
-    baruNama:rq('rekeningBaruNama')?.value.trim()||'',
-    baruNomor:rq('rekeningBaruNomor')?.value.trim()||'',
-    baruBank:rq('rekeningBaruBank')?.value.trim()||'',
-    keterangan:rq('rekeningKeterangan')?.value.trim()||'',
+    nama:rekeningUpper(rq('rekeningNama')?.value.trim()),
+    role:rekeningUpper(rq('rekeningRole')?.value.trim()),
+    paspor:rekeningUpper(rq('rekeningPaspor')?.value.trim()),
+    lamaNama:rekeningUpper(rq('rekeningLamaNama')?.value.trim()),
+    lamaNomor:rekeningUpper(rq('rekeningLamaNomor')?.value.trim()),
+    lamaBank:rekeningUpper(rq('rekeningLamaBank')?.value.trim()),
+    baruNama:rekeningUpper(rq('rekeningBaruNama')?.value.trim()),
+    baruNomor:rekeningUpper(rq('rekeningBaruNomor')?.value.trim()),
+    baruBank:rekeningUpper(rq('rekeningBaruBank')?.value.trim()),
+    keterangan:rekeningUpper(rq('rekeningKeterangan')?.value.trim()),
     status:'Pending',
     createdAt:new Date().toISOString(),
     submittedBy:rekeningUser().username||'-'
@@ -8612,11 +8802,45 @@ document.addEventListener('click',event=>{
     renderRekeningRows();
     return;
   }
+  const detail=event.target.closest('[data-rekening-detail]');
+  if(detail){
+    event.preventDefault();
+    openRekeningDetail(detail.dataset.rekeningDetail);
+    return;
+  }
   const action=event.target.closest('[data-rekening-action]');
   if(action){
     event.preventDefault();
     updateRekeningStatus(action.dataset.rekeningId,action.dataset.rekeningAction);
   }
+});
+
+// Semua data input Ganti Rekening otomatis menjadi huruf kapital.
+[
+  'rekeningNama','rekeningRole','rekeningPaspor',
+  'rekeningLamaNama','rekeningLamaNomor','rekeningLamaBank',
+  'rekeningBaruNama','rekeningBaruNomor','rekeningBaruBank',
+  'rekeningKeterangan'
+].forEach(id=>{
+  rq(id)?.addEventListener('input',event=>{
+    const start=event.target.selectionStart;
+    event.target.value=rekeningUpper(event.target.value);
+    try{event.target.setSelectionRange(start,start)}catch(e){}
+  });
+});
+
+rq('closeRekeningDetailModal')?.addEventListener('click',closeRekeningDetail);
+rq('rekeningDetailOk')?.addEventListener('click',closeRekeningDetail);
+rq('rekeningDetailModal')?.addEventListener('click',event=>{if(event.target===rq('rekeningDetailModal')) closeRekeningDetail();});
+rq('rekeningDetailApprove')?.addEventListener('click',()=>{
+  if(!rekeningDetailId) return;
+  updateRekeningStatus(rekeningDetailId,'Approved');
+  closeRekeningDetail();
+});
+rq('rekeningDetailReject')?.addEventListener('click',()=>{
+  if(!rekeningDetailId) return;
+  updateRekeningStatus(rekeningDetailId,'Rejected');
+  closeRekeningDetail();
 });
 
 onValue(rekeningRef,snapshot=>{
