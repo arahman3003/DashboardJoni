@@ -3240,6 +3240,11 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .izin-quota-popup-btn{width:100%;min-height:46px;border-radius:13px;background:linear-gradient(135deg,#bd8d51,#92683d)!important;color:#fffdf8!important;font-size:13px;font-weight:950;box-shadow:0 10px 20px rgba(146,104,61,.20)}
 .izin-quota-popup-btn:active{transform:translateY(1px)}
 
+
+.izin-quota-popup{pointer-events:auto!important}
+.izin-quota-popup.hidden{pointer-events:none!important}
+.izin-quota-popup-card,.izin-quota-popup-btn{pointer-events:auto!important}
+
 </style>
 </head>
 <body>
@@ -7817,11 +7822,6 @@ onValue(resignRef,snap=>{
 });
 window.renderPengajuanResign=renderResignRows;
 
-document.addEventListener('click',event=>{
-  if(event.target.closest('#izinQuotaPopupClose') || event.target===$q('izinQuotaPopup')){
-    closeIzinQuotaPopup();
-  }
-});
 </script>
 
 
@@ -7882,14 +7882,14 @@ document.addEventListener('click',event=>{
 
 
 <!-- Popup kuota Jam Izin -->
-<div class="izin-quota-popup hidden" id="izinQuotaPopup" role="dialog" aria-modal="true" aria-labelledby="izinQuotaPopupTitle">
-  <div class="izin-quota-popup-card">
+<div class="izin-quota-popup hidden" id="izinQuotaPopup" role="dialog" aria-modal="true" aria-labelledby="izinQuotaPopupTitle" onclick="if(event.target===this){this.classList.add('hidden')}">
+  <div class="izin-quota-popup-card" onclick="event.stopPropagation()">
     <div class="izin-quota-popup-icon">⚠️</div>
     <div class="izin-quota-popup-kicker">KUOTA IZIN PENUH</div>
     <h3 id="izinQuotaPopupTitle">Izin Keluar Belum Bisa Digunakan</h3>
     <p id="izinQuotaPopupText">Kuota izin untuk role ini sedang penuh.</p>
     <div class="izin-quota-popup-rule">Silakan tunggu salah satu staff menekan <b>End Time</b>, lalu coba kembali.</div>
-    <button type="button" class="izin-quota-popup-btn" id="izinQuotaPopupClose">Mengerti</button>
+    <button type="button" class="izin-quota-popup-btn" id="izinQuotaPopupClose" onclick="document.getElementById('izinQuotaPopup').classList.add('hidden')">Mengerti</button>
   </div>
 </div>
 
