@@ -4849,7 +4849,8 @@ function ensureDesktopUser(){
     username:(TEST_USERS[username]?username:DESKTOP_DEFAULT_USER),
     ...base,
     ...(stored?.name?{name:stored.name}:{}),
-    ...(stored?.photo?{photo:stored.photo}:{})
+    ...(stored?.photo?{photo:stored.photo}:{}),
+    ...(stored?.role?{role:stored.role}:{})
   };
   if($('topUserAvatar')){
     const initials=(currentUser.name||'U').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'U';
@@ -5118,8 +5119,8 @@ function renderUserStaff(){
 
   const categories=[
     {key:'LEADER',label:'LEADER',className:'leader'},
-    {key:'CS',label:'CS',className:'cs'},
     {key:'CS LINE',label:'CS LINE',className:'cs-line'},
+    {key:'CS',label:'CS',className:'cs'},
     {key:'KAPTEN',label:'KAPTEN / KKS',className:'kapten'},
     {key:'KASIR',label:'KASIR',className:'kasir'}
   ];
@@ -5205,14 +5206,20 @@ async function saveStaffRole(){
     if(sessionRaw){
       const current=JSON.parse(sessionRaw);
       if(current.username===selectedStaffRoleUser){
-        current.role=newRole;
-        sessionStorage.setItem('absensi_test_user',JSON.stringify(current));
+        const updatedCurrent={...current,role:newRole};
+        sessionStorage.setItem('absensi_test_user',JSON.stringify(updatedCurrent));
+        if(typeof currentUser!=='undefined'){
+          currentUser={...currentUser,...updatedCurrent};
+          window.currentUser=currentUser;
+        }
+        if(typeof applyProfileUi==='function') applyProfileUi(updatedCurrent);
+        if(typeof startApp==='function') startApp();
       }
     }
 
     closeStaffRoleModal();
     renderUserStaff();
-    if(typeof window.toast==='function') window.toast('Role staff berhasil diperbarui.');
+    if(typeof window.toast==='function') window.toast('Role staff berhasil diperbarui dan tersimpan.');
   }catch(error){
     console.error('Gagal menyimpan role staff:',error);
     if(typeof window.toast==='function') window.toast('Role staff belum tersimpan. Periksa koneksi atau Rules Database.');
@@ -5406,7 +5413,13 @@ try{
    currentUser=null;
    showDesktopLogin();
  }else if(saved&&TEST_USERS[saved.username]){
-   currentUser={username:saved.username,...TEST_USERS[saved.username]};
+   currentUser={
+     username:saved.username,
+     ...TEST_USERS[saved.username],
+     ...(saved.name?{name:saved.name}:{}),
+     ...(saved.photo?{photo:saved.photo}:{}),
+     ...(saved.role?{role:saved.role}:{})
+   };
    if(isDesktop){
      showDesktopApp();
    }else{
@@ -5911,7 +5924,7 @@ setInterval(refreshIzinCheckinGate,5000);
 
 <script type="module">
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getDatabase, ref, get, update } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+import { getDatabase, ref, get, update, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 
 const profileFirebaseConfig={
   apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
@@ -5956,19 +5969,49 @@ function applyProfileUi(user){
   }
 
   if(p$('topUserName')) p$('topUserName').textContent=user.name||user.username;
+  if(p$('topUserRole')) p$('topUserRole').textContent=user.role||'-';
+  if(p$('profileSettingsRole')) p$('profileSettingsRole').textContent=user.role||'-';
   if(p$('dashboardWelcomeName')) p$('dashboardWelcomeName').textContent=user.name||user.username;
   if(p$('deskIzinName')) p$('deskIzinName').textContent=user.name||user.username;
+
+  if(typeof currentUser!=='undefined' && currentUser?.username===user.username){
+    currentUser={...currentUser,...user};
+    window.currentUser=currentUser;
+  }
 }
+let stopCurrentProfileSync=null;
+
+function applySyncedProfile(profileData={}){
+  const user=profileSession();
+  if(!user?.username) return;
+  const merged={
+    ...user,
+    ...(profileData.name?{name:profileData.name}:{}),
+    ...(profileData.photo?{photo:profileData.photo}:{}),
+    ...(profileData.role?{role:profileData.role}:{})
+  };
+  sessionStorage.setItem('absensi_test_user',JSON.stringify(merged));
+  applyProfileUi(merged);
+
+  if(typeof renderUserStaff==='function' && document.getElementById('dashUserStaff')?.classList.contains('show')){
+    renderUserStaff();
+  }
+  if(typeof renderDashboard==='function' && document.getElementById('dashShift')?.classList.contains('show')){
+    renderDashboard();
+  }
+}
+
 async function loadProfile(){
   const user=profileSession();
   if(!user?.username) return;
   try{
     const snap=await get(ref(profileDb,`profiles/${user.username}`));
-    if(!snap.exists()) { applyProfileUi(user); return; }
-    const profile=snap.val()||{};
-    const merged={...user,...(profile.name?{name:profile.name}:{}),...(profile.photo?{photo:profile.photo}:{}),...(profile.role?{role:profile.role}:{})};
-    sessionStorage.setItem('absensi_test_user',JSON.stringify(merged));
-    applyProfileUi(merged);
+    applySyncedProfile(snap.exists()?(snap.val()||{}):{});
+
+    if(stopCurrentProfileSync) stopCurrentProfileSync();
+    stopCurrentProfileSync=onValue(ref(profileDb,`profiles/${user.username}`),snap=>{
+      applySyncedProfile(snap.exists()?(snap.val()||{}):{});
+    });
   }catch(e){
     console.error('Profile load error',e);
     applyProfileUi(user);
