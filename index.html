@@ -3246,6 +3246,25 @@ body.pc-app-mode #desktopApp{display:grid!important}
 .izin-quota-popup-card,.izin-quota-popup-btn{pointer-events:auto!important}
 
 </style>
+
+<script>
+(function(){
+  try{
+    var saved=JSON.parse(sessionStorage.getItem('absensi_test_user')||'null');
+    if(saved && saved.username){
+      document.documentElement.classList.add('pc-session-pending');
+    }
+  }catch(e){}
+})();
+</script>
+<style>
+@media(min-width:768px){
+  html.pc-session-pending #desktopLoginPage{display:none!important}
+  html.pc-session-pending #desktopApp{display:grid!important;visibility:hidden!important}
+  html.pc-session-pending body{background:#e9e7e2!important}
+}
+</style>
+
 </head>
 <body>
 <section class="mobile" id="loginPage">
@@ -4255,6 +4274,8 @@ function updateClock(){
 }
 function setLoggedInUser(username,user){
  currentUser={username,...user};
+ sessionStorage.removeItem('absensi_active_sidebar_menu');
+ sessionStorage.setItem('absensi_force_dashboard_home','1');
  sessionStorage.setItem('absensi_test_user',JSON.stringify(currentUser));
 }
 function showDesktopApp(){
@@ -4284,7 +4305,7 @@ function desktopLogin(){
  showDesktopApp();
 }
 function logout(){
- try{sessionStorage.removeItem('absensi_test_user');sessionStorage.setItem('absensi_desktop_logged_out','1')}catch(e){}
+ try{sessionStorage.removeItem('absensi_test_user');sessionStorage.setItem('absensi_desktop_logged_out','1');sessionStorage.removeItem('absensi_active_sidebar_menu');sessionStorage.setItem('absensi_force_dashboard_home','1')}catch(e){}
  currentUser=null;loc=null;currentMobileIzin=null;
  if(typeof mobileIzinTimerInterval!=='undefined'&&mobileIzinTimerInterval)clearInterval(mobileIzinTimerInterval);
  if($('appPage'))$('appPage').classList.add('hidden');
@@ -6196,6 +6217,7 @@ setInterval(async()=>{
   const isDesktop=()=>window.matchMedia('(min-width:768px)').matches;
 
   function showLogin(){
+    document.documentElement.classList.remove('pc-session-pending');
     document.body.classList.remove('pc-app-mode');
     document.body.classList.add('pc-login-mode');
     const app=document.getElementById('desktopApp');
@@ -6216,6 +6238,7 @@ setInterval(async()=>{
     const login=document.getElementById('desktopLoginPage');
     if(login){ login.classList.add('hidden'); login.style.display='none'; }
     if(app){ app.classList.remove('hidden'); app.style.display='grid'; }
+    document.documentElement.classList.remove('pc-session-pending');
   }
 
   window.doPCLogout=function(e){
@@ -6223,6 +6246,8 @@ setInterval(async()=>{
     try{
       sessionStorage.removeItem('absensi_test_user');
       sessionStorage.removeItem('absensi_desktop_logged_out');
+      sessionStorage.removeItem('absensi_active_sidebar_menu');
+      sessionStorage.setItem('absensi_force_dashboard_home','1');
       localStorage.removeItem('absensi_test_user');
     }catch(err){}
     try{
@@ -6244,6 +6269,8 @@ setInterval(async()=>{
       return false;
     }
     try{
+      sessionStorage.removeItem('absensi_active_sidebar_menu');
+      sessionStorage.setItem('absensi_force_dashboard_home','1');
       sessionStorage.setItem('absensi_test_user',JSON.stringify({username,...user}));
     }catch(storageError){
       if(err) err.textContent='Sesi login tidak dapat disimpan.';
@@ -6645,6 +6672,8 @@ async function verifyDashboardLogin(username,password){
 }
 function setSession(user){
   sessionStorage.removeItem('absensi_desktop_logged_out');
+  sessionStorage.removeItem('absensi_active_sidebar_menu');
+  sessionStorage.setItem('absensi_force_dashboard_home','1');
   sessionStorage.setItem('absensi_test_user',JSON.stringify(user));
 }
 async function handleDesktopLogin(){
@@ -7338,6 +7367,14 @@ document.addEventListener('keydown',e=>{
 <script>
 window.addEventListener('load',()=>{
   try{
+    const forceHome=sessionStorage.getItem('absensi_force_dashboard_home')==='1';
+    if(forceHome){
+      sessionStorage.removeItem('absensi_force_dashboard_home');
+      sessionStorage.removeItem('absensi_active_sidebar_menu');
+      if(typeof window.switchDash==='function') window.switchDash('home');
+      return;
+    }
+
     const savedMenu=sessionStorage.getItem('absensi_active_sidebar_menu');
     if(savedMenu && savedMenu!=='home' && typeof window.switchDash==='function'){
       window.switchDash(savedMenu);
