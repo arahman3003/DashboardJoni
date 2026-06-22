@@ -5721,7 +5721,7 @@ try{
 
 <script type="module">
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getDatabase, ref, set, get, update } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
+import { getDatabase, ref, set, get, update, runTransaction } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 
 const izinFirebaseConfig={
   apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
@@ -5739,6 +5739,86 @@ let izinSelectedType='Izin Keluar';
 let izinCurrentItem=null;
 
 const izinRules={'Izin Keluar':15,'Izin Ambil Makan':7};
+
+/* Kuota ketat Izin Keluar 15 menit per role.
+   Ambil Makan tidak dibatasi oleh kuota ini. */
+const izinKeluarQuota={
+  'CS LINE':2,
+  'CS':2,
+  'KASIR':2,
+  'KAPTEN':1
+};
+const normalizeQuotaRole=role=>{
+  const value=String(role||'').trim().toUpperCase();
+  if(value==='KKS'||value==='KAPTEN') return 'KAPTEN';
+  if(value==='KS'||value==='KASIR') return 'KASIR';
+  if(value==='CS LINE') return 'CS LINE';
+  if(value==='CS') return 'CS';
+  return value;
+};
+const quotaRoleLabel=role=>normalizeQuotaRole(role)==='KAPTEN'?'KAPTEN / KKS':normalizeQuotaRole(role);
+
+async function startIzinWithStrictQuota(acc,type,minutes){
+  const today=dateKey();
+  const key=`izin_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  const now=new Date();
+  const role=normalizeQuotaRole(acc.role);
+  const limit=type==='Izin Keluar' ? (izinKeluarQuota[role]||0) : 0;
+  let quotaFull=false;
+  let activeOwn=false;
+  let currentCount=0;
+
+  const record={
+    username:acc.username,
+    name:acc.name,
+    role:acc.role,
+    type,
+    durationMinutes:minutes,
+    startedAt:now.toISOString(),
+    expiresAt:new Date(now.getTime()+minutes*60000).toISOString(),
+    lateAt:new Date(now.getTime()+(minutes+1)*60000).toISOString(),
+    endedAt:null,
+    createdAt:now.toISOString()
+  };
+
+  const result=await runTransaction(ref(izinDb,`${IZIN_PATH}/${today}`),current=>{
+    const records=current && typeof current==='object' ? current : {};
+
+    activeOwn=Object.values(records).some(item=>
+      item && item.username===acc.username && !item.endedAt
+    );
+    if(activeOwn) return;
+
+    if(type==='Izin Keluar' && limit>0){
+      currentCount=Object.values(records).filter(item=>
+        item &&
+        item.type==='Izin Keluar' &&
+        !item.endedAt &&
+        normalizeQuotaRole(item.role)===role
+      ).length;
+
+      if(currentCount>=limit){
+        quotaFull=true;
+        return;
+      }
+    }
+
+    records[key]=record;
+    return records;
+  });
+
+  if(!result.committed){
+    if(quotaFull){
+      return {
+        ok:false,
+        message:`Kuota Izin Keluar ${quotaRoleLabel(role)} sudah penuh (${currentCount}/${limit} staff).`
+      };
+    }
+    return {ok:false,message:'Izin masih aktif pada akun ini.'};
+  }
+
+  return {ok:true,record:{key,...record}};
+}
 const $q=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
 const dateKey=(d=new Date())=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -5772,6 +5852,41 @@ async function getIzinByDate(selectedDate=dateKey()){
 }
 async function getTodayIzin(){
   return getIzinByDate(dateKey());
+}
+
+/* Membersihkan data lama yang sudah telanjur melampaui kuota:
+   hanya 2 CS/CS LINE/KASIR dan 1 KAPTEN/KKS yang pertama tetap aktif. */
+async function enforceStrictIzinQuota(){
+  const today=dateKey();
+  await runTransaction(ref(izinDb,`${IZIN_PATH}/${today}`),current=>{
+    const records=current && typeof current==='object' ? current : {};
+    const groups={};
+
+    Object.entries(records).forEach(([key,item])=>{
+      if(!item || item.endedAt || item.type!=='Izin Keluar') return;
+      const role=normalizeQuotaRole(item.role);
+      const limit=izinKeluarQuota[role]||0;
+      if(!limit) return;
+      (groups[role]||(groups[role]=[])).push({key,item,limit});
+    });
+
+    Object.values(groups).forEach(list=>{
+      list.sort((a,b)=>String(a.item.startedAt||'').localeCompare(String(b.item.startedAt||'')));
+      const keep=list[0]?.limit||0;
+      list.slice(keep).forEach(({key,item,limit})=>{
+        const closedAt=new Date().toISOString();
+        records[key]={
+          ...item,
+          endedAt:closedAt,
+          endTime:formatTime(closedAt),
+          quotaAutoClosed:true,
+          quotaClosedReason:`Melebihi kuota ${quotaRoleLabel(item.role)} maksimal ${limit} staff`
+        };
+      });
+    });
+
+    return records;
+  });
 }
 
 /* Jika staff lupa End Time lalu hari sudah berganti, izin otomatis ditutup
@@ -5856,7 +5971,7 @@ function displayInput(item){
   if(end) end.disabled=false;
 }
 async function renderInput(){
-  try{displayInput(await getActiveForCurrent())}
+  try{await enforceStrictIzinQuota();displayInput(await getActiveForCurrent())}
   catch(err){console.error(err);displayInput(null);toastMsg(`Firebase baca gagal: ${err.code||err.message}`)}
 }
 function renderIzinInputLiveMeta(){
@@ -5875,6 +5990,7 @@ async function renderActiveIzinCard(){
   const totalEl=$q('activeIzinTotal');
   if(!listEl || !totalEl) return;
   try{
+    await enforceStrictIzinQuota();
     const now=Date.now();
     const rawActive=(await getTodayIzin())
       .filter(x=>!x.endedAt)
@@ -5921,6 +6037,7 @@ async function renderDashboardIzin(){
   const selectedDate=$q('izinFilterDate')?.value||dateKey();
   const isToday=selectedDate===dateKey();
   try{
+    if(isToday) await enforceStrictIzinQuota();
     const list=(await getIzinByDate(selectedDate)).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
     if($q('izinListDesc')){
       const label=new Date(selectedDate+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -5975,20 +6092,26 @@ window.izinPCStart=async()=>{
   const btn=$q('deskIzinStart');
   try{
     if(btn) btn.disabled=true;
+
     const active=await getActiveForCurrent();
-    if(active){toastMsg('Izin masih aktif. Tekan End Time saat sudah kembali.');return}
-    const acc=currentAccount(), now=new Date(), minutes=izinRules[izinSelectedType]||15;
-    const record={
-      username:acc.username,name:acc.name,role:acc.role,type:izinSelectedType,
-      durationMinutes:minutes,startedAt:now.toISOString(),
-      expiresAt:new Date(now.getTime()+minutes*60000).toISOString(),
-      lateAt:new Date(now.getTime()+(minutes+1)*60000).toISOString(),endedAt:null,
-      createdAt:now.toISOString()
-    };
-    const key='izin_'+Date.now();
-    await set(ref(izinDb,`${IZIN_PATH}/${dateKey()}/${key}`),record);
+    if(active){
+      toastMsg('Izin masih aktif. Tekan End Time saat sudah kembali.');
+      return;
+    }
+
+    const acc=currentAccount();
+    const minutes=izinRules[izinSelectedType]||15;
+    const started=await startIzinWithStrictQuota(acc,izinSelectedType,minutes);
+
+    if(!started.ok){
+      toastMsg(started.message);
+      return;
+    }
+
     toastMsg('Start Time tersimpan ke Firebase.');
-    await renderInput(); await renderDashboardIzin(); await renderActiveIzinCard();
+    await renderInput();
+    await renderDashboardIzin();
+    await renderActiveIzinCard();
   }catch(err){
     console.error('Start Firebase gagal',err);
     toastMsg(`Start gagal Firebase: ${err.code||err.message}`);
