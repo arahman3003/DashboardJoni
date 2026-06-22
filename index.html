@@ -3213,6 +3213,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
   line-height:1.5;
 }
 
+
+/* Informasi kuota Izin Keluar per role */
+.izin-role-quota-note{
+  margin-top:11px;
+  padding:10px 12px;
+  border-radius:11px;
+  background:#f8f1e8;
+  border:1px solid #e7d5bf;
+  color:#785a3c;
+  font-size:10px;
+  line-height:1.55;
+}
+
 </style>
 </head>
 <body>
@@ -3418,7 +3431,8 @@ body.pc-app-mode #desktopApp{display:grid!important}
            <div class="izin-user-avatar" id="deskIzinAvatar">U</div>
            <div><div class="izin-user-name" id="deskIzinName">Memuat akun...</div><div class="izin-user-role" id="deskIzinRole">-</div></div>
          </div>
-         <div class="izin-input-choice-grid" id="deskIzinChoices">
+         <div class="izin-role-quota-note"><b>Kuota Izin Keluar 15 menit:</b> CS LINE 2 staff, CS 2 staff, KASIR 2 staff, KAPTEN / KKS 1 staff. Izin Ambil Makan 7 menit tetap terpisah dan tidak memakai kuota ini.</div>
+        <div class="izin-input-choice-grid" id="deskIzinChoices">
            <button type="button" class="izin-input-choice active" data-desk-izin-type="Izin Keluar" id="deskChoiceKeluar" onclick="window.izinPCChoose('Izin Keluar')">↗ Izin Keluar<span>Durasi 15 menit • Telat mulai 16:00</span></button>
            <button type="button" class="izin-input-choice" data-desk-izin-type="Izin Ambil Makan" id="deskChoiceMakan" onclick="window.izinPCChoose('Izin Ambil Makan')">☕ Ambil Makan<span>Durasi 7 menit • Telat mulai 8:00</span></button>
          </div>
@@ -4750,6 +4764,66 @@ const IZIN_RULES={
   'Izin Ambil Makan':{minutes:7,label:'7 Menit'}
 };
 
+/* Batas izin keluar 15 menit per role.
+   Izin Ambil Makan tidak memakai batas kuota role ini. */
+const IZIN_KELUAR_ROLE_LIMITS={
+  'CS LINE':2,
+  'CS':2,
+  'KASIR':2,
+  'KAPTEN':1
+};
+
+function normalizeIzinRole(role){
+  const value=String(role||'').trim().toUpperCase();
+  if(value==='KKS' || value==='KAPTEN') return 'KAPTEN';
+  if(value==='KS' || value==='KASIR') return 'KASIR';
+  if(value==='CS LINE') return 'CS LINE';
+  if(value==='CS') return 'CS';
+  return value;
+}
+
+function izinRoleLabel(role){
+  const normalized=normalizeIzinRole(role);
+  return normalized==='KAPTEN' ? 'KAPTEN / KKS' : normalized;
+}
+
+async function getIzinKeluarRoleQuota(role,dateKey=ymd(new Date())){
+  const normalizedRole=normalizeIzinRole(role);
+  const limit=IZIN_KELUAR_ROLE_LIMITS[normalizedRole]||0;
+
+  // Role di luar aturan kuota tetap tidak dibatasi oleh aturan ini.
+  if(!limit) return {limited:false,allowed:true,count:0,limit:0,role:normalizedRole};
+
+  const snap=await get(ref(db,`jamIzinV2/${dateKey}`));
+  const records=snap.exists()?Object.values(snap.val()||{}):[];
+  const count=records.filter(item=>{
+    return item &&
+      item.type==='Izin Keluar' &&
+      !item.endedAt &&
+      normalizeIzinRole(item.role)===normalizedRole;
+  }).length;
+
+  return {
+    limited:true,
+    allowed:count<limit,
+    count,
+    limit,
+    role:normalizedRole
+  };
+}
+
+async function canStartIzinByRole(user,type,now=new Date()){
+  // Hanya Izin Keluar 15 menit yang dibatasi. Ambil Makan selalu terpisah.
+  if(type!=='Izin Keluar') return {allowed:true};
+  const quota=await getIzinKeluarRoleQuota(user?.role,ymd(now));
+  if(quota.allowed) return {allowed:true,quota};
+  return {
+    allowed:false,
+    quota,
+    message:`Kuota Izin Keluar untuk role ${izinRoleLabel(quota.role)} sudah penuh (${quota.count}/${quota.limit} staff). Silakan tunggu salah satu staff menekan End Time.`
+  };
+}
+
 function formatIzinTime(iso){
   if(!iso) return '--:--';
   return new Date(iso).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
@@ -4855,6 +4929,11 @@ async function startMobileIzin(){
     const existing=await getActiveMobileIzin();
     if(existing){toast('Izin masih berjalan. Tekan End Izin saat sudah kembali.');return}
     const now=new Date();
+    const quotaCheck=await canStartIzinByRole(currentUser,type,now);
+    if(!quotaCheck.allowed){
+      toast(quotaCheck.message);
+      return;
+    }
     const expiresAt=new Date(now.getTime()+rule.minutes*60*1000);
     const key='izin_'+Date.now();
     await set(ref(db,`jamIzinV2/${ymd(now)}/${key}`),{
@@ -5000,7 +5079,7 @@ function setDeskIzinChoice(type){
   document.querySelectorAll('[data-desk-izin-type]').forEach(b=>b.classList.toggle('active',b.dataset.deskIzinType===type));
 }
 
-function startDeskIzin(){
+async function startDeskIzin(){
   const user=ensureDesktopUser();
   const rule=IZIN_RULES[selectedMobileIzinType];
   if(!user){toast('Akun dashboard tidak terbaca.');return}
@@ -5013,27 +5092,44 @@ function startDeskIzin(){
     return;
   }
 
-  const now=new Date();
-  const expiresAt=new Date(now.getTime()+rule.minutes*60*1000);
-  const record={
-    key:'izin_'+Date.now(),
-    username:user.username,
-    name:user.name,
-    role:user.role,
-    type:selectedMobileIzinType,
-    durationMinutes:rule.minutes,
-    startedAt:now.toISOString(),
-    expiresAt:expiresAt.toISOString(),
-    endedAt:null,
-    createdAt:now.toISOString()
-  };
+  try{
+    const now=new Date();
+    const quotaCheck=await canStartIzinByRole(user,selectedMobileIzinType,now);
+    if(!quotaCheck.allowed){
+      toast(quotaCheck.message);
+      return;
+    }
 
-  const all=readIzinStore();
-  all.unshift(record);
-  writeIzinStore(all);
-  toast(`Start Time ${selectedMobileIzinType} berhasil dicatat.`);
-  renderDeskIzinInput();
-  renderIzin();
+    const expiresAt=new Date(now.getTime()+rule.minutes*60*1000);
+    const record={
+      key:'izin_'+Date.now(),
+      username:user.username,
+      name:user.name,
+      role:user.role,
+      type:selectedMobileIzinType,
+      durationMinutes:rule.minutes,
+      startedAt:now.toISOString(),
+      expiresAt:expiresAt.toISOString(),
+      lateAt:new Date(now.getTime()+((rule.minutes+1)*60*1000)).toISOString(),
+      endedAt:null,
+      createdAt:now.toISOString()
+    };
+
+    // Firebase menjadi sumber kuota bersama semua perangkat.
+    await set(ref(db,`jamIzinV2/${ymd(now)}/${record.key}`),record);
+
+    // Tetap simpan lokal agar tampilan desktop lama tetap berjalan tanpa berubah.
+    const all=readIzinStore();
+    all.unshift(record);
+    writeIzinStore(all);
+
+    toast(`Start Time ${selectedMobileIzinType} berhasil dicatat.`);
+    renderDeskIzinInput();
+    renderIzin();
+  }catch(error){
+    console.error('Start Jam Izin gagal:',error);
+    toast('Jam Izin belum dapat dimulai. Periksa koneksi.');
+  }
 }
 
 function endDeskIzin(){
@@ -5051,8 +5147,14 @@ function endDeskIzin(){
     toast('Data izin aktif tidak ditemukan.');
     return;
   }
-  all[idx]={...all[idx],endedAt:now.toISOString(),endTime:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})};
+  const endedAt=now.toISOString();
+  const endTime=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  all[idx]={...all[idx],endedAt,endTime};
   writeIzinStore(all);
+
+  // Sinkronkan status selesai agar slot kuota role langsung terbuka di semua perangkat.
+  update(ref(db,`jamIzinV2/${ymd(new Date(currentDeskIzin.startedAt||now))}/${currentDeskIzin.key}`),{endedAt,endTime})
+    .catch(error=>console.warn('Sinkron End Time Firebase gagal:',error));
 
   toast('End Time izin berhasil dicatat.');
   renderDeskIzinInput();
