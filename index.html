@@ -4073,6 +4073,101 @@ body.pc-app-mode #desktopApp{display:grid!important}
     visibility:hidden!important;
   }
 }
+
+/* Final Ganti Rekening: banner turun dan judul tetap sebaris */
+@media (min-width:901px){
+  #dashGantiRekening{
+    padding-top:34px!important;
+    margin-top:0!important;
+  }
+  #dashGantiRekening .rekening-quote-card{
+    margin-top:8px!important;
+    min-height:128px!important;
+  }
+  #dashGantiRekening .rekening-quote-text{
+    max-width:none!important;
+    width:100%!important;
+    white-space:nowrap!important;
+    font-size:22px!important;
+    line-height:1.18!important;
+    letter-spacing:0!important;
+  }
+}
+
+
+/* Ganti Rekening: perbesar tulisan tabel agar tidak kecil/buram */
+#dashGantiRekening table th{
+  font-size:10.5px!important;
+  letter-spacing:.045em!important;
+  font-weight:1000!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+#dashGantiRekening table td{
+  font-size:12px!important;
+  font-weight:750!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+#dashGantiRekening .muted,
+#dashGantiRekening .empty-row,
+#dashGantiRekening table em{
+  font-size:12px!important;
+  font-weight:700!important;
+}
+
+
+/* Ganti Rekening: tetap jelas saat browser zoom 75% */
+#dashGantiRekening table th{
+  font-size:13px!important;
+  line-height:1.2!important;
+  letter-spacing:.03em!important;
+  font-weight:1000!important;
+  white-space:nowrap!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+#dashGantiRekening table td{
+  font-size:12.5px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+#dashGantiRekening table thead tr:first-child th{
+  padding-top:12px!important;
+  padding-bottom:10px!important;
+}
+#dashGantiRekening table thead tr:last-child th{
+  padding-top:10px!important;
+  padding-bottom:10px!important;
+}
+
+
+/* Form Ganti Rekening: data staff otomatis dan pilihan bank */
+.rekening-form-grid select{
+  width:100%;
+  border:1px solid #ddc6aa;
+  background:#fffdfa;
+  border-radius:11px;
+  padding:11px 38px 11px 12px;
+  color:#433426;
+  outline:none;
+  font-size:12px;
+  font-weight:800;
+  appearance:auto;
+}
+.rekening-form-grid select:focus{
+  border-color:#b6844c;
+  box-shadow:0 0 0 3px rgba(182,132,76,.12);
+}
+.rekening-form-grid input[readonly]{
+  background:#f3ece2;
+  color:#5f4631;
+  font-weight:900;
+  cursor:not-allowed;
+}
+
 </style>
 
 <!-- Hostinger MySQL source-of-truth fix: 2026-06-23 -->
@@ -4270,12 +4365,12 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
 <section class="shift-topbox">
   <div class="shift-top-title"><span class="ico">◆</span><span id="shiftTopHeading">SHIFT KERJA CS LINE & CS</span></div>
   <div class="shift-mini-grid">
-    <div class="shift-mini-card"><div class="shift-mini-icon">🏖️</div><div class="shift-mini-name">CUTI</div><div class="shift-mini-value" id="sumCuti">0</div><div class="shift-mini-sub">Staff cuti</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">🏙️</div><div class="shift-mini-name">PAGI</div><div class="shift-mini-value" id="sumPagi">0</div><div class="shift-mini-sub">Shift pagi</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">🌆</div><div class="shift-mini-name">MALAM</div><div class="shift-mini-value" id="sumMalam">0</div><div class="shift-mini-sub">Shift malam</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">🌁</div><div class="shift-mini-name">GANTUNG</div><div class="shift-mini-value" id="sumGantung">0</div><div class="shift-mini-sub">Shift gantung</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">🛶</div><div class="shift-mini-name">NELAYAN</div><div class="shift-mini-value" id="sumNelayan">0</div><div class="shift-mini-sub">Shift nelayan</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">🔜</div><div class="shift-mini-name">BELUM DIATUR</div><div class="shift-mini-value" id="sumUnset">0</div><div class="shift-mini-sub">Belum ada jadwal</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🏖️</div><div class="shift-mini-name">CUTI</div><div class="shift-mini-value" id="sumCuti">0</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🏙️</div><div class="shift-mini-name">PAGI</div><div class="shift-mini-value" id="sumPagi">0</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🌆</div><div class="shift-mini-name">MALAM</div><div class="shift-mini-value" id="sumMalam">0</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🌁</div><div class="shift-mini-name">GANTUNG</div><div class="shift-mini-value" id="sumGantung">0</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🛶</div><div class="shift-mini-name">NELAYAN</div><div class="shift-mini-value" id="sumNelayan">0</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🔜</div><div class="shift-mini-name">BELUM DIATUR</div><div class="shift-mini-value" id="sumUnset">0</div></div>
   </div>
   <div class="shift-date-wrap">
     <div class="shift-date-card">
@@ -4286,14 +4381,14 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
     <button class="shift-filter-btn" id="applyDateFilter">◌ Filter Tanggal</button>
   </div>
 </section>
-<section class="dash-summary"><div class="dash-stat"><div class="lab">TOTAL KARYAWAN</div><div class="num" id="statTotal">55</div><div class="cap">Akun absensi terdaftar</div></div><div class="dash-stat"><div class="lab">SUDAH MASUK</div><div class="num" id="statIn">0</div><div class="cap">Check-in hari ini</div></div><div class="dash-stat"><div class="lab">SUDAH PULANG</div><div class="num" id="statOut">0</div><div class="cap">Check-out hari ini</div></div><div class="dash-stat"><div class="lab">BELUM ABSEN</div><div class="num" id="statAbsent">55</div><div class="cap">Belum check-in hari ini</div></div></section>
+<section class="dash-summary"><div class="dash-stat"><div class="lab">TOTAL KARYAWAN</div><div class="num" id="statTotal">55</div></div><div class="dash-stat"><div class="lab">SUDAH MASUK</div><div class="num" id="statIn">0</div></div><div class="dash-stat"><div class="lab">SUDAH PULANG</div><div class="num" id="statOut">0</div></div><div class="dash-stat"><div class="lab">BELUM ABSEN</div><div class="num" id="statAbsent">55</div></div></section>
     <section class="dash-panel"><div class="dash-tools"><h2>Pengaturan Shift & Absensi</h2><div class="tools-right"><select id="dashRole"><option value="">Semua role</option><option value="CS">CS</option><option value="CS LINE">CS LINE</option><option value="KAPTEN">KAPTEN</option><option value="KASIR">KASIR</option></select><input id="dashSearch" placeholder="Cari nama atau username"><button class="dash-refresh" id="dashRefresh">↻ Perbarui</button></div></div><div id="shiftSections" class="shift-sections"><div class="dash-empty">Memuat data shift...</div></div></section>
    </section>
    <section class="izin-input-page" id="dashIzinInput">
      <div class="izin-workspace">
      <section class="izin-input-card">
        <h2>Input Jam Izin</h2>
-       <p>Jenis izin akan dicatat otomatis atas nama akun yang sedang login. Tekan Start Time saat keluar dan End Time ketika sudah kembali.</p>
+       
        <div class="izin-input-livebar">
          <div class="izin-input-liveitem">
            <span>WAKTU SEKARANG</span>
@@ -4309,8 +4404,7 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
            <div class="izin-user-avatar" id="deskIzinAvatar">U</div>
            <div><div class="izin-user-name" id="deskIzinName">Memuat akun...</div><div class="izin-user-role" id="deskIzinRole">-</div></div>
          </div>
-         <div class="izin-role-quota-note"><b>Kuota Izin Keluar 15 menit:</b> CS LINE 2 staff, CS 2 staff, KASIR 2 staff, KAPTEN / KKS 1 staff. Kuota dikunci bersama untuk semua perangkat dan data lama yang melebihi kuota akan dikoreksi otomatis. <b>Izin Ambil Makan 7 menit</b> tetap terpisah dan tidak memakai kuota ini.</div>
-        <div class="izin-input-choice-grid" id="deskIzinChoices">
+<div class="izin-input-choice-grid" id="deskIzinChoices">
            <button type="button" class="izin-input-choice active" data-desk-izin-type="Izin Keluar" id="deskChoiceKeluar" onclick="window.izinPCChoose('Izin Keluar')">↗ Izin Keluar<span>Durasi 15 menit • Telat mulai 16:00</span></button>
            <button type="button" class="izin-input-choice" data-desk-izin-type="Izin Ambil Makan" id="deskChoiceMakan" onclick="window.izinPCChoose('Izin Ambil Makan')">☕ Ambil Makan<span>Durasi 7 menit • Telat mulai 8:00</span></button>
          </div>
@@ -4340,7 +4434,7 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
            <div>
              <div class="izin-active-eyebrow">◉ LIVE</div>
              <h2>Staff Sedang Izin</h2>
-             <p>Daftar staff yang sedang memakai jam izin hari ini.</p>
+             
            </div>
            <span class="izin-active-total" id="activeIzinTotal">0 Aktif</span>
          </div>
@@ -4529,7 +4623,7 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
        <div class="izin-monitor-top">
          <div>
            <h2>Monitor Jam Izin Staff</h2>
-           <div class="izin-monitor-note">◷ Dashboard ini memantau data izin yang tersimpan di Firebase.</div>
+           <div class="izin-monitor-note">◷ JAM IZIN LEWAT DARI 17 MENIT BAYAR DENDA KE MAMI GHEA</div>
          </div>
          <div class="izin-date-filter">
            <label for="izinFilterDate">Pilih Tanggal</label>
@@ -4537,7 +4631,7 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
            <button type="button" id="izinTodayBtn">Hari Ini</button>
          </div>
        </div>
-       <p id="izinListDesc">Timer izin aktif dan riwayat izin staff hari ini.</p>
+       
        <div class="dash-table-wrap">
          <table class="izin-table">
            <thead><tr><th>NO</th><th>NAMA STAFF</th><th>ROLE</th><th>JENIS IZIN</th><th>START TIME</th><th>BATAS KEMBALI</th><th>END TIME</th><th>DURASI</th><th>STATUS</th></tr></thead>
@@ -6332,9 +6426,7 @@ async function renderIzin(){
   const isToday=date===ymd(new Date());
   if($('izinToday')) $('izinToday').textContent=formatIzinDashboardDate(date);
   if($('izinFilterDate') && $('izinFilterDate').value!==date) $('izinFilterDate').value=date;
-  if($('izinListDesc')) $('izinListDesc').textContent=isToday
-    ? 'Data izin hari ini tersimpan di MySQL Hostinger.'
-    : `Menampilkan riwayat data izin pada ${formatIzinDashboardDate(date)}.`;
+  if($('izinListDesc')) $('izinListDesc').textContent='';
 
   const rows=$('izinRows');
   if(!rows) return;
@@ -6765,7 +6857,14 @@ function switchDash(view){
     Promise.all([loadStaffProfileOverrides(),loadDeletedStaffUsers()]).finally(renderUserStaff);
   }
   if(isIzinInput) renderDeskIzinInput();
-  if(isIzinDashboard) renderIzin();
+  if(isIzinDashboard){
+    // Langsung ambil dari MySQL saat menu Dashboard Izin dibuka,
+    // supaya data tidak menunggu refresh/timer berikutnya.
+    if($('izinFilterDate') && !$('izinFilterDate').value){
+      $('izinFilterDate').value=dateKey();
+    }
+    renderDashboardIzin();
+  }
   if(isPengajuanCuti && typeof renderPengajuanCuti==='function') renderPengajuanCuti();
 }
 $('userStaffSearch')?.addEventListener('input',renderUserStaff);
@@ -6802,12 +6901,12 @@ $('desktopPassword').addEventListener('keydown',e=>{if(e.key==='Enter')desktopLo
 $('applyDateFilter').addEventListener('click',()=>{selectedDashboardDate=$('filterDate').value||ymd(new Date());renderDashboard()});
 $('izinFilterDate')?.addEventListener('change',()=>{
   selectedIzinDashboardDate=$('izinFilterDate').value||ymd(new Date());
-  renderIzin();
+  renderDashboardIzin();
 });
 $('izinTodayBtn')?.addEventListener('click',()=>{
   selectedIzinDashboardDate=ymd(new Date());
   if($('izinFilterDate')) $('izinFilterDate').value=selectedIzinDashboardDate;
-  renderIzin();
+  renderDashboardIzin();
 });
 $('mobileIzinChoices').addEventListener('click',e=>{
   const btn=e.target.closest('[data-izin-choice]');
@@ -7178,12 +7277,7 @@ async function renderDashboardIzin(){
   try{
     if(isToday) await enforceStrictIzinQuota();
     const list=(await getIzinByDate(selectedDate)).sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
-    if($q('izinListDesc')){
-      const label=new Date(selectedDate+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-      $q('izinListDesc').textContent=isToday
-        ? 'Data izin hari ini tersimpan di MySQL Hostinger.'
-        : `Menampilkan riwayat data izin pada ${label}.`;
-    }
+    if($q('izinListDesc')){ $q('izinListDesc').textContent=''; }
     rows.innerHTML=list.length?list.map((x,i)=>{
       const minutes=Number(x.durationMinutes||15);
       const due=x.lateAt
@@ -9180,11 +9274,11 @@ window.setTimeout(()=>{
     <div class="rekening-form-grid">
       <label>
         <span>NAMA</span>
-        <input id="rekeningNama" type="text" placeholder="Nama staff">
+        <input id="rekeningNama" type="text" placeholder="Nama staff" readonly aria-readonly="true">
       </label>
       <label>
         <span>ROLE</span>
-        <input id="rekeningRole" type="text" placeholder="Role staff">
+        <input id="rekeningRole" type="text" placeholder="Role staff" readonly aria-readonly="true">
       </label>
       <label class="rekening-full">
         <span>NOMOR PASSPOR</span>
@@ -9198,11 +9292,21 @@ window.setTimeout(()=>{
       </label>
       <label>
         <span>NOMOR REKENING</span>
-        <input id="rekeningLamaNomor" type="text" inputmode="numeric" placeholder="Nomor rekening lama">
+        <input id="rekeningLamaNomor" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" inputmode="numeric" placeholder="Nomor rekening lama">
       </label>
       <label class="rekening-full">
         <span>JENIS BANK</span>
-        <input id="rekeningLamaBank" type="text" placeholder="Contoh: BCA, BRI, Mandiri">
+        <select id="rekeningLamaBank"><option value="">PILIH JENIS BANK</option>
+          <option value="BCA">BCA</option>
+          <option value="BNI">BNI</option>
+          <option value="BRI">BRI</option>
+          <option value="MANDIRI">MANDIRI</option>
+          <option value="CIMB">CIMB</option>
+          <option value="DANAMON">DANAMON</option>
+          <option value="BSI">BSI</option>
+          <option value="MAYBANK">MAYBANK</option>
+          <option value="BANKJAGO">BANKJAGO</option>
+          <option value="SEABANK">SEABANK</option></select>
       </label>
 
       <div class="rekening-form-section rekening-full">DATA REKENING BARU</div>
@@ -9212,11 +9316,21 @@ window.setTimeout(()=>{
       </label>
       <label>
         <span>NOMOR REKENING</span>
-        <input id="rekeningBaruNomor" type="text" inputmode="numeric" placeholder="Nomor rekening baru">
+        <input id="rekeningBaruNomor" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" inputmode="numeric" placeholder="Nomor rekening baru">
       </label>
       <label class="rekening-full">
         <span>JENIS BANK</span>
-        <input id="rekeningBaruBank" type="text" placeholder="Contoh: BCA, BRI, Mandiri">
+        <select id="rekeningBaruBank"><option value="">PILIH JENIS BANK</option>
+          <option value="BCA">BCA</option>
+          <option value="BNI">BNI</option>
+          <option value="BRI">BRI</option>
+          <option value="MANDIRI">MANDIRI</option>
+          <option value="CIMB">CIMB</option>
+          <option value="DANAMON">DANAMON</option>
+          <option value="BSI">BSI</option>
+          <option value="MAYBANK">MAYBANK</option>
+          <option value="BANKJAGO">BANKJAGO</option>
+          <option value="SEABANK">SEABANK</option></select>
       </label>
 
       <label class="rekening-full">
@@ -9305,8 +9419,8 @@ const rekeningId=()=>`rekening_${Date.now()}_${Math.random().toString(36).slice(
 
 function openRekeningModal(){
   const user=rekeningUser();
-  rq('rekeningNama').value=user.name||'';
-  rq('rekeningRole').value=user.role||'';
+  rq('rekeningNama').value=rekeningUpper(user.name||'');
+  rq('rekeningRole').value=rekeningUpper(user.role||'');
   rq('gantiRekeningModal')?.classList.remove('hidden');
 }
 function closeRekeningModal(){
@@ -9476,9 +9590,9 @@ document.addEventListener('click',event=>{
 
 // Semua data input Ganti Rekening otomatis menjadi huruf kapital.
 [
-  'rekeningNama','rekeningRole','rekeningPaspor',
-  'rekeningLamaNama','rekeningLamaNomor','rekeningLamaBank',
-  'rekeningBaruNama','rekeningBaruNomor','rekeningBaruBank',
+  'rekeningPaspor',
+  'rekeningLamaNama','rekeningLamaNomor',
+  'rekeningBaruNama','rekeningBaruNomor',
   'rekeningKeterangan'
 ].forEach(id=>{
   rq(id)?.addEventListener('input',event=>{
@@ -9518,6 +9632,44 @@ onValue(rekeningRef,async snapshot=>{
 });
 
 window.renderGantiRekening=renderRekeningRows;
+
+
+/* Nomor rekening: hanya angka, huruf/tanda baca otomatis ditolak */
+['rekeningLamaNomor','rekeningBaruNomor'].forEach(id=>{
+  const input=document.getElementById(id);
+  if(!input) return;
+
+  input.addEventListener('beforeinput',(e)=>{
+    if(e.inputType && e.inputType.startsWith('insert') && e.data && /[^0-9]/.test(e.data)){
+      e.preventDefault();
+      const onlyDigits=e.data.replace(/\D/g,'');
+      if(onlyDigits){
+        const start=input.selectionStart ?? input.value.length;
+        const end=input.selectionEnd ?? input.value.length;
+        input.setRangeText(onlyDigits,start,end,'end');
+        input.dispatchEvent(new Event('input',{bubbles:true}));
+      }
+    }
+  });
+
+  input.addEventListener('input',()=>{
+    const clean=input.value.replace(/\D/g,'');
+    if(input.value!==clean) input.value=clean;
+  });
+
+  input.addEventListener('paste',(e)=>{
+    const pasted=(e.clipboardData || window.clipboardData).getData('text');
+    if(/[^0-9]/.test(pasted)){
+      e.preventDefault();
+      const onlyDigits=pasted.replace(/\D/g,'');
+      const start=input.selectionStart ?? input.value.length;
+      const end=input.selectionEnd ?? input.value.length;
+      input.setRangeText(onlyDigits,start,end,'end');
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+  });
+});
+
 </script>
 
 </body>
