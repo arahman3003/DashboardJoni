@@ -837,27 +837,69 @@ select{
   max-width:1180px;
   margin:0 auto;
 }
-.desktop-login-copy{color:#fff7ec;padding:28px}
-.desktop-login-kicker{
-  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;
-  background:rgba(190,148,97,.13);border:1px solid rgba(190,148,97,.22);
-  color:#e8c79d;font-size:11px;font-weight:900;letter-spacing:.08em;
+.desktop-login-copy{
+  color:#fff7ec;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
 }
-.desktop-login-copy h1{font-size:46px;line-height:1.05;margin:18px 0 14px;letter-spacing:-1.3px}
+.desktop-login-kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:14px;
+  background:linear-gradient(180deg,#f7f2ea,#ece4d8);
+  border:1px solid rgba(228,205,176,.72);
+  box-shadow:0 14px 28px rgba(0,0,0,.22);
+  color:#4b3424;font-size:11px;font-weight:900;letter-spacing:.08em;
+}
+.desktop-login-copy h1{
+  font-size:46px;line-height:1.05;margin:18px 0 14px;letter-spacing:-1.3px;
+  font-weight:1000;text-transform:uppercase;
+}
 .desktop-login-copy h1 b{color:#d6a56d}
+.desktop-shine-title{
+  position:relative;display:inline-block;overflow:hidden;
+  background:linear-gradient(105deg,#fff7ec 0%,#fff7ec 38%,#ffe2a4 47%,#ffffff 51%,#ffe2a4 56%,#fff7ec 64%,#fff7ec 100%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:dashboardTitleShine 3.2s linear infinite;
+  text-shadow:0 4px 18px rgba(0,0,0,.28);
+}
+.desktop-shine-title b{color:inherit!important}
+@keyframes dashboardTitleShine{
+  from{background-position:200% 0}
+  to{background-position:-55% 0}
+}
 .desktop-login-copy p{max-width:560px;color:#bdb5aa;line-height:1.7;font-size:14px}
-.desktop-login-points{display:grid;gap:12px;margin-top:28px}
-.desktop-login-point{display:flex;align-items:center;gap:10px;color:#ddd5c9;font-size:13px}
-.desktop-login-point i{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(190,148,97,.14);color:#d9b17c;font-style:normal}
+.desktop-login-rules-title{
+  margin-top:22px;
+  color:#f5d09a;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:.14em;
+}
+.desktop-login-points{display:grid;gap:12px;margin-top:16px}
+.desktop-login-point{
+  display:flex;align-items:center;gap:10px;color:#fff5e8;font-size:13px;
+  font-weight:850;letter-spacing:.015em;
+}
+.desktop-login-point i{
+  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(190,148,97,.22);border:1px solid rgba(234,196,143,.34);
+  color:#f7d29b;font-style:normal;font-weight:1000;font-size:11px;
+}
+.desktop-login-rules .desktop-login-point{color:#fff7ec}
 .desktop-login-card{
   width:min(430px,100%);justify-self:end;padding:28px;border-radius:24px;
   background:linear-gradient(180deg,#f7f2ea,#ece4d8);
   border:1px solid rgba(228,205,176,.72);
   box-shadow:0 30px 70px rgba(0,0,0,.35);
+  transform:translateX(-180px);
 }
 .desktop-login-brand{display:flex;align-items:center;justify-content:center;margin-bottom:18px}
 .desktop-login-brand img{height:66px;max-width:260px;object-fit:contain}
-.desktop-login-card h2{margin:0;color:#30271f;font-size:22px}
+.desktop-login-card h2{margin:0;color:#30271f;font-size:22px;text-align:center}
 .desktop-login-card p{margin:7px 0 18px;color:#7e6e5c;font-size:12px;line-height:1.5}
 .desktop-login-card label{display:block;margin:12px 0 7px;color:#5d4a36;font-size:11px;font-weight:900}
 .desktop-login-card input{
@@ -881,7 +923,7 @@ select{
   .desktop-login-wrap{grid-template-columns:1fr;gap:18px}
   .desktop-login-copy{padding:10px;text-align:center}
   .desktop-login-copy h1{font-size:34px}
-  .desktop-login-card{justify-self:center}
+  .desktop-login-card{justify-self:center;transform:none}
 }
 
 
@@ -2964,6 +3006,24 @@ body.pc-app-mode #desktopApp{display:grid!important}
   .user-role-table{min-width:640px}
 }
 
+
+/* User Staff: kolom Username dan Role berada di tengah */
+@media(min-width:768px){
+  .user-role-table th:nth-child(3),
+  .user-role-table td:nth-child(3),
+  .user-role-table th:nth-child(4),
+  .user-role-table td:nth-child(4){
+    text-align:center!important;
+  }
+  .user-role-table td:nth-child(3){
+    font-weight:800;
+  }
+  .user-role-table .user-staff-role-cell{
+    justify-content:center!important;
+    text-align:center!important;
+  }
+}
+
 /* Edit role staff */
 .user-staff-role-cell{
   display:flex;
@@ -4015,6 +4075,35 @@ body.pc-app-mode #desktopApp{display:grid!important}
 }
 </style>
 
+<!-- Hostinger MySQL source-of-truth fix: 2026-06-23 -->
+<!-- Hostinger MySQL Pilot Pengajuan Resign: 2026-06-23 -->
+
+<script>
+/* Hostinger MySQL pilot: User Staff / Profile */
+window.staffMySQLRequest = async function(method='GET', payload=null){
+  const endpoint = './api/users.php';
+  const opts = {
+    method,
+    headers: {'Content-Type':'application/json','Accept':'application/json'},
+    credentials:'same-origin'
+  };
+  let url = endpoint;
+  if(method === 'GET' && payload && typeof payload === 'object'){
+    const params = new URLSearchParams(payload);
+    url += '?' + params.toString();
+  }else if(payload !== null){
+    opts.body = JSON.stringify(payload);
+  }
+  const response = await fetch(url, opts);
+  const data = await response.json().catch(()=>({ok:false,message:'Respons User Staff API tidak valid.'}));
+  if(!response.ok || !data.ok) throw new Error(data.message || 'User Staff MySQL belum siap.');
+  return data;
+};
+</script>
+
+<!-- Hostinger MySQL Pilot Shift Kerja: 2026-06-23 -->
+<!-- Hostinger MySQL Pilot Jam Izin: 2026-06-23 -->
+<!-- Hostinger MySQL Pilot Absensi & Crosscheck: 2026-06-23 -->
 </head>
 <body>
 <section class="mobile" id="loginPage">
@@ -4058,18 +4147,19 @@ body.pc-app-mode #desktopApp{display:grid!important}
   <div class="desktop-login-wrap">
     <div class="desktop-login-copy">
       <div class="desktop-login-kicker">◆ ABSENSI JONI • DASHBOARD ACCESS</div>
-      <h1>Kelola absensi <b>lebih rapi.</b></h1>
-      <p>Masuk menggunakan akun staff untuk membuka dashboard shift kerja, monitoring absensi, dan Jam Izin.</p>
-      <div class="desktop-login-points">
-        <div class="desktop-login-point"><i>◔</i> Dashboard absensi dan shift kerja</div>
-        <div class="desktop-login-point"><i>◷</i> Clock In/Out Jam Izin</div>
-        <div class="desktop-login-point"><i>◈</i> Data tersimpan di Firebase</div>
+      <h1 class="desktop-shine-title">DASHBOARD <b>JONI</b></h1>
+      <div class="desktop-login-rules-title">4 PERATURAN PT SMB</div>
+      <div class="desktop-login-points desktop-login-rules">
+        <div class="desktop-login-point"><i>1</i> DILARANG BERMAIN JUDI</div>
+        <div class="desktop-login-point"><i>2</i> DILARANG MENGGUNAKAN NARKOBA</div>
+        <div class="desktop-login-point"><i>3</i> DILARANG MANIPULASI</div>
+        <div class="desktop-login-point"><i>4</i> DILARANG AMBIL SUAMI/ISTRI ORANG</div>
       </div>
     </div>
     <div class="desktop-login-card">
       <div class="desktop-login-brand"><img src="https://i.imgur.com/Dy45M4t.png" alt="Joni Togel"></div>
       <h2>Masuk Dashboard</h2>
-      <p>Gunakan username dan password akun yang terdaftar.</p>
+      
       <label for="desktopUsername">USERNAME</label>
       <input id="desktopUsername" autocomplete="username" placeholder="Masukkan username">
       <label for="desktopPassword">PASSWORD</label>
@@ -5034,32 +5124,103 @@ const PRESET_SHIFT = {
 };
 const $=id=>document.getElementById(id);
 let currentUser=null, loc=null; let selectedDashboardDate='';
+
+/* Hostinger MySQL pilot: Absensi + Crosscheck.
+   MySQL menjadi sumber utama untuk Check-in, Check-out, Manual Check-in,
+   Crosscheck, riwayat, dan tampilan Shift Kerja. */
+const HOSTINGER_ABSENSI_API='./api/absensi.php';
+let absensiMySQLMigrationChecked=false;
+let absensiMySQLReady=false;
+
+async function hostingerAbsensiRequest(method='GET', payload=null){
+  const options={
+    method,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    credentials:'same-origin'
+  };
+  let url=HOSTINGER_ABSENSI_API;
+  if(method==='GET' && payload && typeof payload==='object'){
+    url+='?'+new URLSearchParams(payload).toString();
+  }else if(payload!==null){
+    options.body=JSON.stringify(payload);
+  }
+  const response=await fetch(url,options);
+  const data=await response.json().catch(()=>({ok:false,message:'Respons API Absensi tidak valid.'}));
+  if(!response.ok || !data.ok) throw new Error(data.message||'MySQL Absensi belum siap.');
+  return data;
+}
+function flattenFirebaseAttendance(tree={}){
+  const out=[];
+  Object.entries(tree||{}).forEach(([workDate,group])=>{
+    Object.entries(group||{}).forEach(([username,item])=>{
+      if(!item || typeof item!=='object') return;
+      out.push({
+        workDate,username,
+        name:item.name||'',role:item.role||'',
+        checkIn:item.checkIn||null,checkOut:item.checkOut||null,
+        checkoutLateFromPreviousDay:!!item.checkoutLateFromPreviousDay,
+        checkoutCompletedAt:item.checkoutCompletedAt||null
+      });
+    });
+  });
+  return out;
+}
+function flattenFirebaseCrosschecks(tree={}){
+  const out=[];
+  Object.entries(tree||{}).forEach(([workDate,group])=>{
+    Object.entries(group||{}).forEach(([username,item])=>{
+      if(!item || typeof item!=='object') return;
+      out.push({workDate,username,time:item.time||'',checkedAt:item.checkedAt||''});
+    });
+  });
+  return out;
+}
+async function ensureAbsensiMySQLMigration(){
+  if(absensiMySQLMigrationChecked) return;
+  const state=await hostingerAbsensiRequest('GET',{action:'state'});
+  if(!state.migrationCompleted){
+    const [attendanceSnap,crossSnap]=await Promise.all([
+      get(ref(db,'absensi')),
+      get(ref(db,'crosschecks'))
+    ]);
+    const attendance=attendanceSnap.exists()?flattenFirebaseAttendance(attendanceSnap.val()||{}):[];
+    const crosschecks=crossSnap.exists()?flattenFirebaseCrosschecks(crossSnap.val()||{}):[];
+    await hostingerAbsensiRequest('POST',{action:'bootstrap',attendance,crosschecks});
+  }
+  absensiMySQLMigrationChecked=true;
+  absensiMySQLReady=true;
+}
+async function mysqlAttendanceDate(workDate){
+  await ensureAbsensiMySQLMigration();
+  const payload=await hostingerAbsensiRequest('GET',{action:'list_date',date:workDate});
+  return Array.isArray(payload.items)?payload.items:[];
+}
+async function mysqlAttendanceHistory(username){
+  await ensureAbsensiMySQLMigration();
+  const payload=await hostingerAbsensiRequest('GET',{action:'history',username});
+  return Array.isArray(payload.items)?payload.items:[];
+}
+async function mysqlOpenAttendance(username){
+  await ensureAbsensiMySQLMigration();
+  const payload=await hostingerAbsensiRequest('GET',{action:'open',username,date:ymd(new Date())});
+  return payload.item||null;
+}
 const pad=n=>String(n).padStart(2,'0');
 const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const currentDashboardDate=()=>selectedDashboardDate||ymd(new Date());
 const dateLabel=d=>d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>e.classList.remove('show'),2500)}
 function recordPath(){return `absensi/${ymd(new Date())}/${currentUser.username}`}
-async function getToday(){const snap=await get(ref(db,recordPath()));return snap.exists()?snap.val():null}
+async function getToday(){
+  await ensureAbsensiMySQLMigration();
+  const rows=await mysqlAttendanceDate(ymd(new Date()));
+  return rows.find(x=>x.username===currentUser?.username)||null;
+}
 
 /* Check-in lama yang belum Check-out harus diselesaikan sebelum absensi baru. */
 async function getOpenAttendance(username=currentUser?.username){
   if(!username) return null;
-  const snap=await get(ref(db,'absensi'));
-  if(!snap.exists()) return null;
-
-  const today=ymd(new Date());
-  const open=[];
-  Object.entries(snap.val()||{}).forEach(([date,group])=>{
-    const item=group?.[username];
-    // Semua absensi dari tanggal lain yang sudah Check-in tetapi belum Check-out
-    // harus diselesaikan lebih dulu.
-    if(date!==today && item?.checkIn && !item?.checkOut){
-      open.push({date,...item});
-    }
-  });
-  open.sort((a,b)=>b.date.localeCompare(a.date));
-  return open[0]||null;
+  return mysqlOpenAttendance(username);
 }
 function openAttendanceMessage(item){
   if(!item) return '';
@@ -5119,21 +5280,35 @@ function logout(){
  showDesktopLogin();
 }
 async function renderMobile(){
- $('welcome').textContent=`${currentUser.name} • ${currentUser.role}`;
- const todayRecord=await getToday();
- const oldOpen=!todayRecord?.checkIn ? await getOpenAttendance() : null;
- const r=todayRecord||oldOpen;
- const isOldOpen=!!oldOpen;
- $('inTime').textContent=r?.checkIn?.time||'--:--';$('outTime').textContent=r?.checkOut?.time||'--:--';
- $('inState').textContent=r?.checkIn?(isOldOpen?'Check-in belum selesai':'Sudah check-in'):'Belum check-in';
- $('outState').textContent=r?.checkOut?'Sudah check-out':'Belum check-out';
- $('todayStatus').textContent=isOldOpen
-   ? `Wajib check-out dulu (${oldOpen.date})`
-   : (r?.checkOut?'Absensi lengkap':r?.checkIn?'Sedang bekerja':'Belum absensi');
- $('checkInBtn').disabled=!!todayRecord?.checkIn||isOldOpen;
- $('checkOutBtn').disabled=!r?.checkIn||!!r?.checkOut;
- const list=$('historyList'); list.innerHTML='<div class="empty">Memuat riwayat...</div>';
- try{const root=await get(ref(db,'absensi')),all=[];if(root.exists())Object.entries(root.val()).forEach(([date,group])=>{const x=group?.[currentUser.username];if(x)all.push({date,...x})});all.sort((a,b)=>b.date.localeCompare(a.date));list.innerHTML=all.length?all.slice(0,8).map(x=>{const d=new Date(x.date+'T00:00:00');return `<div class="row"><div class="day">${d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}).replace('.','')}</div><div class="row-main"><b>${d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long'})}</b><small>Masuk ${x.checkIn?.time||'--:--'} • Pulang ${x.checkOut?.time||'--:--'}</small></div><span class="tag ${x.checkOut?'out':''}">${x.checkOut?'Selesai':'Masuk'}</span></div>`}).join(''):'<div class="empty">Belum ada riwayat absensi.</div>'}catch(e){list.innerHTML='<div class="empty">Riwayat belum dapat dimuat.</div>'}
+  if(!currentUser) return;
+  $('welcome').textContent=`${currentUser.name} • ${currentUser.role}`;
+  try{
+    const todayRecord=await getToday();
+    const oldOpen=!todayRecord?.checkIn ? await getOpenAttendance() : null;
+    const r=todayRecord||oldOpen;
+    const isOldOpen=!!oldOpen;
+    $('inTime').textContent=r?.checkIn?.time||'--:--';
+    $('outTime').textContent=r?.checkOut?.time||'--:--';
+    $('inState').textContent=r?.checkIn?(isOldOpen?'Check-in belum selesai':'Sudah check-in'):'Belum check-in';
+    $('outState').textContent=r?.checkOut?'Sudah check-out':'Belum check-out';
+    $('todayStatus').textContent=isOldOpen
+      ? `Wajib check-out dulu (${oldOpen.workDate||oldOpen.date})`
+      : (r?.checkOut?'Absensi lengkap':r?.checkIn?'Sedang bekerja':'Belum absensi');
+    $('checkInBtn').disabled=!!todayRecord?.checkIn||isOldOpen;
+    $('checkOutBtn').disabled=!r?.checkIn||!!r?.checkOut;
+
+    const list=$('historyList');
+    list.innerHTML='<div class="empty">Memuat riwayat...</div>';
+    const all=await mysqlAttendanceHistory(currentUser.username);
+    list.innerHTML=all.length?all.slice(0,8).map(x=>{
+      const date=x.workDate||x.date;
+      const d=new Date(date+'T00:00:00');
+      return `<div class="row"><div class="day">${d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}).replace('.','')}</div><div class="row-main"><b>${d.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long'})}</b><small>Masuk ${x.checkIn?.time||'--:--'} • Pulang ${x.checkOut?.time||'--:--'}</small></div><span class="tag ${x.checkOut?'out':''}">${x.checkOut?'Selesai':'Masuk'}</span></div>`;
+    }).join(''):'<div class="empty">Belum ada riwayat absensi.</div>';
+  }catch(e){
+    console.error(e);
+    $('historyList').innerHTML='<div class="empty">Riwayat MySQL belum dapat dimuat.</div>';
+  }
 }
 function getLoc(){
  if(!navigator.geolocation){toast('GPS tidak didukung perangkat ini.');return}
@@ -5141,37 +5316,34 @@ function getLoc(){
  navigator.geolocation.getCurrentPosition(p=>{loc={lat:p.coords.latitude,lng:p.coords.longitude,accuracy:Math.round(p.coords.accuracy),takenAt:new Date().toISOString()};$('locTitle').textContent='Lokasi berhasil diambil';$('locDetail').textContent=`GPS akurasi ±${loc.accuracy} meter • ${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;toast('Lokasi GPS berhasil diperbarui.')},()=>{$('locTitle').textContent='Lokasi belum diambil';$('locDetail').textContent='Akses lokasi ditolak atau GPS belum aktif.';toast('Tidak dapat mengambil lokasi GPS.')},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 async function submit(type){
- if(type==='in' && !loc){toast('Ambil lokasi GPS terlebih dahulu untuk Check-in.');return}
- const now=new Date(), item={
-   time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
-   timestamp:now.toISOString(),
-   location:type==='in' ? loc : (loc||null)
- };
- try{
-   const existing=await getToday();
-   const oldOpen=!existing?.checkIn ? await getOpenAttendance() : null;
-   if(type==='in'){
-     // Cek ulang langsung dari Firebase agar tidak bisa lolos karena tampilan HP belum refresh.
-     const hardOpen=await getOpenAttendance(currentUser.username);
-     if(hardOpen) return toast(openAttendanceMessage(hardOpen));
-     if(oldOpen) return toast(openAttendanceMessage(oldOpen));
-     if(existing?.checkIn)return toast('Anda sudah check-in hari ini.');
-     await set(ref(db,recordPath()),{
-       username:currentUser.username,name:currentUser.name,role:currentUser.role,
-       date:ymd(now),checkIn:item,checkOut:null
-     });
-   }else{
-     const target=existing?.checkIn ? {date:ymd(now),...existing} : oldOpen;
-     if(!target?.checkIn)return toast('Silakan check-in terlebih dahulu.');
-     await update(ref(db,`absensi/${target.date}/${currentUser.username}`),{
-       checkOut:item,
-       checkoutLateFromPreviousDay:target.date!==ymd(now),
-       checkoutCompletedAt:new Date().toISOString()
-     });
-   }
-   toast(type==='in'?'Check-in berhasil disimpan.':'Check-out berhasil disimpan.');
-   await renderMobile();
- }catch(e){console.error(e);toast('Data belum tersimpan. Periksa Rules Database / internet.')}
+  if(type==='in' && !loc){toast('Ambil lokasi GPS terlebih dahulu untuk Check-in.');return}
+  const now=new Date();
+  const item={
+    time:now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
+    timestamp:now.toISOString(),
+    location:type==='in' ? loc : (loc||null)
+  };
+  try{
+    await ensureAbsensiMySQLMigration();
+    const payload=await hostingerAbsensiRequest('POST',{
+      action:type==='in'?'checkin':'checkout',
+      username:currentUser.username,
+      name:currentUser.name,
+      role:currentUser.role,
+      workDate:ymd(now),
+      item,
+      nowIso:now.toISOString()
+    });
+    if(!payload.saved){
+      toast(payload.message||'Absensi belum dapat disimpan.');
+      return;
+    }
+    toast(type==='in'?'Check-in berhasil disimpan ke MySQL.':'Check-out berhasil disimpan ke MySQL.');
+    await renderMobile();
+  }catch(e){
+    console.error(e);
+    toast('Data absensi belum tersimpan ke MySQL Hostinger.');
+  }
 }
 function startApp(){
   updateClock();
@@ -5204,6 +5376,77 @@ function normalizeSchedule(raw, username){
   const category=(raw?.category||raw?.shift||preset||'').toUpperCase();
   const def=DEFAULT_TIMES[category]||{start:'',end:''};
   return {category,start:raw?.start??def.start,end:raw?.end??def.end};
+}
+
+/* Hostinger MySQL pilot: Shift Kerja.
+   Jadwal shift menjadi sumber utama MySQL; absensi dan crosscheck tetap Firebase pada tahap ini. */
+const HOSTINGER_SHIFT_API='./api/shift.php';
+let shiftMySQLMigrationChecked=false;
+let shiftMySQLAvailable=false;
+
+async function hostingerShiftRequest(method='GET', payload=null){
+  const options={
+    method,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    credentials:'same-origin'
+  };
+  let url=HOSTINGER_SHIFT_API;
+  if(method==='GET' && payload && typeof payload==='object'){
+    url+='?'+new URLSearchParams(payload).toString();
+  }else if(payload!==null){
+    options.body=JSON.stringify(payload);
+  }
+  const response=await fetch(url,options);
+  const data=await response.json().catch(()=>({ok:false,message:'Respons API Shift tidak valid.'}));
+  if(!response.ok || !data.ok) throw new Error(data.message||'MySQL Shift belum siap.');
+  return data;
+}
+function flattenFirebaseShiftHistory(history={}){
+  const items=[];
+  Object.entries(history||{}).forEach(([workDate,staffs])=>{
+    Object.entries(staffs||{}).forEach(([username,schedule])=>{
+      if(!schedule || typeof schedule!=='object') return;
+      items.push({
+        workDate,
+        username,
+        category:String(schedule.category||schedule.shift||'').toUpperCase(),
+        start:schedule.start||'',
+        end:schedule.end||'',
+        updatedAt:schedule.updatedAt||new Date().toISOString()
+      });
+    });
+  });
+  return items;
+}
+async function loadMySQLShiftSchedules(workDate){
+  let result=await hostingerShiftRequest('GET',{action:'load',date:workDate});
+  shiftMySQLAvailable=true;
+
+  // Migrasi Firebase hanya sekali dan tidak pernah mengisi ulang MySQL setelah selesai.
+  if(!shiftMySQLMigrationChecked && !result.migrationCompleted){
+    try{
+      const snap=await get(ref(db,'shiftStaff'));
+      const legacy=snap.exists()?flattenFirebaseShiftHistory(snap.val()||{}):[];
+      result=await hostingerShiftRequest('POST',{action:'bootstrap',items:legacy});
+    }catch(error){
+      console.warn('Migrasi awal shift Firebase ke MySQL gagal:',error);
+    }
+  }
+  shiftMySQLMigrationChecked=true;
+  return result.items||{};
+}
+async function saveMySQLShift(workDate,username,schedule){
+  return hostingerShiftRequest('POST',{
+    action:'save',
+    workDate,
+    username,
+    category:schedule.category||'',
+    start:schedule.start||'',
+    end:schedule.end||''
+  });
+}
+async function removeMySQLShift(workDate,username){
+  return hostingerShiftRequest('POST',{action:'delete',workDate,username});
 }
 
 /* Shift hasil edit berlaku terus sampai diedit lagi.
@@ -5324,22 +5567,23 @@ async function renderDashboard(){
   $('dashToday').textContent=dateLabel(dateObj);
   holder.innerHTML='<div class="dash-empty">Memuat data shift dan absensi...</div>';
   try{
-    const [attendanceSnap, scheduleSnap, scheduleHistorySnap, crosscheckSnap]=await Promise.all([
-      get(ref(db,`absensi/${date}`)),
-      get(ref(db,`shiftStaff/${date}`)),
-      get(ref(db,'shiftStaff')),
-      get(ref(db,`crosschecks/${date}`))
+    const [rows,mysqlSchedules]=await Promise.all([
+      mysqlAttendanceDate(date),
+      loadMySQLShiftSchedules(date)
     ]);
-    // Dashboard hanya menampilkan status Check-in/Check-out dari tanggal yang dipilih.
-    // Check-out tertunda hari sebelumnya tetap dikunci di HP, tetapi tidak ditampilkan di dashboard hari berikutnya.
-    const attendance=attendanceSnap.exists()?attendanceSnap.val():{};
-    const savedSchedules=scheduleSnap.exists()?scheduleSnap.val():{};
-    const shiftHistory=scheduleHistorySnap.exists()?scheduleHistorySnap.val():{};
-    const crosschecks=crosscheckSnap.exists()?crosscheckSnap.val():{};
+    const attendance={};
+    const crosschecks={};
+    rows.forEach(item=>{
+      attendance[item.username]={
+        username:item.username,name:item.name,role:item.role,date:item.workDate||date,
+        checkIn:item.checkIn||null,checkOut:item.checkOut||null
+      };
+      if(item.crosscheck?.time) crosschecks[item.username]=item.crosscheck;
+    });
+
     const schedules={};
     userList().forEach(u=>{
-      const saved=savedSchedules[u.username] || getInheritedShift(shiftHistory,date,u.username);
-      schedules[u.username]=normalizeSchedule(saved,u.username);
+      schedules[u.username]=normalizeSchedule(mysqlSchedules?.[u.username]||null,u.username);
     });
     const search=($('dashSearch').value||'').trim().toLowerCase();
     const role=$('dashRole').value;
@@ -5376,8 +5620,12 @@ async function renderDashboard(){
       sectionHtml('SHIFT NELAYAN','Atur jam mulai dan selesai sesuai kebutuhan.',nelayan,attendance,schedules,crosschecks,'NELAYAN')+
       sectionHtml('CUTI','Staff yang sedang cuti pada tanggal ini.',cuti,attendance,schedules,crosschecks,'CUTI')+
       unsetHtml(unset,attendance,schedules,crosschecks);
-  }catch(e){console.error(e);holder.innerHTML='<div class="dash-empty">Data shift belum dapat dimuat. Periksa koneksi / Rules Firebase.</div>'}
+  }catch(e){
+    console.error(e);
+    holder.innerHTML='<div class="dash-empty">Data absensi belum dapat dimuat dari MySQL Hostinger.</div>';
+  }
 }
+
 function setTimeUi(category){
   const off=category==='CUTI'||!category;
   $('timeGrid').classList.toggle('time-disabled',off);
@@ -5399,33 +5647,31 @@ function setTimeUi(category){
     $('shiftGuide').textContent='Pilih kategori shift terlebih dahulu.';
   }
 }
-function openShiftModal(username){
+async function openShiftModal(username){
   if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const user=TEST_USERS[username];
   if(!user) return;
   selectedShiftUser=username;
   $('shiftModalUser').innerHTML=`<b>${user.name}</b><br><span style="color:#8e7b68">${user.username} • ${user.role}</span>`;
   $('shiftModal').classList.remove('hidden');
-  Promise.all([
-    get(ref(db,`shiftStaff/${currentDashboardDate()}/${username}`)),
-    get(ref(db,'shiftStaff'))
-  ]).then(([todaySnap,historySnap])=>{
-    const todayRaw=todaySnap.exists()?todaySnap.val():null;
-    const history=historySnap.exists()?historySnap.val():{};
-    const raw=todayRaw || getInheritedShift(history,currentDashboardDate(),username);
-    const schedule=normalizeSchedule(raw,username);
+  try{
+    const schedules=await loadMySQLShiftSchedules(currentDashboardDate());
+    const schedule=normalizeSchedule(schedules?.[username]||null,username);
     $('shiftModalSelect').value=schedule.category||'';
     $('shiftStart').value=schedule.start||'';
     $('shiftEnd').value=schedule.end||'';
     setTimeUi(schedule.category||'');
-  }).catch(()=>{
+  }catch(error){
+    console.error(error);
     const schedule=normalizeSchedule(null,username);
     $('shiftModalSelect').value=schedule.category||'';
     $('shiftStart').value=schedule.start||'';
     $('shiftEnd').value=schedule.end||'';
     setTimeUi(schedule.category||'');
-  });
+    toast('Jadwal MySQL belum bisa dibaca.');
+  }
 }
+
 function closeShiftModal(){selectedShiftUser=null;$('shiftModal').classList.add('hidden')}
 async function saveShift(){
   if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
@@ -5434,14 +5680,26 @@ async function saveShift(){
   const start=$('shiftStart').value;
   const end=$('shiftEnd').value;
   if(category && category!=='CUTI' && (!start||!end)){toast('Isi jam mulai dan jam selesai terlebih dahulu.');return}
-  const path=ref(db,`shiftStaff/${currentDashboardDate()}/${selectedShiftUser}`);
+  const workDate=currentDashboardDate();
   try{
-    if(!category) await remove(path);
-    else await set(path,{category,shift:category,start:category==='CUTI'?'':start,end:category==='CUTI'?'':end,updatedAt:new Date().toISOString()});
-    toast(category?`${category} berhasil disimpan dan berlaku sampai diubah lagi.`:'Shift dikosongkan dan kembali ke jadwal awal.');
+    if(!category){
+      await removeMySQLShift(workDate,selectedShiftUser);
+      // Backup Firebase tetap ada namun tidak menjadi sumber UI.
+      try{await remove(ref(db,`shiftStaff/${workDate}/${selectedShiftUser}`))}catch(e){}
+    }else{
+      const schedule={category,start:category==='CUTI'?'':start,end:category==='CUTI'?'':end};
+      await saveMySQLShift(workDate,selectedShiftUser,schedule);
+      try{
+        await set(ref(db,`shiftStaff/${workDate}/${selectedShiftUser}`),{
+          ...schedule,shift:category,updatedAt:new Date().toISOString()
+        });
+      }catch(e){}
+    }
+    toast(category?`${category} berhasil disimpan ke MySQL Hostinger.`:'Shift dikosongkan.');
     closeShiftModal(); renderDashboard();
-  }catch(e){console.error(e);toast('Shift belum tersimpan. Periksa Rules Database.')}
+  }catch(e){console.error(e);toast('Shift belum tersimpan ke MySQL Hostinger.')}
 }
+
 function currentTimeInput(){
   const now=new Date();
   return `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -5464,28 +5722,27 @@ async function saveCrosscheck(){
   const savedAt=new Date();
   const time=`${String(savedAt.getHours()).padStart(2,'0')}:${String(savedAt.getMinutes()).padStart(2,'0')}`;
   try{
-    await set(ref(db,`crosschecks/${currentDashboardDate()}/${selectedCrosscheckUser}`),{
+    await ensureAbsensiMySQLMigration();
+    await hostingerAbsensiRequest('POST',{
+      action:'crosscheck',
+      workDate:currentDashboardDate(),
+      username:selectedCrosscheckUser,
       time,
       checkedAt:savedAt.toISOString()
     });
-    toast(`Crosscheck berhasil disimpan pukul ${time} WIB.`);
+    toast(`Crosscheck berhasil disimpan ke MySQL pukul ${time} WIB.`);
     closeCrosscheckModal();
     renderDashboard();
   }catch(e){
     console.error(e);
-    toast('Crosscheck belum tersimpan. Periksa Rules Database.');
+    toast('Crosscheck belum tersimpan ke MySQL Hostinger.');
   }
 }
 async function getManualCheckinSchedule(username){
-  const today=currentDashboardDate();
-  const [todaySnap,historySnap]=await Promise.all([
-    get(ref(db,`shiftStaff/${today}/${username}`)),
-    get(ref(db,'shiftStaff'))
-  ]);
-  const history=historySnap.exists()?historySnap.val():{};
-  const raw=todaySnap.exists()?todaySnap.val():getInheritedShift(history,today,username);
-  return normalizeSchedule(raw,username);
+  const schedules=await loadMySQLShiftSchedules(currentDashboardDate());
+  return normalizeSchedule(schedules?.[username]||null,username);
 }
+
 async function openManualCheckinModal(username){
   if(!canManageAllShiftStaff()){toast('Hanya LEADER atau CS LINE yang dapat mengatur shift semua staff.');return}
   const user=TEST_USERS[username];
@@ -5527,41 +5784,29 @@ async function saveManualCheckin(){
       toast('Jadwal shift staff belum diatur. Tidak bisa membuat Check-in Manual.');
       return;
     }
-    const path=ref(db,`absensi/${today}/${username}`);
-    const snap=await get(path);
-    const existing=snap.exists()?snap.val():null;
-    if(existing?.checkIn){
-      toast('Staff ini sudah memiliki data Check-in.');
+    await ensureAbsensiMySQLMigration();
+    const payload=await hostingerAbsensiRequest('POST',{
+      action:'manual_checkin',
+      workDate:today,
+      username,
+      name:user.name,
+      role:user.role,
+      time,
+      shift:schedule.category,
+      createdBy:currentUser?.username||'dashboard'
+    });
+    if(!payload.saved){
+      toast(payload.message||'Staff ini sudah memiliki data Check-in.');
       closeManualCheckinModal();
       renderDashboard();
       return;
     }
-    const [hh,mm]=time.split(':').map(Number);
-    const dateObj=new Date(today+'T00:00:00');
-    dateObj.setHours(hh,mm,0,0);
-    await set(path,{
-      ...(existing||{}),
-      username,
-      name:user.name,
-      role:user.role,
-      date:today,
-      checkIn:{
-        time,
-        timestamp:dateObj.toISOString(),
-        location:null,
-        source:'Manual Admin • Shift '+schedule.category,
-        manual:true,
-        shift:schedule.category,
-        createdBy:currentUser?.username||'dashboard'
-      },
-      checkOut:existing?.checkOut||null
-    });
-    toast(`Check-in manual ${user.name} otomatis disimpan sesuai Shift ${schedule.category} • ${time} WIB.`);
+    toast(`Check-in manual ${user.name} disimpan ke MySQL sesuai Shift ${schedule.category} • ${time} WIB.`);
     closeManualCheckinModal();
     renderDashboard();
   }catch(e){
     console.error(e);
-    toast('Check-in manual belum tersimpan. Periksa Rules Database.');
+    toast('Check-in manual belum tersimpan ke MySQL Hostinger.');
   }
 }
 function openResetModal(username){
@@ -5585,37 +5830,27 @@ async function confirmResetShift(){
   if(!user) return;
   try{
     const today=currentDashboardDate();
+    await ensureAbsensiMySQLMigration();
     await Promise.all([
-      remove(ref(db,`shiftStaff/${today}/${username}`)),
-      remove(ref(db,`absensi/${today}/${username}`)),
-      remove(ref(db,`crosschecks/${today}/${username}`))
+      removeMySQLShift(today,username),
+      hostingerAbsensiRequest('POST',{action:'reset_user',workDate:today,username})
     ]);
+    // Firebase backup cleanup only; UI no longer reads it.
+    try{
+      await Promise.all([
+        remove(ref(db,`shiftStaff/${today}/${username}`)),
+        remove(ref(db,`absensi/${today}/${username}`)),
+        remove(ref(db,`crosschecks/${today}/${username}`))
+      ]);
+    }catch(backupError){ console.warn('Cadangan Firebase reset gagal:',backupError); }
     closeResetModal();
-    toast('Reset berhasil. User kembali ke status Belum Absen.');
+    toast('Reset berhasil. Shift dan absensi MySQL hari ini dibersihkan.');
     renderDashboard();
   }catch(e){
     console.error(e);
-    toast('Reset belum berhasil. Periksa Rules Database.');
+    toast('Reset belum berhasil. Periksa MySQL Hostinger.');
   }
 }
-
-let izinTimerInterval=null;
-let mobileIzinTimerInterval=null;
-let currentMobileIzin=null;
-
-const IZIN_RULES={
-  'Izin Keluar':{minutes:15,label:'15 Menit'},
-  'Izin Ambil Makan':{minutes:7,label:'7 Menit'}
-};
-
-/* Batas izin keluar 15 menit per role.
-   Izin Ambil Makan tidak memakai batas kuota role ini. */
-const IZIN_KELUAR_ROLE_LIMITS={
-  'CS LINE':2,
-  'CS':2,
-  'KASIR':2,
-  'KAPTEN':1
-};
 
 function normalizeIzinRole(role){
   const value=String(role||'').trim().toUpperCase();
@@ -6098,7 +6333,7 @@ async function renderIzin(){
   if($('izinToday')) $('izinToday').textContent=formatIzinDashboardDate(date);
   if($('izinFilterDate') && $('izinFilterDate').value!==date) $('izinFilterDate').value=date;
   if($('izinListDesc')) $('izinListDesc').textContent=isToday
-    ? 'Data izin hari ini tersimpan di Firebase.'
+    ? 'Data izin hari ini tersimpan di MySQL Hostinger.'
     : `Menampilkan riwayat data izin pada ${formatIzinDashboardDate(date)}.`;
 
   const rows=$('izinRows');
@@ -6174,9 +6409,64 @@ let selectedStaffRoleUser='';
 let selectedDeleteStaffUser='';
 let deletedStaffUsers=new Set();
 let staffProfileOverrides={};
+let staffMySQLLoaded=false;
+let staffMySQLSnapshot=null;
+
+async function bootstrapStaffMySQL(){
+  if(staffMySQLLoaded && staffMySQLSnapshot) return staffMySQLSnapshot;
+
+  let firebaseProfiles={};
+  let firebaseDeleted={};
+  try{
+    const [profileSnap, deletedSnap] = await Promise.all([
+      get(ref(db,'profiles')),
+      get(ref(db,'staffDirectoryDeleted'))
+    ]);
+    firebaseProfiles=profileSnap.exists()?(profileSnap.val()||{}):{};
+    firebaseDeleted=deletedSnap.exists()?(deletedSnap.val()||{}):{};
+  }catch(error){
+    console.warn('Data Firebase lama User Staff tidak dapat dibaca:',error);
+  }
+
+  const users=Object.entries(TEST_USERS||{}).map(([username,data])=>({
+    username,
+    name:data?.name||username,
+    role:data?.role||'LAINNYA'
+  }));
+
+  const payload=await window.staffMySQLRequest('POST',{
+    action:'bootstrap',
+    users,
+    firebaseProfiles,
+    firebaseDeleted
+  });
+  staffMySQLLoaded=true;
+  staffMySQLSnapshot=payload;
+  return payload;
+}
+
+function applyStaffMySQLItems(items=[]){
+  staffProfileOverrides={};
+  deletedStaffUsers=new Set();
+
+  (items||[]).forEach(item=>{
+    if(!item?.username) return;
+    staffProfileOverrides[item.username]={
+      ...(item.name?{name:item.name}:{}),
+      ...(item.role?{role:item.role}:{}),
+      ...(item.photo?{photo:item.photo}:{})
+    };
+    if(item.deleted) deletedStaffUsers.add(item.username);
+  });
+}
 
 async function loadStaffProfileOverrides(){
   try{
+    const payload=await bootstrapStaffMySQL();
+    applyStaffMySQLItems(payload.items||[]);
+  }catch(error){
+    console.warn('User Staff MySQL belum dapat dimuat, memakai Firebase sementara:',error);
+    // Fallback Firebase only when MySQL API is unavailable.
     const snap=await get(ref(db,'profiles'));
     const profiles=snap.exists()?(snap.val()||{}):{};
     staffProfileOverrides={};
@@ -6184,12 +6474,11 @@ async function loadStaffProfileOverrides(){
       if(profile && typeof profile==='object'){
         staffProfileOverrides[username]={
           ...(profile.name?{name:profile.name}:{}),
-          ...(profile.role?{role:profile.role}:{})
+          ...(profile.role?{role:profile.role}:{}),
+          ...(profile.photo?{photo:profile.photo}:{})
         };
       }
     });
-  }catch(error){
-    console.warn('Role staff dari Firebase belum dimuat:',error);
   }
 }
 
@@ -6206,13 +6495,17 @@ function getStaffDirectoryUser(username,data){
 
 async function loadDeletedStaffUsers(){
   try{
+    if(!staffMySQLSnapshot){
+      const payload=await bootstrapStaffMySQL();
+      applyStaffMySQLItems(payload.items||[]);
+    }
+  }catch(error){
+    console.warn('Daftar staff terhapus MySQL belum dimuat, memakai Firebase sementara:',error);
     const snap=await get(ref(db,'staffDirectoryDeleted'));
     const value=snap.exists()?snap.val():{};
     deletedStaffUsers=new Set(Object.entries(value||{})
       .filter(([,item])=>item && item.deleted)
       .map(([username])=>username));
-  }catch(error){
-    console.warn('Daftar staff terhapus belum dimuat:',error);
   }
 }
 
@@ -6314,17 +6607,31 @@ async function saveStaffRole(){
   if(saveButton) saveButton.disabled=true;
 
   try{
-    await update(ref(db,`profiles/${selectedStaffRoleUser}`),{
+    const updatedBy=JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').username||'-';
+
+    // Sumber utama: MySQL Hostinger
+    const payload=await window.staffMySQLRequest('POST',{
+      action:'set_role',
+      username:selectedStaffRoleUser,
       role:newRole,
-      roleUpdatedAt:new Date().toISOString(),
-      roleUpdatedBy:JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').username||'-'
+      updatedBy
     });
 
-    // Update daftar yang sedang aktif supaya berpindah tabel tanpa reload.
-    staffProfileOverrides[selectedStaffRoleUser]={
-      ...(staffProfileOverrides[selectedStaffRoleUser]||{}),
-      role:newRole
-    };
+    staffMySQLLoaded=true;
+    staffMySQLSnapshot={...(staffMySQLSnapshot||{}),items:payload.items||[]};
+    applyStaffMySQLItems(payload.items||[]);
+
+    // Firebase hanya backup selama tahap migrasi.
+    try{
+      await update(ref(db,`profiles/${selectedStaffRoleUser}`),{
+        role:newRole,
+        roleUpdatedAt:new Date().toISOString(),
+        roleUpdatedBy:updatedBy
+      });
+    }catch(backupError){
+      console.warn('Cadangan Firebase role staff gagal:',backupError);
+    }
+
     TEST_USERS[selectedStaffRoleUser].role=newRole;
     if(typeof AUTH_USERS!=='undefined' && AUTH_USERS[selectedStaffRoleUser]){
       AUTH_USERS[selectedStaffRoleUser].role=newRole;
@@ -6347,10 +6654,10 @@ async function saveStaffRole(){
 
     closeStaffRoleModal();
     renderUserStaff();
-    if(typeof window.toast==='function') window.toast('Role staff berhasil diperbarui dan tersimpan.');
+    if(typeof window.toast==='function') window.toast('Role staff berhasil diperbarui di MySQL Hostinger.');
   }catch(error){
     console.error('Gagal menyimpan role staff:',error);
-    if(typeof window.toast==='function') window.toast('Role staff belum tersimpan. Periksa koneksi atau Rules Database.');
+    if(typeof window.toast==='function') window.toast('Role staff belum tersimpan ke MySQL Hostinger.');
   }finally{
     if(saveButton) saveButton.disabled=false;
   }
@@ -6385,19 +6692,37 @@ async function deleteStaffUser(){
   if(deleteButton) deleteButton.disabled=true;
 
   try{
-    await set(ref(db,`staffDirectoryDeleted/${username}`),{
-      deleted:true,
-      deletedAt:new Date().toISOString(),
-      deletedBy:JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').username||'-'
+    const deletedBy=JSON.parse(sessionStorage.getItem('absensi_test_user')||'{}').username||'-';
+
+    // Sumber utama: MySQL Hostinger.
+    const payload=await window.staffMySQLRequest('POST',{
+      action:'delete_staff',
+      username,
+      deletedBy
     });
+
+    staffMySQLLoaded=true;
+    staffMySQLSnapshot={...(staffMySQLSnapshot||{}),items:payload.items||[]};
+    applyStaffMySQLItems(payload.items||[]);
+
+    // Firebase backup.
+    try{
+      await set(ref(db,`staffDirectoryDeleted/${username}`),{
+        deleted:true,
+        deletedAt:new Date().toISOString(),
+        deletedBy
+      });
+    }catch(backupError){
+      console.warn('Cadangan Firebase hapus staff gagal:',backupError);
+    }
 
     deletedStaffUsers.add(username);
     closeDeleteStaffModal();
     renderUserStaff();
-    if(typeof window.toast==='function') window.toast('Staff berhasil dihapus dari daftar.');
+    if(typeof window.toast==='function') window.toast('Staff berhasil dihapus dari daftar MySQL Hostinger.');
   }catch(error){
     console.error('Gagal menghapus staff:',error);
-    if(typeof window.toast==='function') window.toast('Staff belum terhapus. Periksa koneksi atau Rules Database.');
+    if(typeof window.toast==='function') window.toast('Staff belum terhapus. Periksa MySQL Hostinger.');
   }finally{
     if(deleteButton) deleteButton.disabled=false;
   }
@@ -6594,6 +6919,53 @@ const IZIN_PATH='jamIzinV2';
 let izinSelectedType='Izin Keluar';
 let izinCurrentItem=null;
 
+/* Hostinger MySQL pilot: Jam Izin */
+const HOSTINGER_IZIN_API='./api/izin.php';
+let izinMySQLReady=false;
+let izinMigrationChecked=false;
+
+async function hostingerIzinRequest(method='GET', payload=null){
+  const options={method,headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin'};
+  let url=HOSTINGER_IZIN_API;
+  if(method==='GET' && payload && typeof payload==='object'){
+    url+='?'+new URLSearchParams(payload).toString();
+  }else if(payload!==null){
+    options.body=JSON.stringify(payload);
+  }
+  const response=await fetch(url,options);
+  const data=await response.json().catch(()=>({ok:false,message:'Respons API Jam Izin tidak valid.'}));
+  if(!response.ok || !data.ok) throw new Error(data.message||'MySQL Jam Izin belum siap.');
+  return data;
+}
+function flattenFirebaseIzinTree(tree={}){
+  const items=[];
+  Object.entries(tree||{}).forEach(([workDate,records])=>{
+    Object.entries(records||{}).forEach(([key,item])=>{
+      if(!item || typeof item!=='object') return;
+      items.push({
+        id:key,workDate,username:item.username||'',name:item.name||'',role:item.role||'',
+        type:item.type||'Izin Keluar',durationMinutes:Number(item.durationMinutes||15),
+        startedAt:item.startedAt||'',expiresAt:item.expiresAt||'',lateAt:item.lateAt||'',
+        endedAt:item.endedAt||null,endTime:item.endTime||null,createdAt:item.createdAt||item.startedAt||'',
+        autoClosed:!!item.autoClosed,autoClosedReason:item.autoClosedReason||'',
+        quotaAutoClosed:!!item.quotaAutoClosed,quotaClosedReason:item.quotaClosedReason||''
+      });
+    });
+  });
+  return items;
+}
+async function ensureIzinMySQLMigration(){
+  if(izinMigrationChecked) return;
+  const state=await hostingerIzinRequest('GET',{action:'state'});
+  if(!state.migrationCompleted){
+    const legacySnap=await get(ref(izinDb,IZIN_PATH));
+    const legacy=legacySnap.exists()?flattenFirebaseIzinTree(legacySnap.val()||{}):[];
+    await hostingerIzinRequest('POST',{action:'bootstrap',items:legacy});
+  }
+  izinMigrationChecked=true;
+  izinMySQLReady=true;
+}
+
 const izinRules={'Izin Keluar':15,'Izin Ambil Makan':7};
 
 /* Kuota ketat Izin Keluar 15 menit per role.
@@ -6615,65 +6987,19 @@ const normalizeQuotaRole=role=>{
 const quotaRoleLabel=role=>normalizeQuotaRole(role)==='KAPTEN'?'KAPTEN / KKS':normalizeQuotaRole(role);
 
 async function startIzinWithStrictQuota(acc,type,minutes){
-  const today=dateKey();
-  const key=`izin_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
-  const now=new Date();
-  const role=normalizeQuotaRole(acc.role);
-  const limit=type==='Izin Keluar' ? (izinKeluarQuota[role]||0) : 0;
-  let quotaFull=false;
-  let activeOwn=false;
-  let currentCount=0;
-
-  const record={
+  await ensureIzinMySQLMigration();
+  const result=await hostingerIzinRequest('POST',{
+    action:'start',
+    workDate:dateKey(),
     username:acc.username,
     name:acc.name,
     role:acc.role,
     type,
     durationMinutes:minutes,
-    startedAt:now.toISOString(),
-    expiresAt:new Date(now.getTime()+minutes*60000).toISOString(),
-    lateAt:new Date(now.getTime()+(minutes+1)*60000).toISOString(),
-    endedAt:null,
-    createdAt:now.toISOString()
-  };
-
-  const result=await runTransaction(ref(izinDb,`${IZIN_PATH}/${today}`),current=>{
-    const records=current && typeof current==='object' ? current : {};
-
-    activeOwn=Object.values(records).some(item=>
-      item && item.username===acc.username && !item.endedAt
-    );
-    if(activeOwn) return;
-
-    if(type==='Izin Keluar' && limit>0){
-      currentCount=Object.values(records).filter(item=>
-        item &&
-        item.type==='Izin Keluar' &&
-        !item.endedAt &&
-        normalizeQuotaRole(item.role)===role
-      ).length;
-
-      if(currentCount>=limit){
-        quotaFull=true;
-        return;
-      }
-    }
-
-    records[key]=record;
-    return records;
+    nowIso:new Date().toISOString()
   });
-
-  if(!result.committed){
-    if(quotaFull){
-      return {
-        ok:false,
-        message:`Kuota Izin Keluar ${quotaRoleLabel(role)} sudah penuh (${currentCount}/${limit} staff).`
-      };
-    }
-    return {ok:false,message:'Izin masih aktif pada akun ini.'};
-  }
-
-  return {ok:true,record:{key,...record}};
+  if(!result.started) return {ok:false,message:result.message||'Jam Izin belum dapat dimulai.'};
+  return {ok:true,record:result.record};
 }
 const $q=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,'0');
@@ -6720,9 +7046,9 @@ const toastMsg=msg=>{
   else console.log(text);
 };
 async function getIzinByDate(selectedDate=dateKey()){
-  const snap=await get(ref(izinDb,`${IZIN_PATH}/${selectedDate}`));
-  if(!snap.exists()) return [];
-  return Object.entries(snap.val()).map(([key,v])=>({key,...v}));
+  await ensureIzinMySQLMigration();
+  const payload=await hostingerIzinRequest('GET',{action:'list',date:selectedDate});
+  return Array.isArray(payload.items)?payload.items:[];
 }
 async function getTodayIzin(){
   return getIzinByDate(dateKey());
@@ -6731,72 +7057,19 @@ async function getTodayIzin(){
 /* Membersihkan data lama yang sudah telanjur melampaui kuota:
    hanya 2 CS/CS LINE/KASIR dan 1 KAPTEN/KKS yang pertama tetap aktif. */
 async function enforceStrictIzinQuota(){
-  const today=dateKey();
-  await runTransaction(ref(izinDb,`${IZIN_PATH}/${today}`),current=>{
-    const records=current && typeof current==='object' ? current : {};
-    const groups={};
-
-    Object.entries(records).forEach(([key,item])=>{
-      if(!item || item.endedAt || item.type!=='Izin Keluar') return;
-      const role=normalizeQuotaRole(item.role);
-      const limit=izinKeluarQuota[role]||0;
-      if(!limit) return;
-      (groups[role]||(groups[role]=[])).push({key,item,limit});
-    });
-
-    Object.values(groups).forEach(list=>{
-      list.sort((a,b)=>String(a.item.startedAt||'').localeCompare(String(b.item.startedAt||'')));
-      const keep=list[0]?.limit||0;
-      list.slice(keep).forEach(({key,item,limit})=>{
-        const closedAt=new Date().toISOString();
-        records[key]={
-          ...item,
-          endedAt:closedAt,
-          endTime:formatTime(closedAt),
-          quotaAutoClosed:true,
-          quotaClosedReason:`Melebihi kuota ${quotaRoleLabel(item.role)} maksimal ${limit} staff`
-        };
-      });
-    });
-
-    return records;
-  });
+  await ensureIzinMySQLMigration();
+  await hostingerIzinRequest('POST',{action:'enforce_quota',workDate:dateKey(),nowIso:new Date().toISOString()});
 }
 
 /* Jika staff lupa End Time lalu hari sudah berganti, izin otomatis ditutup
    pada 23:59:59 tanggal izin tersebut agar tidak tersisa sebagai izin aktif. */
 let autoCloseIzinRunning=false;
 async function autoCloseOldOpenIzin(){
-  if(autoCloseIzinRunning) return;
-  autoCloseIzinRunning=true;
   try{
-    const snap=await get(ref(izinDb,IZIN_PATH));
-    if(!snap.exists()) return;
-    const today=dateKey();
-    const jobs=[];
-    Object.entries(snap.val()||{}).forEach(([recordDate,items])=>{
-      if(recordDate>=today || !items) return;
-      Object.entries(items).forEach(([key,item])=>{
-        if(item && !item.endedAt){
-          const autoEnd=new Date(`${recordDate}T23:59:59`);
-          jobs.push(update(ref(izinDb,`${IZIN_PATH}/${recordDate}/${key}`),{
-            endedAt:autoEnd.toISOString(),
-            endTime:'23:59:59',
-            autoClosed:true,
-            autoClosedReason:'Otomatis ditutup karena pergantian hari',
-            autoClosedAt:new Date().toISOString()
-          }));
-        }
-      });
-    });
-    if(jobs.length){
-      await Promise.all(jobs);
-      console.log(`Jam izin otomatis ditutup: ${jobs.length} data.`);
-    }
+    await ensureIzinMySQLMigration();
+    await hostingerIzinRequest('POST',{action:'auto_close_old',today:dateKey()});
   }catch(err){
-    console.error('Auto close Jam Izin gagal:',err);
-  }finally{
-    autoCloseIzinRunning=false;
+    console.warn('Auto close Jam Izin MySQL gagal:',err.message||err);
   }
 }
 async function getActiveForCurrent(){
@@ -6846,7 +7119,7 @@ function displayInput(item){
 }
 async function renderInput(){
   try{await enforceStrictIzinQuota();displayInput(await getActiveForCurrent())}
-  catch(err){console.error(err);displayInput(null);toastMsg(`Firebase baca gagal: ${err.code||err.message}`)}
+  catch(err){console.error(err);displayInput(null);toastMsg(`MySQL baca gagal: ${err.code||err.message}`)}
 }
 function renderIzinInputLiveMeta(){
   const now = new Date();
@@ -6870,15 +7143,7 @@ async function renderActiveIzinCard(){
       .filter(x=>!x.endedAt)
       .sort((a,b)=>(a.expiresAt||'').localeCompare(b.expiresAt||''));
 
-    const active=await Promise.all(rawActive.map(async x=>{
-      try{
-        const profileSnap=await get(ref(izinDb,`profiles/${x.username}`));
-        const profile=profileSnap.exists()?profileSnap.val():{};
-        return {...x,photo:profile?.photo||''};
-      }catch(e){
-        return {...x,photo:''};
-      }
-    }));
+    const active=rawActive.map(x=>({...x,photo:''}));
 
     totalEl.textContent=`${active.length} Aktif`;
     if(!active.length){
@@ -6916,7 +7181,7 @@ async function renderDashboardIzin(){
     if($q('izinListDesc')){
       const label=new Date(selectedDate+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
       $q('izinListDesc').textContent=isToday
-        ? 'Data izin hari ini tersimpan di Firebase.'
+        ? 'Data izin hari ini tersimpan di MySQL Hostinger.'
         : `Menampilkan riwayat data izin pada ${label}.`;
     }
     rows.innerHTML=list.length?list.map((x,i)=>{
@@ -6958,7 +7223,7 @@ async function renderDashboardIzin(){
     }).join(''):'<tr><td colspan="9" class="izin-empty">Belum ada data jam izin baru.</td></tr>';
   }catch(err){
     console.error(err);
-    rows.innerHTML='<tr><td colspan="9" class="izin-empty">Gagal membaca Firebase. Periksa Rules.</td></tr>';
+    rows.innerHTML='<tr><td colspan="9" class="izin-empty">Gagal membaca MySQL Hostinger.</td></tr>';
   }
 }
 window.izinPCChoose=type=>setChoice(type);
@@ -6982,13 +7247,13 @@ window.izinPCStart=async()=>{
       return;
     }
 
-    toastMsg('Start Time tersimpan ke Firebase.');
+    toastMsg('Start Time tersimpan ke MySQL Hostinger.');
     await renderInput();
     await renderDashboardIzin();
     await renderActiveIzinCard();
   }catch(err){
-    console.error('Start Firebase gagal',err);
-    toastMsg(`Start gagal Firebase: ${err.code||err.message}`);
+    console.error('Start MySQL gagal',err);
+    toastMsg(`Start gagal MySQL: ${err.code||err.message}`);
   }finally{
     if(btn && !izinCurrentItem) btn.disabled=false;
   }
@@ -6997,15 +7262,18 @@ window.izinPCEnd=async()=>{
   try{
     const active=izinCurrentItem||await getActiveForCurrent();
     if(!active){toastMsg('Tidak ada izin aktif untuk diakhiri.');return}
-    const now=new Date();
-    await update(ref(izinDb,`${IZIN_PATH}/${dateKey()}/${active.key}`),{
-      endedAt:now.toISOString(),endTime:formatTime(now.toISOString())
+    await ensureIzinMySQLMigration();
+    await hostingerIzinRequest('POST',{
+      action:'end',
+      id:active.key||active.id,
+      workDate:active.workDate||dateKey(new Date(active.startedAt||Date.now())),
+      nowIso:new Date().toISOString()
     });
-    toastMsg('End Time tersimpan ke Firebase.');
+    toastMsg('End Time tersimpan ke MySQL Hostinger.');
     await renderInput(); await renderDashboardIzin(); await renderActiveIzinCard();
   }catch(err){
-    console.error('End Firebase gagal',err);
-    toastMsg(`End gagal Firebase: ${err.code||err.message}`);
+    console.error('End MySQL gagal',err);
+    toastMsg(`End Time belum tersimpan: ${err.message||err}`);
   }
 };
 setChoice('Izin Keluar');
@@ -7164,8 +7432,9 @@ async function refreshIzinCheckinGate(){
   gateInFlight=true;
   gateLastUser=username;
   try{
-    const snap=await get(ref(gateDb,`absensi/${gateDateKey()}/${username}`));
-    const data=snap.exists()?snap.val():null;
+    const payload=await fetch('./api/absensi.php?action=list_date&date='+encodeURIComponent(gateDateKey()),{credentials:'same-origin'}).then(r=>r.json());
+    const items=payload?.ok&&Array.isArray(payload.items)?payload.items:[];
+    const data=items.find(x=>x.username===username)||null;
     gateCanUseIzin=!!(data && data.checkIn);
     form.classList.toggle('hidden',!gateCanUseIzin);
     locked.classList.toggle('hidden',gateCanUseIzin);
@@ -7212,28 +7481,10 @@ setInterval(refreshIzinCheckinGate,5000);
 
 
 <script type="module">
-import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getDatabase, ref, get, update, onValue } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
-
-const profileFirebaseConfig={
-  apiKey:'AIzaSyB7mQEug_xaQHyOKv9yfEt-XQZyDtX-_78',
-  authDomain:'absensi-joni.firebaseapp.com',
-  databaseURL:'https://absensi-joni-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId:'absensi-joni',
-  storageBucket:'absensi-joni.firebasestorage.app',
-  messagingSenderId:'784014108802',
-  appId:'1:784014108802:web:60bddc1aa84de7c95bac9b'
-};
-const profileApp=getApps().length?getApp():initializeApp(profileFirebaseConfig);
-const profileDb=getDatabase(profileApp);
 const p$=id=>document.getElementById(id);
-async function profilePasswordHash(value){
-  const data=new TextEncoder().encode(value);
-  const digest=await crypto.subtle.digest('SHA-256',data);
-  return Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('');
-}
 let profileMode='photo';
 let selectedPhotoData='';
+let profilePollTimer=null;
 
 function profileSession(){
   try{return JSON.parse(sessionStorage.getItem('absensi_test_user')||'null')}catch(e){return null}
@@ -7250,7 +7501,6 @@ function applyProfileUi(user){
     avatar.classList.toggle('has-photo',!!user.photo);
     avatar.innerHTML=user.photo?`<img src="${user.photo}" alt="Foto profile">`:initials;
   }
-
   const izinAvatar=p$('deskIzinAvatar');
   if(izinAvatar){
     izinAvatar.classList.toggle('has-photo',!!user.photo);
@@ -7268,8 +7518,6 @@ function applyProfileUi(user){
     window.currentUser=currentUser;
   }
 }
-let stopCurrentProfileSync=null;
-
 function applySyncedProfile(profileData={}){
   const user=profileSession();
   if(!user?.username) return;
@@ -7294,17 +7542,16 @@ async function loadProfile(){
   const user=profileSession();
   if(!user?.username) return;
   try{
-    const snap=await get(ref(profileDb,`profiles/${user.username}`));
-    applySyncedProfile(snap.exists()?(snap.val()||{}):{});
-
-    if(stopCurrentProfileSync) stopCurrentProfileSync();
-    stopCurrentProfileSync=onValue(ref(profileDb,`profiles/${user.username}`),snap=>{
-      applySyncedProfile(snap.exists()?(snap.val()||{}):{});
-    });
+    const payload=await window.staffMySQLRequest('GET',{action:'profile',username:user.username});
+    applySyncedProfile(payload.user||{});
   }catch(e){
-    console.error('Profile load error',e);
+    console.warn('Profile MySQL belum dapat dimuat:',e.message);
     applyProfileUi(user);
   }
+}
+function startProfilePolling(){
+  if(profilePollTimer) clearInterval(profilePollTimer);
+  profilePollTimer=setInterval(loadProfile,15000);
 }
 function switchProfileTab(mode){
   profileMode=mode==='password'?'password':'photo';
@@ -7365,37 +7612,36 @@ async function saveProfile(){
   const btn=p$('profileSettingsSave');
   btn.disabled=true;
   try{
-    const changes={updatedAt:new Date().toISOString()};
     if(profileMode==='photo'){
       if(!selectedPhotoData) throw new Error('Pilih foto terlebih dahulu.');
-      changes.photo=selectedPhotoData;
-      await update(ref(profileDb,`profiles/${user.username}`),changes);
+      const payload=await window.staffMySQLRequest('POST',{
+        action:'save_profile',
+        username:user.username,
+        changes:{photo:selectedPhotoData}
+      });
+      applySyncedProfile(payload.user||{photo:selectedPhotoData});
+      closeProfileSettings();
+      if(typeof window.toast==='function') window.toast('Foto profile berhasil diperbarui di MySQL Hostinger.');
     }else if(profileMode==='password'){
       const oldPassword=p$('profileOldPassword').value;
       const newPassword=p$('profileNewPassword').value;
       const confirmPassword=p$('profileConfirmPassword').value;
-      const currentPassword=(window.TEST_USERS&&window.TEST_USERS[user.username]?.password)||user.password||'';
-      if(oldPassword!==currentPassword) throw new Error('Password lama tidak sesuai.');
+      if(!oldPassword) throw new Error('Masukkan password lama.');
       if(newPassword.length<4) throw new Error('Password baru minimal 4 karakter.');
       if(newPassword!==confirmPassword) throw new Error('Konfirmasi password baru tidak sama.');
-      changes.passwordHash=await profilePasswordHash(newPassword);
-      changes.passwordChangedAt=new Date().toISOString();
-      changes.passwordChanged=true;
-      await update(ref(profileDb,`profiles/${user.username}`),changes);
-      const merged={...user,...changes};
-      sessionStorage.setItem('absensi_test_user',JSON.stringify(merged));
+
+      await window.staffMySQLRequest('POST',{
+        action:'change_password',
+        username:user.username,
+        oldPassword,
+        newPassword
+      });
       closeProfileSettings();
-      if(typeof window.toast==='function') window.toast('Password baru berhasil tersimpan. Gunakan password baru saat login berikutnya.');
-      return;
+      if(typeof window.toast==='function') window.toast('Password baru berhasil tersimpan di MySQL Hostinger.');
     }
-    const merged={...user,...changes};
-    sessionStorage.setItem('absensi_test_user',JSON.stringify(merged));
-    applyProfileUi(merged);
-    closeProfileSettings();
-    if(typeof window.toast==='function') window.toast('Profile berhasil diperbarui.');
   }catch(e){
     console.error(e);
-    if(typeof window.toast==='function') window.toast(e.message||'Profile belum tersimpan. Periksa Rules Database.');
+    if(typeof window.toast==='function') window.toast(e.message||'Profile belum tersimpan.');
   }finally{btn.disabled=false}
 }
 p$('profileTrigger')?.addEventListener('click',e=>{
@@ -7441,7 +7687,7 @@ p$('profileUploadZone')?.addEventListener('drop',e=>{
   p$('profileUploadZone').classList.remove('dragover');
   handleProfilePhoto(e.dataTransfer?.files?.[0]);
 });
-setTimeout(loadProfile,350);
+setTimeout(()=>{loadProfile();startProfilePolling();},350);
 </script>
 
 
@@ -7470,6 +7716,20 @@ async function authHash(value){
 async function verifyDashboardLogin(username,password){
   const base=AUTH_USERS[username];
   if(!base) return null;
+
+  try{
+    const mysqlResponse=await window.staffMySQLRequest('POST',{
+      action:'login',
+      username,
+      password,
+      baseName:base.name,
+      baseRole:base.role
+    });
+    if(mysqlResponse.user) return mysqlResponse.user;
+  }catch(mysqlError){
+    console.warn('Login MySQL belum dapat dipakai, fallback Firebase:',mysqlError.message);
+  }
+
   try{
     const snap=await get(ref(authDb,`profiles/${username}`));
     const profile=snap.exists()?snap.val()||{}:{};
@@ -8247,38 +8507,90 @@ const cutiSyncApp=getApps().length?getApp():initializeApp(cutiSyncConfig);
 const cutiSyncDb=getDatabase(cutiSyncApp);
 const cutiSyncRef=ref(cutiSyncDb,'pengajuanCutiShared');
 const CUTI_STORAGE_KEY='absensi_pengajuan_cuti_v1';
+const HOSTINGER_CUTI_API='./api/cuti.php';
+
 let cutiRemoteReady=false;
 let cutiFirstSnapshot=true;
+let cutiHostingerReady=false;
+let cutiHostingerHasData=false;
+let cutiLoadingMySQL=false;
 
+async function hostingerCutiRequest(method='GET', body=null){
+  const options={
+    method,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    credentials:'same-origin'
+  };
+  if(body!==null) options.body=JSON.stringify(body);
+
+  const response=await fetch(HOSTINGER_CUTI_API,options);
+  const payload=await response.json().catch(()=>({ok:false,message:'Respons API Cuti tidak valid.'}));
+  if(!response.ok || !payload.ok){
+    throw new Error(payload.message||'Hostinger MySQL Cuti belum siap.');
+  }
+  return payload;
+}
+
+async function loadHostingerCuti(){
+  const payload=await hostingerCutiRequest('GET');
+  cutiHostingerReady=true;
+  cutiHostingerHasData=Array.isArray(payload.items) && payload.items.length>0;
+  return Array.isArray(payload.items)?payload.items:[];
+}
+
+async function saveHostingerCuti(entries){
+  const payload=await hostingerCutiRequest('POST',{items:entries});
+  cutiHostingerReady=true;
+  cutiHostingerHasData=Array.isArray(entries) && entries.length>0;
+  return payload;
+}
+
+/* Dipanggil oleh form Cuti dan aksi Approve/Reject.
+   Data diprioritaskan ke MySQL Hostinger, Firebase tetap jadi cadangan selama migrasi. */
 window.syncPengajuanCutiToFirebase=(entries)=>{
-  if(!cutiRemoteReady) return;
-  set(cutiSyncRef,entries).catch(err=>console.error('Gagal simpan pengajuan cuti Firebase:',err));
+  const list=Array.isArray(entries)?entries:[];
+  // Simpan utama ke MySQL Hostinger, tidak menunggu Firebase.
+  saveHostingerCuti(list)
+    .then(()=>{cutiHostingerReady=true;})
+    .catch(err=>{
+      console.error('Simpan Pengajuan Cuti ke MySQL gagal:',err.message);
+      if(typeof window.toast==='function') window.toast('Pengajuan belum tersimpan ke Hostinger. Periksa koneksi.');
+    });
+
+  // Firebase masih cadangan saja dan tidak akan mengisi ulang tabel SQL bila tabel SQL dihapus.
+  if(cutiRemoteReady){
+    set(cutiSyncRef,list).catch(err=>console.warn('Cadangan Firebase Cuti gagal:',err));
+  }
 };
 
-onValue(cutiSyncRef,(snap)=>{
+onValue(cutiSyncRef,async (snap)=>{
   const remote=snap.exists()?snap.val():null;
-  if(Array.isArray(remote)){
-    localStorage.setItem(CUTI_STORAGE_KEY,JSON.stringify(remote));
-    cutiRemoteReady=true;
-    if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
-  }else if(cutiFirstSnapshot){
-    // Firebase masih kosong: ambil data lama dari browser pertama sebagai data awal bersama.
-    let local=[];
-    try{local=JSON.parse(localStorage.getItem(CUTI_STORAGE_KEY)||'[]')||[]}catch(e){}
-    cutiRemoteReady=true;
-    if(local.length){
-      set(cutiSyncRef,local).catch(err=>console.error('Gagal migrasi data cuti:',err));
-    }else if(typeof window.renderPengajuanCuti==='function'){
-      window.renderPengajuanCuti();
-    }
+  const firebaseItems=Array.isArray(remote)?remote:[];
+
+  try{
+    // MySQL adalah sumber utama. Hapus record SQL = langsung hilang saat refresh dashboard.
+    const mysqlItems=await loadHostingerCuti();
+    localStorage.setItem(CUTI_STORAGE_KEY,JSON.stringify(mysqlItems));
+  }catch(err){
+    console.warn('MySQL Hostinger Cuti belum bisa diakses; memakai Firebase sementara:',err.message);
+    cutiHostingerReady=false;
+    localStorage.setItem(CUTI_STORAGE_KEY,JSON.stringify(firebaseItems));
   }
+
+  cutiRemoteReady=true;
+  if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
   cutiFirstSnapshot=false;
 },err=>{
   console.error('Gagal memuat data cuti Firebase:',err);
   cutiRemoteReady=true;
+  loadHostingerCuti()
+    .then(items=>{
+      localStorage.setItem(CUTI_STORAGE_KEY,JSON.stringify(items));
+      if(typeof window.renderPengajuanCuti==='function') window.renderPengajuanCuti();
+    })
+    .catch(()=>{});
 });
 </script>
-
 
 <script type="module">
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -8483,10 +8795,13 @@ const resignFirebaseConfig={
 const resignApp=getApps().length?getApp():initializeApp(resignFirebaseConfig);
 const resignDb=getDatabase(resignApp);
 const resignRef=ref(resignDb,'pengajuanResignShared');
+const HOSTINGER_RESIGN_API='./api/resign.php';
 
 let resignData=[];
 let resignStatus='Pending';
 let pendingResignAction=null;
+let resignMySQLReady=false;
+let resignMigrationChecked=false;
 
 const $r=id=>document.getElementById(id);
 const escapeHtml=value=>String(value??'-').replace(/[&<>"']/g,ch=>({
@@ -8527,11 +8842,74 @@ function statusClass(status){
   const value=String(status||'Pending').toLowerCase();
   return value==='approved'?'approved':(value==='rejected'?'rejected':'pending');
 }
+
+async function hostingerResignRequest(method='GET', body=null){
+  const options={
+    method,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    credentials:'same-origin'
+  };
+  if(body!==null) options.body=JSON.stringify(body);
+
+  const response=await fetch(HOSTINGER_RESIGN_API,options);
+  const payload=await response.json().catch(()=>({ok:false,message:'Respons API Resign tidak valid.'}));
+  if(!response.ok || !payload.ok){
+    throw new Error(payload.message||'Hostinger MySQL Resign belum siap.');
+  }
+  return payload;
+}
+
+async function loadHostingerResign(){
+  const payload=await hostingerResignRequest('GET');
+  resignMySQLReady=true;
+  return {
+    items:Array.isArray(payload.items)?payload.items:[],
+    migrationCompleted:Boolean(payload.migrationCompleted)
+  };
+}
+
+async function saveHostingerResign(items, migration=false){
+  const payload=await hostingerResignRequest('POST',{
+    items:Array.isArray(items)?items:[],
+    migration:Boolean(migration)
+  });
+  resignMySQLReady=true;
+  return payload;
+}
+
+async function persistResignData(nextItems){
+  const list=Array.isArray(nextItems)?nextItems:[];
+  let mysqlSaved=false;
+
+  try{
+    await saveHostingerResign(list,false);
+    mysqlSaved=true;
+    resignData=list;
+    renderResignTabs();
+    renderResignRows();
+  }catch(error){
+    console.error('Simpan Pengajuan Resign ke MySQL gagal:',error);
+  }
+
+  // Firebase menjadi cadangan, bukan sumber utama saat MySQL API berfungsi.
+  try{
+    if(mysqlSaved) await set(resignRef,list);
+  }catch(error){
+    console.warn('Cadangan Firebase Resign gagal:',error);
+  }
+
+  if(!mysqlSaved){
+    showResignAlert('Pengajuan resign belum tersimpan ke MySQL Hostinger. Periksa koneksi.','warning','Gagal Menyimpan');
+    throw new Error('MySQL Resign gagal disimpan');
+  }
+}
+
 function renderResignTabs(){
   document.querySelectorAll('[data-resign-status]').forEach(button=>{
     button.classList.toggle('active',button.dataset.resignStatus===resignStatus);
   });
 }
+
 function renderResignRows(){
   const rows=$r('pengajuanResignRows');
   if(!rows) return;
@@ -8562,6 +8940,7 @@ function renderResignRows(){
     </tr>`;
   }).join('') : '<tr><td colspan="7" class="pengajuan-resign-empty">Belum ada data pengajuan resign.</td></tr>';
 }
+
 function openResignForm(){
   const user=currentUser();
   $r('pengajuanResignForm')?.reset();
@@ -8606,16 +8985,13 @@ async function setResignStatus(status,id){
     processedBy:currentUser().username||'-'
   } : item);
   try{
-    await set(resignRef,updated);
+    await persistResignData(updated);
     showResignAlert(
       status==='Approved'?'Pengajuan resign telah disetujui.':'Pengajuan resign telah ditolak.',
       status==='Approved'?'success':'warning',
       status==='Approved'?'Pengajuan Disetujui':'Pengajuan Ditolak'
     );
-  }catch(error){
-    console.error(error);
-    showResignAlert('Status pengajuan resign belum tersimpan. Periksa koneksi atau Rules Database.','warning','Gagal Menyimpan');
-  }
+  }catch(error){}
 }
 
 $r('openPengajuanResignBtn')?.addEventListener('click',openResignForm);
@@ -8643,16 +9019,15 @@ $r('pengajuanResignForm')?.addEventListener('submit',async event=>{
     resignDate,
     note,
     status:'Pending',
-    createdAt:new Date().toISOString()
+    createdAt:new Date().toISOString(),
+    processedAt:null,
+    processedBy:null
   };
   try{
-    await set(resignRef,[...resignData,record]);
+    await persistResignData([...resignData,record]);
     closeResignForm();
     showResignAlert('Pengajuan resign berhasil dikirim.','success','Pengajuan Berhasil Dikirim');
-  }catch(error){
-    console.error(error);
-    showResignAlert('Pengajuan resign belum tersimpan. Periksa koneksi atau Rules Database.','warning','Gagal Menyimpan');
-  }
+  }catch(error){}
 });
 
 document.addEventListener('click',event=>{
@@ -8681,17 +9056,37 @@ document.addEventListener('click',event=>{
   }
 });
 
-onValue(resignRef,snap=>{
+onValue(resignRef,async snap=>{
   const remote=snap.exists()?snap.val():[];
-  resignData=Array.isArray(remote)?remote:[];
+  const firebaseItems=Array.isArray(remote)?remote:[];
+
+  try{
+    const mysql=await loadHostingerResign();
+
+    // Satu kali saja: copy data Firebase lama ke MySQL, lalu tandai selesai.
+    // Setelah migrationCompleted=true, hapus data SQL tidak akan pernah diisi ulang dari Firebase.
+    if(!resignMigrationChecked && !mysql.migrationCompleted){
+      await saveHostingerResign(firebaseItems,true);
+      resignData=firebaseItems;
+    }else{
+      resignData=mysql.items;
+    }
+    resignMigrationChecked=true;
+  }catch(error){
+    console.warn('MySQL Hostinger Resign belum bisa diakses; memakai Firebase sementara:',error.message);
+    resignMySQLReady=false;
+    resignData=firebaseItems;
+  }
+
   renderResignTabs();
   renderResignRows();
 },error=>{
-  console.error('Sync resign gagal:',error);
-  renderResignRows();
+  console.error('Sync resign Firebase gagal:',error);
+  loadHostingerResign()
+    .then(mysql=>{resignData=mysql.items;resignMigrationChecked=true;renderResignTabs();renderResignRows();})
+    .catch(()=>renderResignRows());
 });
 window.renderPengajuanResign=renderResignRows;
-
 </script>
 
 
@@ -8854,6 +9249,38 @@ const rekeningApp=getApps().length?getApp():initializeApp(rekeningFirebaseConfig
 const rekeningDb=getDatabase(rekeningApp);
 const rekeningRef=ref(rekeningDb,'pengajuanGantiRekeningShared');
 
+/* Hostinger MySQL pilot: Ganti Rekening.
+   Selama config.php belum diisi, dashboard otomatis tetap memakai Firebase. */
+const HOSTINGER_REKENING_API='./api/rekening.php';
+let rekeningHostingerReady=false;
+let rekeningHostingerHasData=false;
+
+async function hostingerRekeningRequest(method='GET', body=null){
+  const options={
+    method,
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    credentials:'same-origin'
+  };
+  if(body!==null) options.body=JSON.stringify(body);
+  const response=await fetch(HOSTINGER_REKENING_API,options);
+  const payload=await response.json().catch(()=>({ok:false,message:'Respons API tidak valid.'}));
+  if(!response.ok || !payload.ok) throw new Error(payload.message||'Hostinger API belum siap.');
+  return payload;
+}
+async function loadHostingerRekening(){
+  const payload=await hostingerRekeningRequest('GET');
+  rekeningHostingerReady=true;
+  rekeningHostingerHasData=Array.isArray(payload.items)&&payload.items.length>0;
+  return Array.isArray(payload.items)?payload.items:[];
+}
+async function saveHostingerRekening(items){
+  const payload=await hostingerRekeningRequest('POST',{items});
+  rekeningHostingerReady=true;
+  rekeningHostingerHasData=true;
+  return payload;
+}
+
+
 let rekeningData=[];
 let rekeningStatus='Pending';
 let rekeningDetailId='';
@@ -8953,11 +9380,23 @@ function renderRekeningRows(){
 }
 
 async function saveRekeningData(){
+  let mysqlSaved=false;
   try{
-    await set(rekeningRef,rekeningData);
+    await saveHostingerRekening(rekeningData);
+    mysqlSaved=true;
   }catch(error){
-    console.error('Gagal sinkron ganti rekening:',error);
-    if(typeof window.toast==='function') window.toast('Data belum tersimpan. Periksa koneksi.');
+    console.error('Simpan MySQL Hostinger Ganti Rekening gagal:',error);
+  }
+
+  // Firebase tetap cadangan, tetapi tidak lagi dipakai sebagai sumber tampilan ketika MySQL aktif.
+  try{
+    if(rekeningHostingerReady) await set(rekeningRef,rekeningData);
+  }catch(error){
+    console.warn('Cadangan Firebase Ganti Rekening gagal:',error);
+  }
+
+  if(!mysqlSaved && typeof window.toast==='function'){
+    window.toast('Data belum tersimpan. Periksa koneksi Hostinger.');
   }
 }
 function updateRekeningStatus(id,status){
@@ -9053,14 +9492,29 @@ rq('closeRekeningDetailModal')?.addEventListener('click',closeRekeningDetail);
 rq('rekeningDetailOk')?.addEventListener('click',closeRekeningDetail);
 rq('rekeningDetailModal')?.addEventListener('click',event=>{if(event.target===rq('rekeningDetailModal')) closeRekeningDetail();});
 
-onValue(rekeningRef,snapshot=>{
-  const remote=snapshot.exists()?snapshot.val():[];
-  rekeningData=Array.isArray(remote)?remote:Object.values(remote||{});
+onValue(rekeningRef,async snapshot=>{
+  const firebaseItems=snapshot.exists()
+    ? (Array.isArray(snapshot.val())?snapshot.val():Object.values(snapshot.val()||{}))
+    : [];
+
+  try{
+    // MySQL adalah sumber utama. Kalau tabel SQL kosong, Dashboard juga harus kosong.
+    rekeningData=await loadHostingerRekening();
+  }catch(error){
+    // Firebase hanya fallback kalau API Hostinger benar-benar sedang tidak bisa diakses.
+    console.warn('MySQL Hostinger Ganti Rekening tidak dapat diakses; memakai Firebase sementara:',error.message);
+    rekeningHostingerReady=false;
+    rekeningData=firebaseItems;
+  }
+
   renderRekeningTabs();
   renderRekeningRows();
 },error=>{
-  console.error('Sinkron Ganti Rekening gagal:',error);
-  renderRekeningRows();
+  console.error('Sinkron Ganti Rekening Firebase gagal:',error);
+  // Jika Firebase error, tetap coba tampilkan MySQL.
+  loadHostingerRekening()
+    .then(items=>{rekeningData=items;renderRekeningTabs();renderRekeningRows();})
+    .catch(()=>renderRekeningRows());
 });
 
 window.renderGantiRekening=renderRekeningRows;
