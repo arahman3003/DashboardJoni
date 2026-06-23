@@ -4256,7 +4256,7 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
        <div class="user-staff-head">
          <div>
            <h1>👥 User Staff</h1>
-           <p>Daftar staff berurutan dari LEADER, CS, KAPTEN / KKS, sampai KASIR.</p>
+           <p></p>
          </div>
          <input id="userStaffSearch" type="search" placeholder="Cari nama atau username">
        </div>
@@ -4270,12 +4270,12 @@ window.staffMySQLRequest = async function(method='GET', payload=null){
 <section class="shift-topbox">
   <div class="shift-top-title"><span class="ico">◆</span><span id="shiftTopHeading">SHIFT KERJA CS LINE & CS</span></div>
   <div class="shift-mini-grid">
-    <div class="shift-mini-card"><div class="shift-mini-icon">◌</div><div class="shift-mini-name">CUTI</div><div class="shift-mini-value" id="sumCuti">0</div><div class="shift-mini-sub">Staff cuti</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">◐</div><div class="shift-mini-name">PAGI</div><div class="shift-mini-value" id="sumPagi">0</div><div class="shift-mini-sub">Shift pagi</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">◑</div><div class="shift-mini-name">MALAM</div><div class="shift-mini-value" id="sumMalam">0</div><div class="shift-mini-sub">Shift malam</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">⌁</div><div class="shift-mini-name">GANTUNG</div><div class="shift-mini-value" id="sumGantung">0</div><div class="shift-mini-sub">Shift gantung</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">◈</div><div class="shift-mini-name">NELAYAN</div><div class="shift-mini-value" id="sumNelayan">0</div><div class="shift-mini-sub">Shift nelayan</div></div>
-    <div class="shift-mini-card"><div class="shift-mini-icon">—</div><div class="shift-mini-name">BELUM DIATUR</div><div class="shift-mini-value" id="sumUnset">0</div><div class="shift-mini-sub">Belum ada jadwal</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🏖️</div><div class="shift-mini-name">CUTI</div><div class="shift-mini-value" id="sumCuti">0</div><div class="shift-mini-sub">Staff cuti</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🏙️</div><div class="shift-mini-name">PAGI</div><div class="shift-mini-value" id="sumPagi">0</div><div class="shift-mini-sub">Shift pagi</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🌆</div><div class="shift-mini-name">MALAM</div><div class="shift-mini-value" id="sumMalam">0</div><div class="shift-mini-sub">Shift malam</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🌁</div><div class="shift-mini-name">GANTUNG</div><div class="shift-mini-value" id="sumGantung">0</div><div class="shift-mini-sub">Shift gantung</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🛶</div><div class="shift-mini-name">NELAYAN</div><div class="shift-mini-value" id="sumNelayan">0</div><div class="shift-mini-sub">Shift nelayan</div></div>
+    <div class="shift-mini-card"><div class="shift-mini-icon">🔜</div><div class="shift-mini-name">BELUM DIATUR</div><div class="shift-mini-value" id="sumUnset">0</div><div class="shift-mini-sub">Belum ada jadwal</div></div>
   </div>
   <div class="shift-date-wrap">
     <div class="shift-date-card">
@@ -6756,7 +6756,7 @@ function switchDash(view){
     $('dashRole').value='CS';
   }else if(view==='shift-kks'){
     $('shiftTitle').textContent='SHIFT KERJA KKS / KS';
-    $('shiftSubtitle').textContent='Atur Shift Pagi, Malam, Gantung, Nelayan, dan Cuti untuk staff KAPTEN dan KASIR.';
+    $('shiftSubtitle').textContent='';
     $('shiftTopHeading').textContent='SHIFT KERJA KKS & KS';
     $('dashRole').value='';
   }
